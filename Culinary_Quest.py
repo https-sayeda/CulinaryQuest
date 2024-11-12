@@ -47,6 +47,8 @@ sushiIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','sushi_
 halalIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','halal_icon.png'))
 vegetarianIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','vegetarian_icon.png'))
 veganIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','vegan_icon.png'))
+shopIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','shop_icon.png'))
+settingsIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','settings_icon.png'))
 
 #CLASSES
 
@@ -108,29 +110,45 @@ class Button(Box):
 class ImageButton():
     def __init__(self, x, y, image, size):
         width = image.get_width()
-        height = image.get_width
+        height = image.get_width()
         self.image = pygame.transform.scale(image, (int(width * size), int(height * size)))
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.topleft = (x,y)
         self.pressed = False
+        self.active = False
 
     def draw(self):
-        active = False
-        #get mouse position and checks if the button has been clicked
-        pos = pygame.mouse.get_pos()
-        if self.rect.collidepoint(pos):
-            if pygame.mouseget_pressed()[0] == 1 and self.pressed == False:
-                self.pressed = True
-                active = True
-        
-        if pygame.mouse.get_pressed()[0] == 0:
-            self.clicked = False
-
         #draws image button screen
         WIN.blit(self.image, (self.rect.x, self.rect.y))
 
-        return active #returns whether its been clicked or not
+    def checkPressed(self, position):
+        
+        if self.rect.collidepoint(position):
+            if pygame.mouse.get_pressed()[0] == 1 and self.pressed == False:
+                self.pressed = True
+        
+        if pygame.mouse.get_pressed()[0] == 0:
+            self.pressed = False
+
+        return self.pressed
+    
+        '''if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+            self.mouseHovering = True
+        else:
+            self.mouseHovering = False
+        if self.mouseHovering:
+            self.pressed = True
+        else:
+            self.pressed = False
+        return self.pressed'''
+
+    def getActive(self): return self.active
+
+    def setActive(self): self.active = True
+
+    def setUnactive(self): self.active = False
+
 
 
 
@@ -369,12 +387,26 @@ def mainScreen(search_input):
     overhead_box = Box(0, 0, 75, 1000, main_darkPurple1, True)
     levelNeeded_box = Box(240, 15, 40, 270, main_darkPurple3, False)
     currentLevel_box = Box(160, 15, 40, 120, main_darkPurple2, False)
-    searchLabel_box = Box(120, 100, 37, 120, main_lightPurple2, False)
+    search_button = Button(120, 100, 37, 120, main_lightPurple2, False)
+
+    #image button creation
+    shop_button = ImageButton(600, 15, shopIcon_image, 10)
+    settings_button = ImageButton(850, 15, settingsIcon_image, 10)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             break
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            shopPressed = shop_button.checkPressed(pygame.mouse.get_pos())
+            print(shopPressed)
+            if shopPressed:
+                shop_button.setActive()
+                print(shop_button.getActive())
+            settingsPressed = settings_button.checkPressed(pygame.mouse.get_pos())
+            if settingsPressed:
+                shop_button.setActive()
+            
         search_input.handleEvent(event)
 
     #drawing onto screen
@@ -383,10 +415,31 @@ def mainScreen(search_input):
     levelNeeded_box.drawBox()
     currentLevel_box.drawBox()
     WIN.blit(scaled_gameLogo, (30,0))
-    searchLabel_box.drawBox()
+    search_button.drawBox()
     search_input.draw()
+    shop_button.draw()
+    settings_button.draw()
+
+    shop_activate = shop_button.getActive()    
+    settings_activate = settings_button.getActive()
 
     pygame.display.update()
+
+    return shop_activate, settings_activate
+
+def shopScreen():
+    WIN.blit(mainBg_image, bgPosition)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            break
+
+def settingsScreen():
+    WIN.blit(mainBg_image, bgPosition)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            break
 
 def main():
     clock = pygame.time.Clock()
@@ -433,7 +486,22 @@ def main():
                 done2_activate = False
 
         while mainLoop == True:
-            mainScreen(search_input)
+            shopPressed, settingsPressed = mainScreen(search_input)
+            print(shopPressed)
+            if shopPressed:
+                mainLoop = False
+                shopLoop = True
+
+            if settingsPressed:
+                mainLoop = False
+                settingsLoop = True
+        
+        while shopLoop == True:
+            shopScreen()
+
+        while settingsLoop == True:
+            settingsScreen()
+
 
 main()
         
