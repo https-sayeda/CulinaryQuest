@@ -51,6 +51,7 @@ shopIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','shop_ic
 settingsIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','settings_icon.png'))
 filterIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','filter_icon.png'))
 
+
 #CLASSES
 
 class Text:
@@ -216,8 +217,9 @@ class Input:
 
 #SCREENS 
 
-def loginScreen(usernameInput1_input, passwordInput1_input):
+def loginScreen(usernameInput1_input, passwordInput1_input, loginLoop, createLoop, mainLoop):
 
+    #creating objects to display
     #boxes
     loginBg_box = Box(280, 260, 200, 500, login_darkPurple1, True)
     doneBg1_box = Box(150, 490, 80, 330, login_darkPurple1, True)
@@ -237,66 +239,64 @@ def loginScreen(usernameInput1_input, passwordInput1_input):
     passwordLabel_text = Text(327, 405, "Password", white, 22)
     accountError_text = Text(323, 371, "Please enter the correct username / password", white, 21)
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            break
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            createPressed = create_button.checkPressed(pygame.mouse.get_pos())
-            if createPressed:
-                create_button.setActive()
-            done1Pressed = done1_button.checkPressed(pygame.mouse.get_pos())
-            if done1Pressed:
-                done1_button.setActive()
-        usernameInput1_input.handleEvent(event)
-        passwordInput1_input.handleEvent(event)
+    while loginLoop:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                createPressed = create_button.checkPressed(pygame.mouse.get_pos())
+                if createPressed: #if create account button pressed..
+                    loginLoop = False
+                    createLoop = True #set to true while loginLoop is false so it can switch screens
+                done1Pressed = done1_button.checkPressed(pygame.mouse.get_pos())
+                if done1Pressed:
+                    userInput = usernameInput1_input.getInput()
+                    passInput = passwordInput1_input.getInput() #gets the inputs from the box
+                    accountVerified = database.verifyAccount_main(userInput, passInput) #sends to database file
+                    if accountVerified == False: #if account is not verified
+                        accountError_box.setActive() #sets box to active so it can be drawn
+                    elif accountVerified == True: #if it is verified
+                        loginLoop = False #sets loop to false so it can switch screens
+                        mainLoop = True #sets loop to true so it can switch to the main screen
+            
+            usernameInput1_input.handleEvent(event)
+            passwordInput1_input.handleEvent(event)
 
-    #drawing to screen
-    WIN.blit(loginBg_image, bgPosition)
-    WIN.blit(gameLogo_image, (410,20))
+        #drawing to screen
+        WIN.blit(loginBg_image, bgPosition)
+        WIN.blit(gameLogo_image, (410,20))
 
-    loginBg_box.drawBox()
-    doneBg1_box.drawBox()
-    createBg1_box.drawBox()
-    loginLabel_box.drawBox()
-    usernameLabel_box.drawBox()
-    passwordLabel_box.drawBox()
-    done1_button.drawBox()
-    create_button.drawBox()
-    loginLabel_text.drawText()
-    usernameLabel_text.drawText()
-    passwordLabel_text.drawText()
-    done1_text.drawText()
-    create_text.drawText()
-    usernameInput1_input.draw()
-    passwordInput1_input.draw()
+        loginBg_box.drawBox()
+        doneBg1_box.drawBox()
+        createBg1_box.drawBox()
+        loginLabel_box.drawBox()
+        usernameLabel_box.drawBox()
+        passwordLabel_box.drawBox()
+        done1_button.drawBox()
+        create_button.drawBox()
+        loginLabel_text.drawText()
+        usernameLabel_text.drawText()
+        passwordLabel_text.drawText()
+        done1_text.drawText()
+        create_text.drawText()
+        usernameInput1_input.draw()
+        passwordInput1_input.draw()
 
-    #login system
-    create_activate = create_button.getActive() #checks if create account button pressed
-    done1_activate = done1_button.getActive() #checks if done button pressed
-    accountVerified = False
+        accountError_active = accountError_box.getActive() 
+        if accountError_active: #if error box active
+            accountError_box.drawBox() #drawn onto screen
+            accountError_text.drawText()
 
-    if done1_activate == True: #if done button pressed
-        userInput = usernameInput1_input.getInput()
-        passInput = passwordInput1_input.getInput() #gets the inputs from the box
-        accountVerified = database.verifyAccount_main(userInput, passInput) #sends to database file
-    if accountVerified == False: #if not verified, then error box
-        accountError_box.drawBox()
-        accountError_text.drawText()
-    elif accountVerified == True: #if verified
-        loginBg_box.setActive() #sets box to active
-    account_activate = loginBg_box.getActive() #gets the value
+        pygame.display.update()
 
-    pygame.display.update()
+    return loginLoop, createLoop, mainLoop #returns to main() to switch / not switch screens
 
-    return create_activate, account_activate #returns to main() to switch / not switch screens
+def createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLoop):
 
-def createScreen(usernameInput2_input, passwordInput2_input, done2_activate):
-
+    #creating objects to display
     #images
-    WIN.blit(loginBg_image, bgPosition)
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
-    WIN.blit(scaled_gameLogo, (470,10))
     #boxes
     createBg_box = Box(280, 150, 200, 500, login_darkPurple1, True)
     doneBg2_box = Box(405, 360, 60, 230, login_darkPurple1, True)
@@ -321,60 +321,71 @@ def createScreen(usernameInput2_input, passwordInput2_input, done2_activate):
     passError4_text = Text(355, 540, "- 1 uppercase character", white, 22)
     passError5_text = Text(355, 560, "- 1 special symbol", white, 22)
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            break
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            backPressed = back_button.checkPressed(pygame.mouse.get_pos())
-            if backPressed:
-                back_button.setActive()
-            done2Pressed = done2_button.checkPressed(pygame.mouse.get_pos())
-            if done2Pressed: #if the done button is pressed..
-                passValidated = passwordInput2_input.passValidate() #makes sure pass matches requirements
-                if passValidated:
-                    passInput = passwordInput2_input.getInput() #if validated, stored into variable
-                userInput = usernameInput2_input.getInput() #username stored
-                userValidated = database.validateUser_main(userInput) #sent to database to check if exists
-                if userValidated == True and passValidated == True: #if both valid
-                    database.addAccount_main(userInput, passInput) #new account created
-                    done2_button.setActive() #will only switch screens if account is validated
-        usernameInput2_input.handleEvent(event)
-        passwordInput2_input.handleEvent(event)
+    while createLoop:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                backPressed = back_button.checkPressed(pygame.mouse.get_pos())
+                if backPressed:
+                    createLoop = False
+                    loginLoop = True #if back pressed, will return to login screen
+                done2Pressed = done2_button.checkPressed(pygame.mouse.get_pos())
+                if done2Pressed: #if the done button is pressed..
+                    passValidated = passwordInput2_input.passValidate() #makes sure pass matches requirements
+                    if passValidated:
+                        passInput = passwordInput2_input.getInput() #if validated, stored into variable
+                    else:
+                        passError_box.setActive() #if not validated, error box is activated
+                    userInput = usernameInput2_input.getInput() #username stored
+                    userValidated = database.validateUser_main(userInput) #sent to database to check if exists
+                    if userValidated == True and passValidated == True: #if both valid
+                        database.addAccount_main(userInput, passInput) #new account created
+                        createLoop = False  #will only switch screens if account is validated
+                        loginLoop = True
+                    elif userValidated != True: #if username not validated..
+                        userError_box.setActive() #error box is activated
+            usernameInput2_input.handleEvent(event)
+            passwordInput2_input.handleEvent(event)
 
-    createBg_box.drawBox()
-    doneBg2_box.drawBox()
-    createLabel_box.drawBox()
-    usernameLabel2_box.drawBox()
-    passwordLabel2_box.drawBox()
-    createLabel_text.drawText()
-    usernameLabel2_text.drawText()
-    passwordLabel2_text.drawText()
-    done2_button.drawBox()
-    done2_text.drawText()
-    back_button.drawBox()
-    back_text.drawText()
-    usernameInput2_input.draw()
-    passwordInput2_input.draw()
-    passError_box.drawBox()
-    userError_box.drawBox()
-    userError_text.drawText()
-    passError1_text.drawText()
-    passError2_text.drawText()
-    passError3_text.drawText()
-    passError4_text.drawText()
-    passError5_text.drawText()
+        #drawing the objects
+        WIN.blit(loginBg_image, bgPosition)
+        WIN.blit(scaled_gameLogo, (470,10))
+        createBg_box.drawBox()
+        doneBg2_box.drawBox()
+        createLabel_box.drawBox()
+        usernameLabel2_box.drawBox()
+        passwordLabel2_box.drawBox()
+        createLabel_text.drawText()
+        usernameLabel2_text.drawText()
+        passwordLabel2_text.drawText()
+        done2_button.drawBox()
+        done2_text.drawText()
+        back_button.drawBox()
+        back_text.drawText()
+        usernameInput2_input.draw()
+        passwordInput2_input.draw()
 
-    #activating methods to switch screens
-    done2_activate = done2_button.getActive()    
-    back_activate = back_button.getActive()
+        passError_active = passError_box.getActive()
+        userError_active = userError_box.getActive()
+        if passError_active: #if password error box is active, it is drawn onto screen
+            passError_box.drawBox()
+            passError1_text.drawText()
+            passError2_text.drawText()
+            passError3_text.drawText()
+            passError4_text.drawText()
+            passError5_text.drawText()
+        if userError_active: #if username error box is active, it is drawn onto screen
+            userError_box.drawBox()
+            userError_text.drawText()
 
-    pygame.display.update()
+        pygame.display.update()
 
-    return done2_activate, back_activate
+    return createLoop, loginLoop
 
-def mainScreen(search_input):
-    WIN.blit(mainBg_image, bgPosition)
+
+def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeLoop, sushiLoop):
     #scaling the game logo
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (75, 75))
     #box object creation
@@ -387,6 +398,7 @@ def mainScreen(search_input):
     cakeBg_box = Box(340, 180, 180, 200, main_lightPurple2, False)
     sushiBg_box = Box(550, 180, 180, 200, main_lightPurple2, False)
     filterBg_box = Box(820, 100, 37, 50, login_grey1, False)
+    filtertoolBg_box = Box(820, 100, 50, 100, login_grey1, False)
 
     #text object creation
     searchLabel_text = Text(150, 105, "Search", white, 22)
@@ -399,65 +411,68 @@ def mainScreen(search_input):
     sushi_button = ImageButton(570, 180, sushiIcon_image, 0.3)
     filter_button = ImageButton(830, 102, filterIcon_image, 0.7)
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            break
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            shopPressed = shop_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
-            print(shopPressed)
-            if shopPressed:
-                shop_button.setActive() #if it has, activates it
-                print(shop_button.getActive())
-            settingsPressed = settings_button.checkPressed(pygame.mouse.get_pos())
-            if settingsPressed:
-                settings_button.setActive()
-            burgerPressed = burger_button.checkPressed(pygame.mouse.get_pos())
-            if burgerPressed:
-                burger_button.setActive()
-            cakePressed = cake_button.checkPressed(pygame.mouse.get_pos())
-            if cakePressed:
-                cake_button.setActive()
-            sushiPressed = sushi_button.checkPressed(pygame.mouse.get_pos())
-            if sushiPressed:
-                sushi_button.setActive()
-            
-        search_input.handleEvent(event)
+    while mainLoop:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                shopPressed = shop_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
+                if shopPressed:
+                    mainLoop = False
+                    shopLoop = True
+                settingsPressed = settings_button.checkPressed(pygame.mouse.get_pos())
+                if settingsPressed:
+                    mainLoop = False
+                    settingsLoop = True
+                burgerPressed = burger_button.checkPressed(pygame.mouse.get_pos())
+                if burgerPressed:
+                    mainLoop = False
+                    burgerLoop = True
+                cakePressed = cake_button.checkPressed(pygame.mouse.get_pos())
+                if cakePressed:
+                    mainLoop = False
+                    cakeLoop = True
+                sushiPressed = sushi_button.checkPressed(pygame.mouse.get_pos())
+                if sushiPressed:
+                    mainLoop = False
+                    sushiLoop = True
+                filterPressed = filter_button.checkPressed(pygame.mouse.get_pos()) #checks if it's been pressed
+                if filterPressed: #if it has..
+                    filter_button.setActive() #the button is active
+                
+            search_input.handleEvent(event)
 
-    #drawing onto screen
-    recipeBg_box.drawBox()
-    overhead_box.drawBox()
-    levelNeeded_box.drawBox()
-    currentLevel_box.drawBox()
-    WIN.blit(scaled_gameLogo, (30,0))
-    search_button.drawBox()
-    search_input.draw()
-    searchLabel_text.drawText()
-    shop_button.draw()
-    settings_button.draw()
-    burgerBg_box.drawBox()
-    burger_button.draw()
-    cakeBg_box.drawBox()
-    cake_button.draw()
-    sushiBg_box.drawBox()
-    sushi_button.draw()
-    filterBg_box.drawBox()
-    filter_button.draw()
+        #drawing onto screen
+        WIN.blit(mainBg_image, bgPosition)
+        recipeBg_box.drawBox()
+        overhead_box.drawBox()
+        levelNeeded_box.drawBox()
+        currentLevel_box.drawBox()
+        WIN.blit(scaled_gameLogo, (30,0))
+        search_button.drawBox()
+        search_input.draw()
+        searchLabel_text.drawText()
+        shop_button.draw()
+        settings_button.draw()
+        burgerBg_box.drawBox()
+        burger_button.draw()
+        cakeBg_box.drawBox()
+        cake_button.draw()
+        sushiBg_box.drawBox()
+        sushi_button.draw()
+        filterBg_box.drawBox()
+        filter_button.draw()
+        filterActive = filter_button.getActive() # gets the value of whether its active
+        if filterActive: #if it is..
+            filtertoolBg_box.drawBox() #draws the box
 
-    shop_activate = shop_button.getActive()    #checks if its active or not
-    settings_activate = settings_button.getActive()
-    burger_activate = burger_button.getActive()
-    cake_activate = cake_button.getActive()
-    sushi_activate = sushi_button.getActive()
+        pygame.display.update()
 
-    pygame.display.update()
+    return mainLoop, shopLoop, settingsLoop, burgerLoop, cakeLoop, sushiLoop
 
-    return shop_activate, settings_activate, burger_activate, cake_activate, sushi_activate #returned to main()
-
-def shopScreen():
-    WIN.blit(mainBg_image, bgPosition)
+def shopScreen(mainLoop, shopLoop):
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
-    WIN.blit(scaled_gameLogo, (450,10))
 
     #box object creation
     shopBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
@@ -470,30 +485,32 @@ def shopScreen():
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            break
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
-            if backPressed:
-                back_button.setActive() #if it has, activates it
-        
-    #drawing onto screen
-    shopBg_box.drawBox()
-    back_button.drawBox()
-    back_text.drawText()
-    shopLabel_box.drawBox()
-    shopLabel_text.drawText()
+    while shopLoop:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
+                if backPressed:
+                    shopLoop = False
+                    mainLoop = True
+            
+        #drawing onto screen
+        WIN.blit(mainBg_image, bgPosition)
+        WIN.blit(scaled_gameLogo, (450,10))
+        shopBg_box.drawBox()
+        back_button.drawBox()
+        back_text.drawText()
+        shopLabel_box.drawBox()
+        shopLabel_text.drawText()
 
-    back_activate = back_button.getActive()
-    pygame.display.update()
-    return back_activate
+        pygame.display.update()
 
-def settingsScreen():
-    WIN.blit(mainBg_image, bgPosition)
+    return mainLoop, shopLoop
+
+def settingsScreen(mainLoop, settingsLoop):
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
-    WIN.blit(scaled_gameLogo, (450,10))
 
     #box object creation
     settingsBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
@@ -506,30 +523,31 @@ def settingsScreen():
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            break
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
-            if backPressed:
-                back_button.setActive() #if it has, activates it
-    
-    #drawing onto screen
-    settingsBg_box.drawBox()
-    back_button.drawBox()
-    back_text.drawText()
-    settingsLabel_box.drawBox()
-    settingsLabel_text.drawText()
+    while settingsLoop:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
+                if backPressed:
+                    settingsLoop = False
+                    mainLoop = True
+        
+        #drawing onto screen
+        WIN.blit(mainBg_image, bgPosition)
+        WIN.blit(scaled_gameLogo, (450,10))
+        settingsBg_box.drawBox()
+        back_button.drawBox()
+        back_text.drawText()
+        settingsLabel_box.drawBox()
+        settingsLabel_text.drawText()
 
-    back_activate = back_button.getActive()
-    pygame.display.update()
-    return back_activate
+        pygame.display.update()
+    return mainLoop, settingsLoop
     
-def burgerScreen():
-    WIN.blit(mainBg_image, bgPosition)
+def burgerScreen(mainLoop, burgerLoop):
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
-    WIN.blit(scaled_gameLogo, (450,10))
 
     #box object creation
     burgerBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
@@ -542,30 +560,32 @@ def burgerScreen():
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            break
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
-            if backPressed:
-                back_button.setActive() #if it has, activates it
-    
-    #drawing onto screen
-    burgerBg_box.drawBox()
-    back_button.drawBox()
-    back_text.drawText()
-    burgerLabel_box.drawBox()
-    burgerLabel_text.drawText()
+    while burgerLoop:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
+                if backPressed:
+                    burgerLoop = False
+                    mainLoop = True
+        
+        #drawing onto screen
+        WIN.blit(mainBg_image, bgPosition)
+        WIN.blit(scaled_gameLogo, (450,10))
+        burgerBg_box.drawBox()
+        back_button.drawBox()
+        back_text.drawText()
+        burgerLabel_box.drawBox()
+        burgerLabel_text.drawText()
 
-    back_activate = back_button.getActive()
-    pygame.display.update()
-    return back_activate
+        back_activate = back_button.getActive()
+        pygame.display.update()
+        return mainLoop, burgerLoop
 
-def cakeScreen():
-    WIN.blit(mainBg_image, bgPosition)
+def cakeScreen(mainLoop, cakeLoop):
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
-    WIN.blit(scaled_gameLogo, (450,10))
 
     #box object creation
     cakeBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
@@ -577,31 +597,32 @@ def cakeScreen():
 
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            break
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
-            if backPressed:
-                back_button.setActive() #if it has, activates it
     
-    #drawing onto screen
-    cakeBg_box.drawBox()
-    back_button.drawBox()
-    back_text.drawText()
-    cakeLabel_box.drawBox()
-    cakeLabel_text.drawText()
+    while cakeLoop:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
+                if backPressed:
+                    cakeLoop = False
+                    mainLoop = True
+        
+        #drawing onto screen
+        WIN.blit(mainBg_image, bgPosition)
+        WIN.blit(scaled_gameLogo, (450,10))
+        cakeBg_box.drawBox()
+        back_button.drawBox()
+        back_text.drawText()
+        cakeLabel_box.drawBox()
+        cakeLabel_text.drawText()
 
-    back_activate = back_button.getActive()
-    pygame.display.update()
-    return back_activate
+        pygame.display.update()
+    return mainLoop, cakeLoop
 
-def sushiScreen():
-    WIN.blit(mainBg_image, bgPosition)
+def sushiScreen(mainLoop, sushiLoop):
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
-    WIN.blit(scaled_gameLogo, (450,10))
 
     #box object creation
     sushiBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
@@ -614,40 +635,36 @@ def sushiScreen():
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            break
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
-            if backPressed:
-                back_button.setActive() #if it has, activates it
-    
-    #drawing onto screen
-    sushiBg_box.drawBox()
-    back_button.drawBox()
-    back_text.drawText()
-    sushiLabel_box.drawBox()
-    sushiLabel_text.drawText()
+    while sushiLoop:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
+                if backPressed:
+                    sushiLoop = False
+                    mainLoop = True
+        
+        #drawing onto screen
+        WIN.blit(mainBg_image, bgPosition)
+        WIN.blit(scaled_gameLogo, (450,10))
+        sushiBg_box.drawBox()
+        back_button.drawBox()
+        back_text.drawText()
+        sushiLabel_box.drawBox()
+        sushiLabel_text.drawText()
 
-    back_activate = back_button.getActive()
-    pygame.display.update()
-    return back_activate
+        pygame.display.update()
+    return mainLoop, sushiLoop
 
-def main():
+
+def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, burgerLoop, cakeLoop, sushiLoop):
     clock = pygame.time.Clock()
     clock.tick(FPS)
     run = True
     #loops
-    loginLoop = True
-    createLoop = False
-    mainLoop = False
-    settingsLoop = False
-    shopLoop = False
-    recipeLoop = False
-    burgerLoop = False
-    cakeLoop = False
-    sushiLoop = False
+
     #input boxes
     usernameInput1_input = Input(480, 330, 37, 280, black, 20, False)
     passwordInput1_input = Input(480, 400, 37, 280, black, 20, True)
@@ -656,77 +673,39 @@ def main():
     search_input = Input(240, 100, 37, 570, black, 20, False)
     
     while run:
-        while loginLoop == True:
-            createPressed, accountActivated = loginScreen(usernameInput1_input, passwordInput1_input)
-            if createPressed == True:
-                loginLoop = False
-                createLoop = True
-            if accountActivated == True:
-                loginLoop = False
-                mainLoop = True
+        if loginLoop == True:
+            loginLoop, createLoop, mainLoop = loginScreen(usernameInput1_input, passwordInput1_input, loginLoop, createLoop, mainLoop)
 
-        while createLoop == True:
-            done2_activate = False
-            accountVerified, backPressed = createScreen(usernameInput2_input, passwordInput2_input, done2_activate)
-            if backPressed:
-                createLoop = False
-                loginLoop = True
-                done2_activate = False
+        if createLoop == True:
+            createLoop, loginLoop = createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLoop)
 
-            if accountVerified:
-                createLoop = False
-                loginLoop = True
-                done2_activate = False
-
-        while mainLoop == True:
-            shopPressed, settingsPressed, burgerPressed, cakePressed, sushiPressed = mainScreen(search_input)
-            print(shopPressed)
-            if shopPressed: #if the shop button is pressed, it'll go onto the shop screen
-                mainLoop = False
-                shopLoop = True
-            if settingsPressed:
-                mainLoop = False
-                settingsLoop = True
-            if burgerPressed:
-                mainLoop = False
-                burgerLoop = True
-            if cakePressed:
-                mainLoop = False
-                cakeLoop = True
-            if sushiPressed:
-                mainLoop = False
-                sushiLoop = True 
+        if mainLoop == True:
+            mainLoop, shopLoop, settingsLoop, burgerLoop, cakeLoop, sushiLoop = mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeLoop, sushiLoop) 
         
-        while shopLoop == True:
-            backPressed = shopScreen()
-            if backPressed:
-                shopLoop = False
-                mainLoop = True
+        if shopLoop == True:
+            mainLoop, shopLoop = shopScreen(mainLoop, shopLoop)
 
-        while settingsLoop == True:
-            backPressed = settingsScreen()
-            if backPressed:
-                settingsLoop = False
-                mainLoop = True
+        if settingsLoop == True:
+            mainLoop, settingsLoop = settingsScreen(mainLoop, settingsLoop)
 
-        while burgerLoop == True:
-            backPressed = burgerScreen()
-            if backPressed:
-                burgerLoop = False
-                mainLoop = True
+        if burgerLoop == True:
+            mainLoop, burgerLoop = burgerScreen(mainLoop, burgerLoop)
 
-        while cakeLoop == True:
-            backPressed = cakeScreen()
-            if backPressed:
-                cakeLoop = False
-                mainLoop = True
+        if cakeLoop == True:
+            mainLoop, cakeLoop = cakeScreen(mainLoop, cakeLoop)
 
-        while sushiLoop == True:
-            backPressed = sushiScreen()
-            if backPressed:
-                sushiLoop = False
-                mainLoop = True
+        if sushiLoop == True:
+            mainLoop, sushiLoop = sushiScreen(mainLoop, sushiLoop)
 
+loginLoop = True
+createLoop = False
+mainLoop = False
+settingsLoop = False
+shopLoop = False
+recipeLoop = False
+burgerLoop = False
+cakeLoop = False
+sushiLoop = False
 
-main()
+main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, burgerLoop, cakeLoop, sushiLoop)
         
