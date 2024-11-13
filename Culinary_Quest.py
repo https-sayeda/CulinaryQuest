@@ -49,6 +49,7 @@ vegetarianIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','v
 veganIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','vegan_icon.png'))
 shopIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','shop_icon.png'))
 settingsIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','settings_icon.png'))
+filterIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','filter_icon.png'))
 
 #CLASSES
 
@@ -146,10 +147,6 @@ class ImageButton():
     def getActive(self): return self.active
     def setActive(self): self.active = True
     def setUnactive(self): self.active = False
-
-
-
-
 
 class Input:
     def __init__(self, x, y, height, length, colourText, size, censored):
@@ -389,6 +386,7 @@ def mainScreen(search_input):
     burgerBg_box = Box(130, 180, 180, 200, main_lightPurple2, False)
     cakeBg_box = Box(340, 180, 180, 200, main_lightPurple2, False)
     sushiBg_box = Box(550, 180, 180, 200, main_lightPurple2, False)
+    filterBg_box = Box(820, 100, 37, 50, login_grey1, False)
 
     #text object creation
     searchLabel_text = Text(150, 105, "Search", white, 22)
@@ -399,6 +397,7 @@ def mainScreen(search_input):
     burger_button = ImageButton(110, 155, burgerIcon_image, 0.45)
     cake_button = ImageButton(355, 190, cakeIcon_image, 0.3)
     sushi_button = ImageButton(570, 180, sushiIcon_image, 0.3)
+    filter_button = ImageButton(830, 102, filterIcon_image, 0.7)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -442,6 +441,8 @@ def mainScreen(search_input):
     cake_button.draw()
     sushiBg_box.drawBox()
     sushi_button.draw()
+    filterBg_box.drawBox()
+    filter_button.draw()
 
     shop_activate = shop_button.getActive()    #checks if its active or not
     settings_activate = settings_button.getActive()
@@ -456,13 +457,15 @@ def mainScreen(search_input):
 def shopScreen():
     WIN.blit(mainBg_image, bgPosition)
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
-    WIN.blit(scaled_gameLogo, (430,10))
+    WIN.blit(scaled_gameLogo, (450,10))
 
     #box object creation
     shopBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
+    shopLabel_box = Box(410, 160, 30, 200, main_darkPurple2, False)
 
     #text object creation
     back_text = Text(80, 55, "<--", white, 50)
+    shopLabel_text = Text(485, 162, "Shop", white, 22)
 
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
@@ -476,24 +479,29 @@ def shopScreen():
             if backPressed:
                 back_button.setActive() #if it has, activates it
         
-    
     #drawing onto screen
     shopBg_box.drawBox()
     back_button.drawBox()
     back_text.drawText()
+    shopLabel_box.drawBox()
+    shopLabel_text.drawText()
 
+    back_activate = back_button.getActive()
     pygame.display.update()
+    return back_activate
 
 def settingsScreen():
     WIN.blit(mainBg_image, bgPosition)
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
-    WIN.blit(scaled_gameLogo, (430,10))
+    WIN.blit(scaled_gameLogo, (450,10))
 
     #box object creation
     settingsBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
+    settingsLabel_box = Box(405, 160, 30, 200, main_darkPurple2, False)
 
     #text object creation
     back_text = Text(80, 55, "<--", white, 50)
+    settingsLabel_text = Text(470, 162, "Settings", white, 22)
 
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
@@ -511,19 +519,25 @@ def settingsScreen():
     settingsBg_box.drawBox()
     back_button.drawBox()
     back_text.drawText()
+    settingsLabel_box.drawBox()
+    settingsLabel_text.drawText()
 
+    back_activate = back_button.getActive()
     pygame.display.update()
+    return back_activate
     
 def burgerScreen():
     WIN.blit(mainBg_image, bgPosition)
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
-    WIN.blit(scaled_gameLogo, (430,10))
+    WIN.blit(scaled_gameLogo, (450,10))
 
     #box object creation
     burgerBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
+    burgerLabel_box = Box(410, 160, 30, 200, main_darkPurple2, False)
 
     #text object creation
     back_text = Text(80, 55, "<--", white, 50)
+    burgerLabel_text = Text(480, 162, "Burger", white, 22)
 
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
@@ -541,19 +555,25 @@ def burgerScreen():
     burgerBg_box.drawBox()
     back_button.drawBox()
     back_text.drawText()
+    burgerLabel_box.drawBox()
+    burgerLabel_text.drawText()
 
+    back_activate = back_button.getActive()
     pygame.display.update()
+    return back_activate
 
 def cakeScreen():
     WIN.blit(mainBg_image, bgPosition)
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
-    WIN.blit(scaled_gameLogo, (430,10))
+    WIN.blit(scaled_gameLogo, (450,10))
 
     #box object creation
     cakeBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
+    cakeLabel_box = Box(410, 160, 30, 200, main_darkPurple2, False)
 
     #text object creation
     back_text = Text(80, 55, "<--", white, 50)
+    cakeLabel_text = Text(485, 162, "Cake", white, 22)
 
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
@@ -571,19 +591,25 @@ def cakeScreen():
     cakeBg_box.drawBox()
     back_button.drawBox()
     back_text.drawText()
+    cakeLabel_box.drawBox()
+    cakeLabel_text.drawText()
 
+    back_activate = back_button.getActive()
     pygame.display.update()
+    return back_activate
 
 def sushiScreen():
     WIN.blit(mainBg_image, bgPosition)
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
-    WIN.blit(scaled_gameLogo, (430,10))
+    WIN.blit(scaled_gameLogo, (450,10))
 
     #box object creation
     sushiBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
+    sushiLabel_box = Box(410, 160, 30, 200, main_darkPurple2, False)
 
     #text object creation
     back_text = Text(80, 55, "<--", white, 50)
+    sushiLabel_text = Text(480, 162, "Sushi", white, 22)
 
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
@@ -601,8 +627,12 @@ def sushiScreen():
     sushiBg_box.drawBox()
     back_button.drawBox()
     back_text.drawText()
+    sushiLabel_box.drawBox()
+    sushiLabel_text.drawText()
 
+    back_activate = back_button.getActive()
     pygame.display.update()
+    return back_activate
 
 def main():
     clock = pygame.time.Clock()
@@ -668,19 +698,34 @@ def main():
                 sushiLoop = True 
         
         while shopLoop == True:
-            shopScreen()
+            backPressed = shopScreen()
+            if backPressed:
+                shopLoop = False
+                mainLoop = True
 
         while settingsLoop == True:
-            settingsScreen()
+            backPressed = settingsScreen()
+            if backPressed:
+                settingsLoop = False
+                mainLoop = True
 
         while burgerLoop == True:
-            burgerScreen()
+            backPressed = burgerScreen()
+            if backPressed:
+                burgerLoop = False
+                mainLoop = True
 
         while cakeLoop == True:
-            cakeScreen()
+            backPressed = cakeScreen()
+            if backPressed:
+                cakeLoop = False
+                mainLoop = True
 
         while sushiLoop == True:
-            sushiScreen()
+            backPressed = sushiScreen()
+            if backPressed:
+                sushiLoop = False
+                mainLoop = True
 
 
 main()
