@@ -10,7 +10,7 @@ def createDatabase(filename):
         if conn:
             conn.close() #closes the database when it is no longer in use
 
-def createTable():
+def createTable_user():
     sql = """CREATE TABLE IF NOT EXISTS users (
           accountID integer primary key,         
           username text NOT NULL,
@@ -23,6 +23,23 @@ def createTable():
     #sql is used to create a table with the above rows
     try:
         with sqlite3.connect("user.db") as conn: #this statement closes the connection automatically
+            cursor = conn.cursor() #cursor object created
+            cursor.execute(sql) #iterates through the sql statement and executes them using the method
+            conn.commit() #creates connection to the database
+    except sqlite3.Error as e:
+        print(e) #error displayed if it occurs
+
+def createTable_recipes():
+    sql = """CREATE TABLE IF NOT EXISTS recipes (
+          recipeName string primary key,         
+          halal real NOT NULL,
+          vegetarian real NOT NULL,
+          vegan real real NOT NULL,
+          difficulty string NOT NULL
+          );"""
+    #sql is used to create a table with the above rows
+    try:
+        with sqlite3.connect("recipes.db") as conn: #this statement closes the connection automatically
             cursor = conn.cursor() #cursor object created
             cursor.execute(sql) #iterates through the sql statement and executes them using the method
             conn.commit() #creates connection to the database
@@ -57,6 +74,26 @@ def verifyAccount_sql(conn, userInput, passInput):
             verified = True #if it does, then it's verified
     return verified
 
+def addRecipe_sql(conn, Recipe):
+    sql = """INSERT INTO recipes(recipeName, halal, vegetarian, vegan, difficulty)
+            VALUES(?,?,?,?,?,?)""" #inserts information into database
+    cur = conn.cursor()
+    cur.execute(sql, Recipe)
+    conn.commit()
+
+def searchRecipe_sql(conn, searchRecipe):
+    cur = conn.cursor()
+    cur.execute("""SELECT * FROM recipes""") 
+    records = cur.fetchall() #the total rows
+    recipeFound = False
+    recipeName = "None"
+    for row in records:#checks each row
+        if row[0] == searchRecipe: #if the recipe is in the database
+            recipeFound = True #if it does, then it's found
+            recipeName = str.row[0]
+
+    return recipeFound, recipeName
+
 def addAccount_main(userInput, passInput):
     try:
         with sqlite3.connect("user.db") as conn:
@@ -81,6 +118,28 @@ def verifyAccount_main(userInput, passInput):
     except sqlite3.Error as e:
         print(e)
 
+def addRecipe_main(recipeName, halal, vegetarian, vegan, difficulty):
+    try:
+        with sqlite3.connect("recipes.db") as conn:
+            Recipe = (recipeName, halal, vegetarian, vegan, difficulty)
+            addRecipe_sql(conn, Recipe)
+    except sqlite3.Error as e:
+        print(e)
+
+def searchRecipe_main(searchRecipe):
+    try:
+        with sqlite3.connect("recipes.db") as conn:
+            recipeFound, recipeName = searchRecipe_sql(conn, searchRecipe) #sends user + pass to see if account exists
+            return recipeFound, recipeName #returns that to main python file
+    except sqlite3.Error as e:
+        print(e)
+
 if __name__ == '__main__':
     createDatabase("user.db")
-    createTable()
+    createTable_user()
+    createDatabase("recipes.db")
+    createTable_recipes()
+    addRecipe_main("burger", True, True, False, "Easy")
+    addRecipe_main("cake", True, True, False, "Medium")
+    addRecipe_main("sushi", True, False, False, "Hard")
+

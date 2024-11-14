@@ -393,15 +393,18 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
     overhead_box = Box(0, 0, 75, 1000, main_darkPurple1, True)
     levelNeeded_box = Box(240, 15, 40, 270, main_darkPurple3, False)
     currentLevel_box = Box(160, 15, 40, 120, main_darkPurple2, False)
-    search_button = Button(120, 100, 37, 120, main_lightPurple2, False)
     burgerBg_box = Box(130, 180, 180, 200, main_lightPurple2, False)
     cakeBg_box = Box(340, 180, 180, 200, main_lightPurple2, False)
     sushiBg_box = Box(550, 180, 180, 200, main_lightPurple2, False)
     filterBg_box = Box(820, 100, 37, 50, login_grey1, False)
     filtertoolBg_box = Box(820, 100, 50, 100, login_grey1, False)
+    errorBg_box = Box(110, 155, 50, 100, login_grey1, False)
 
     #text object creation
     searchLabel_text = Text(150, 105, "Search", white, 22)
+
+    #button creation
+    search_button = Button(120, 100, 37, 120, main_lightPurple2, False)
 
     #image button creation
     shop_button = ImageButton(600, 13, shopIcon_image, 1)
@@ -440,6 +443,19 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                 filterPressed = filter_button.checkPressed(pygame.mouse.get_pos()) #checks if it's been pressed
                 if filterPressed: #if it has..
                     filter_button.setActive() #the button is active
+                searchPressed = search_button.checkPressed(pygame.mouse.get_pos())
+                if searchPressed:
+                    searchRecipe = (search_input.getInput()).lower()
+                    recipeFound, recipeName = database.searchRecipe_main(searchRecipe)
+                    if recipeFound:
+                        if recipeName == "burger":
+                            burger_button.setActive()
+                        elif recipeName == "cake":
+                            cake_button.setActive()
+                        elif recipeName == "sushi":
+                            sushi_button.setActive()
+                    else:
+                        errorBg_box.setActive()
                 
             search_input.handleEvent(event)
 
@@ -455,17 +471,34 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
         searchLabel_text.drawText()
         shop_button.draw()
         settings_button.draw()
-        burgerBg_box.drawBox()
-        burger_button.draw()
-        cakeBg_box.drawBox()
-        cake_button.draw()
-        sushiBg_box.drawBox()
-        sushi_button.draw()
         filterBg_box.drawBox()
         filter_button.draw()
         filterActive = filter_button.getActive() # gets the value of whether its active
         if filterActive: #if it is..
             filtertoolBg_box.drawBox() #draws the box
+        burgerActive = burger_button.getActive()
+        cakeActive = cake_button.getActive()
+        sushiActive = sushi_button.getActive()
+        errorActive = errorBg_box.getActive()
+        if burgerActive == False and cakeActive == False and sushiActive == False and errorActive == False :
+            burgerBg_box.drawBox()
+            burger_button.draw()
+            cakeBg_box.drawBox()
+            cake_button.draw()
+            sushiBg_box.drawBox()
+            sushi_button.draw()
+        elif burgerActive:
+            burgerBg_box.drawBox()
+            burger_button.draw()
+        elif cakeActive:
+            cakeBg_box.drawBox()
+            cake_button.draw()
+        elif sushiActive:
+            sushiBg_box.drawBox()
+            sushi_button.draw()
+        elif errorActive:
+            errorBg_box.drawBox()
+
 
         pygame.display.update()
 
