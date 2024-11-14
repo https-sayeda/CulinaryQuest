@@ -31,11 +31,11 @@ def createTable_user():
 
 def createTable_recipes():
     sql = """CREATE TABLE IF NOT EXISTS recipes (
-          recipeName string primary key,         
+          recipeName text primary key,         
           halal real NOT NULL,
           vegetarian real NOT NULL,
           vegan real real NOT NULL,
-          difficulty string NOT NULL
+          difficulty text NOT NULL
           );"""
     #sql is used to create a table with the above rows
     try:
@@ -76,7 +76,7 @@ def verifyAccount_sql(conn, userInput, passInput):
 
 def addRecipe_sql(conn, Recipe):
     sql = """INSERT INTO recipes(recipeName, halal, vegetarian, vegan, difficulty)
-            VALUES(?,?,?,?,?,?)""" #inserts information into database
+            VALUES(?,?,?,?,?)""" #inserts information into database
     cur = conn.cursor()
     cur.execute(sql, Recipe)
     conn.commit()
@@ -87,12 +87,13 @@ def searchRecipe_sql(conn, searchRecipe):
     records = cur.fetchall() #the total rows
     recipeFound = False
     recipeName = "None"
-    for row in records:#checks each row
-        if row[0] == searchRecipe: #if the recipe is in the database
+    for row in records: #checks each row
+        if row[0] == searchRecipe.lower(): #if the recipe is in the database
             recipeFound = True #if it does, then it's found
-            recipeName = str.row[0]
+            recipeName = str(row[0]) #tells us the name of the recipe that was found
 
-    return recipeFound, recipeName
+    return recipeFound, recipeName 
+    #returns the variables to searchRecipe_main() so it can be returned to mainScreen()
 
 def addAccount_main(userInput, passInput):
     try:
@@ -122,14 +123,16 @@ def addRecipe_main(recipeName, halal, vegetarian, vegan, difficulty):
     try:
         with sqlite3.connect("recipes.db") as conn:
             Recipe = (recipeName, halal, vegetarian, vegan, difficulty)
-            addRecipe_sql(conn, Recipe)
+            recipeFound, recipeName = searchRecipe_sql(conn, recipeName) #searches if the recipe exists
+            if recipeFound != True: #if it doesn't exist
+                addRecipe_sql(conn, Recipe) #creates it, prevents the same recipe from being created twice
     except sqlite3.Error as e:
         print(e)
 
 def searchRecipe_main(searchRecipe):
     try:
         with sqlite3.connect("recipes.db") as conn:
-            recipeFound, recipeName = searchRecipe_sql(conn, searchRecipe) #sends user + pass to see if account exists
+            recipeFound, recipeName = searchRecipe_sql(conn, searchRecipe) #sends recipe to see if it exists
             return recipeFound, recipeName #returns that to main python file
     except sqlite3.Error as e:
         print(e)

@@ -50,7 +50,7 @@ veganIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','vegan_
 shopIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','shop_icon.png'))
 settingsIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','settings_icon.png'))
 filterIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','filter_icon.png'))
-
+xIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','x_icon.png'))
 
 #CLASSES
 
@@ -384,7 +384,6 @@ def createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLo
 
     return createLoop, loginLoop
 
-
 def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeLoop, sushiLoop):
     #scaling the game logo
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (75, 75))
@@ -413,6 +412,7 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
     cake_button = ImageButton(355, 190, cakeIcon_image, 0.3)
     sushi_button = ImageButton(570, 180, sushiIcon_image, 0.3)
     filter_button = ImageButton(830, 102, filterIcon_image, 0.7)
+    #x_button = ImageButton(830, 90, xIcon_image, 10)
 
     while mainLoop:
         for event in pygame.event.get():
@@ -444,18 +444,20 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                 if filterPressed: #if it has..
                     filter_button.setActive() #the button is active
                 searchPressed = search_button.checkPressed(pygame.mouse.get_pos())
-                if searchPressed:
-                    searchRecipe = (search_input.getInput()).lower()
-                    recipeFound, recipeName = database.searchRecipe_main(searchRecipe)
-                    if recipeFound:
-                        if recipeName == "burger":
-                            burger_button.setActive()
+                if searchPressed: #if search button is pressed
+                    searchRecipe = search_input.getInput() #retrieves search input
+                    recipeFound, recipeName = database.searchRecipe_main(searchRecipe) #sends to database functions
+                    print(recipeName)
+                    print(recipeFound)
+                    if recipeFound: #if the recipe is found
+                        if recipeName == "burger": #checks which recipe it is
+                            burger_button.setActive() #actives the correct button so that it will appear
                         elif recipeName == "cake":
                             cake_button.setActive()
                         elif recipeName == "sushi":
                             sushi_button.setActive()
-                    else:
-                        errorBg_box.setActive()
+                    else: #if there recipe isnt found
+                        errorBg_box.setActive() #the error box is set to active so it appears
                 
             search_input.handleEvent(event)
 
@@ -473,22 +475,25 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
         settings_button.draw()
         filterBg_box.drawBox()
         filter_button.draw()
+        #x_button.draw()
+        
         filterActive = filter_button.getActive() # gets the value of whether its active
         if filterActive: #if it is..
             filtertoolBg_box.drawBox() #draws the box
         burgerActive = burger_button.getActive()
         cakeActive = cake_button.getActive()
         sushiActive = sushi_button.getActive()
-        errorActive = errorBg_box.getActive()
+        errorActive = errorBg_box.getActive() #gets the value of the button / box being active
         if burgerActive == False and cakeActive == False and sushiActive == False and errorActive == False :
+        #if they are all unactive (there hasn't been a search query)
             burgerBg_box.drawBox()
             burger_button.draw()
             cakeBg_box.drawBox()
             cake_button.draw()
             sushiBg_box.drawBox()
-            sushi_button.draw()
-        elif burgerActive:
-            burgerBg_box.drawBox()
+            sushi_button.draw() #they are all drawn to the screen except the error box
+        elif burgerActive: #if only burger button is active
+            burgerBg_box.drawBox() #that is only drawn
             burger_button.draw()
         elif cakeActive:
             cakeBg_box.drawBox()
@@ -496,8 +501,8 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
         elif sushiActive:
             sushiBg_box.drawBox()
             sushi_button.draw()
-        elif errorActive:
-            errorBg_box.drawBox()
+        elif errorActive: #if only the error box is active
+            errorBg_box.drawBox() #it gets drawn
 
 
         pygame.display.update()
