@@ -50,7 +50,6 @@ veganIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','vegan_
 shopIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','shop_icon.png'))
 settingsIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','settings_icon.png'))
 filterIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','filter_icon.png'))
-xIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','x_icon.png'))
 
 #CLASSES
 
@@ -123,6 +122,10 @@ class ImageButton():
     def draw(self):
         #draws image button screen
         WIN.blit(self.image, (self.rect.x, self.rect.y))
+    
+    def changePosition(self, newX, newY):
+        #changes position of the button if needed
+        WIN.blit(self.image, (newX, newY))
 
     def checkPressed(self, position):
         
@@ -135,15 +138,6 @@ class ImageButton():
         else:
             self.pressed = False
         return self.pressed
-    
-        '''if self.rect.collidepoint(position):
-            if pygame.mouse.get_pressed()[0] == 1 and self.pressed == False:
-                self.pressed = True
-
-        if pygame.mouse.get_pressed()[0] == 0:
-            self.pressed = False
-
-        return self.pressed'''
 
     def getActive(self): return self.active
     def setActive(self): self.active = True
@@ -397,10 +391,11 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
     sushiBg_box = Box(550, 180, 180, 200, main_lightPurple2, False)
     filterBg_box = Box(820, 100, 37, 50, login_grey1, False)
     filtertoolBg_box = Box(820, 100, 50, 100, login_grey1, False)
-    errorBg_box = Box(110, 155, 50, 100, login_grey1, False)
+    errorBg_box = Box(350, 230, 50, 300, login_red1, False)
 
     #text object creation
     searchLabel_text = Text(150, 105, "Search", white, 22)
+    error_text = Text(405, 240, "Recipe not found", white, 25)
 
     #button creation
     search_button = Button(120, 100, 37, 120, main_lightPurple2, False)
@@ -412,7 +407,6 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
     cake_button = ImageButton(355, 190, cakeIcon_image, 0.3)
     sushi_button = ImageButton(570, 180, sushiIcon_image, 0.3)
     filter_button = ImageButton(830, 102, filterIcon_image, 0.7)
-    #x_button = ImageButton(830, 90, xIcon_image, 10)
 
     while mainLoop:
         for event in pygame.event.get():
@@ -445,6 +439,10 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                     filter_button.setActive() #the button is active
                 searchPressed = search_button.checkPressed(pygame.mouse.get_pos())
                 if searchPressed: #if search button is pressed
+                    burger_button.setUnactive()
+                    cake_button.setUnactive()
+                    sushi_button.setUnactive()
+                    errorBg_box.setUnactive()
                     searchRecipe = search_input.getInput() #retrieves search input
                     recipeFound, recipeName = database.searchRecipe_main(searchRecipe) #sends to database functions
                     print(recipeName)
@@ -475,7 +473,6 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
         settings_button.draw()
         filterBg_box.drawBox()
         filter_button.draw()
-        #x_button.draw()
         
         filterActive = filter_button.getActive() # gets the value of whether its active
         if filterActive: #if it is..
@@ -496,14 +493,14 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
             burgerBg_box.drawBox() #that is only drawn
             burger_button.draw()
         elif cakeActive:
-            cakeBg_box.drawBox()
-            cake_button.draw()
+            burgerBg_box.drawBox()
+            cake_button.changePosition(145, 180)
         elif sushiActive:
-            sushiBg_box.drawBox()
-            sushi_button.draw()
+            burgerBg_box.drawBox()
+            sushi_button.changePosition(145, 180)
         elif errorActive: #if only the error box is active
             errorBg_box.drawBox() #it gets drawn
-
+            error_text.drawText()
 
         pygame.display.update()
 
@@ -695,7 +692,6 @@ def sushiScreen(mainLoop, sushiLoop):
 
         pygame.display.update()
     return mainLoop, sushiLoop
-
 
 def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, burgerLoop, cakeLoop, sushiLoop):
     clock = pygame.time.Clock()
