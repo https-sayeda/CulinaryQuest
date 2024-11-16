@@ -32,6 +32,7 @@ main_lightPurple2 = pygame.Color(192, 153, 218)
 main_darkPurple1 = pygame.Color(168, 120, 169)
 main_darkPurple2 = pygame.Color(130, 103, 158)
 main_darkPurple3 = pygame.Color(110, 54, 98)
+main_brightPurple = pygame.Color(112, 48, 160)
 main_beige = pygame.Color(232, 220, 211)
 
 #IMAGES
@@ -50,6 +51,7 @@ veganIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','vegan_
 shopIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','shop_icon.png'))
 settingsIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','settings_icon.png'))
 filterIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','filter_icon.png'))
+checkmarkIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','checkmark_icon.png'))
 
 #CLASSES
 
@@ -390,15 +392,39 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
     cakeBg_box = Box(340, 180, 180, 200, main_lightPurple2, False)
     sushiBg_box = Box(550, 180, 180, 200, main_lightPurple2, False)
     filterBg_box = Box(820, 100, 37, 50, login_grey1, False)
-    filtertoolBg_box = Box(820, 100, 50, 100, login_grey1, False)
+    filtertoolBg_box = Box(670, 150, 380, 300, login_grey1, False)
+    dietaryBg_box = Box(690, 160, 33, 265, main_darkPurple2, False)
+    halalBg_box = Box(690, 200, 33, 130, main_lightPurple1, False)
+    vegeterianBg_box = Box(690, 238, 33, 130, main_lightPurple1, False)
+    veganBg_box = Box(690, 276, 33, 130, main_lightPurple1, False)
+    difficultyBg_box = Box(690, 316, 33, 265, main_darkPurple2, False)
+    easyBg_box = Box(690, 356, 33, 130, main_lightPurple1, False)
+    mediumBg_box = Box(690, 394, 33, 130, main_lightPurple1, False)
+    hardBg_box = Box(690, 432, 33, 130, main_lightPurple1, False)
     errorBg_box = Box(350, 230, 50, 300, login_red1, False)
 
     #text object creation
     searchLabel_text = Text(150, 105, "Search", white, 22)
     error_text = Text(405, 240, "Recipe not found", white, 25)
+    dietary_text = Text(720, 165, "Dietary Requirements", white, 22)
+    halal_text = Text(727, 205, "Halal", white, 22)
+    vegetarian_text = Text(703, 243, "Vegetarian", white, 22)
+    vegan_text = Text(725, 281, "Vegan", white, 22)
+    difficulty_text = Text(775, 321, "Difficulty", white, 22)
+    easy_text = Text(732, 361, "Easy", white, 22)
+    medium_text = Text(715, 399, "Medium", white, 22)
+    hard_text = Text(732, 437, "Hard", white, 22)
+    filterText_text = Text(800, 477, "Filter", white, 22)
 
     #button creation
     search_button = Button(120, 100, 37, 120, main_lightPurple2, False)
+    halal_button = Button(840, 200, 33, 33, white, False)
+    vegetarian_button = Button(840, 238, 33, 33, white, False)
+    vegan_button = Button(840, 276, 33, 33, white, False)
+    easy_button = Button(840, 356, 33, 33, white, False)
+    medium_button = Button(840, 394, 33, 33, white, False)
+    hard_button = Button(840, 432, 33, 33, white, False)
+    filterText_button = Button(690, 472, 33, 265, main_brightPurple, False)
 
     #image button creation
     shop_button = ImageButton(600, 13, shopIcon_image, 1)
@@ -436,7 +462,33 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                     sushiLoop = True
                 filterPressed = filter_button.checkPressed(pygame.mouse.get_pos()) #checks if it's been pressed
                 if filterPressed: #if it has..
-                    filter_button.setActive() #the button is active
+                    filterActive = filter_button.getActive() #checks if the button has been pressed before
+                    if filterActive != True: #if it hasn't (the pop up is not on the screen)
+                        filter_button.setActive() #the button is active
+                    else: #if it is (the pop up is on the screen)
+                        filter_button.setUnactive() #sets to unactive so the pop up disappears
+                #when one of the filtering options are pressed
+                halalPressed = halal_button.checkPressed(pygame.mouse.get_pos())
+                if halalPressed:
+                    halalActive = halal_button.getActive()
+                    if halalActive != True:
+                        halal_button.setActive()
+                    else:
+                        halal_button.setUnactive()
+                vegetarianPressed = vegetarian_button.checkPressed(pygame.mouse.get_pos())
+                if vegetarianPressed:
+                    vegetarianActive = vegetarian_button.getActive()
+                    if vegetarianActive != True:
+                        vegetarian_button.setActive()
+                    else:
+                        vegetarian_button.setUnactive()
+                veganPressed = vegan_button.checkPressed(pygame.mouse.get_pos())
+                if veganPressed:
+                    veganActive = vegan_button.getActive()
+                    if veganActive != True:
+                        vegan_button.setActive()
+                    else:
+                        vegan_button.setUnactive()
                 searchPressed = search_button.checkPressed(pygame.mouse.get_pos())
                 if searchPressed: #if search button is pressed
                     burger_button.setUnactive()
@@ -474,9 +526,6 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
         filterBg_box.drawBox()
         filter_button.draw()
         
-        filterActive = filter_button.getActive() # gets the value of whether its active
-        if filterActive: #if it is..
-            filtertoolBg_box.drawBox() #draws the box
         burgerActive = burger_button.getActive()
         cakeActive = cake_button.getActive()
         sushiActive = sushi_button.getActive()
@@ -501,6 +550,41 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
         elif errorActive: #if only the error box is active
             errorBg_box.drawBox() #it gets drawn
             error_text.drawText()
+
+        filterActive = filter_button.getActive() # gets the value of whether its active
+        if filterActive: #if it is..
+            filtertoolBg_box.drawBox() #draws the box
+            dietaryBg_box.drawBox()
+            dietary_text.drawText()
+            halalBg_box.drawBox()
+            halal_text.drawText()
+            halal_button.drawBox()
+            vegeterianBg_box.drawBox()
+            vegetarian_text.drawText()
+            vegetarian_button.drawBox()
+            veganBg_box.drawBox()
+            vegan_text.drawText()
+            vegan_button.drawBox()
+            difficultyBg_box.drawBox()
+            difficulty_text.drawText()
+            easyBg_box.drawBox()
+            easy_text.drawText()
+            easy_button.drawBox()
+            mediumBg_box.drawBox()
+            medium_text.drawText()
+            medium_button.drawBox()
+            hardBg_box.drawBox()
+            hard_text.drawText()
+            hard_button.drawBox()
+            filterText_button.drawBox()
+            filterText_text.drawText()
+
+        #checks if filter option buttons have been pressed
+        halalActive = halal_button.getActive()
+        vegetarianActive = vegetarian_button.getActive()
+        veganActive = vegan_button.getActive()
+        if halalActive:
+            WIN.blit(checkmarkIcon_image, (850, 205))
 
         pygame.display.update()
 
