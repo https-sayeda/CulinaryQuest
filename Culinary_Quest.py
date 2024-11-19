@@ -386,6 +386,7 @@ def createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLo
 def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeLoop, sushiLoop):
     #scaling the game logo
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (75, 75))
+    scaled_checkmarkIcon = pygame.transform.scale(checkmarkIcon_image, (30, 30))
     #box object creation
     recipeBg_box = Box(120, 170, 425, 750, main_lightPurple1, True)
     overhead_box = Box(0, 0, 75, 1000, main_darkPurple1, True)
@@ -437,6 +438,10 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
     sushi_button = ImageButton(570, 180, sushiIcon_image, 0.3)
     filter_button = ImageButton(830, 102, filterIcon_image, 0.7)
 
+    #this will hold the dietary requirements that have been selected via the filter tool, the values 
+    #will change depending on what the user will select
+    dietaryOption = [False, False, False]
+
     while mainLoop:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -472,27 +477,72 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                     else: #if it is (the pop up is on the screen)
                         filter_button.setUnactive() #sets to unactive so the pop up disappears
                 #when one of the filtering options are pressed
-                halalPressed = halal_button.checkPressed(pygame.mouse.get_pos())
+                halalPressed = halal_button.checkPressed(pygame.mouse.get_pos()) #checks if pressed..
                 if halalPressed:
-                    halalActive = halal_button.getActive()
-                    if halalActive != True:
+                    halalActive = halal_button.getActive() #if it is, gets value of if its active or not
+                    if halalActive != True: #if it isnt already active
                         halal_button.setActive()
-                    else:
-                        halal_button.setUnactive()
+                        #sets to active so the filter can be applied and checkmark can appear
+                        dietaryOption[0] = True
+                    else: #if its already active
+                        halal_button.setUnactive() 
+                        #sets to unactive (check mark disappears and filter not applied 
+                        # if user changes their mind)
+                        dietaryOption[0] = False
                 vegetarianPressed = vegetarian_button.checkPressed(pygame.mouse.get_pos())
                 if vegetarianPressed:
                     vegetarianActive = vegetarian_button.getActive()
                     if vegetarianActive != True:
                         vegetarian_button.setActive()
+                        dietaryOption[1] = True
                     else:
                         vegetarian_button.setUnactive()
+                        dietaryOption[1] = False
                 veganPressed = vegan_button.checkPressed(pygame.mouse.get_pos())
                 if veganPressed:
                     veganActive = vegan_button.getActive()
                     if veganActive != True:
                         vegan_button.setActive()
+                        dietaryOption[2] = True
                     else:
                         vegan_button.setUnactive()
+                        dietaryOption[2] = False
+                easyPressed = easy_button.checkPressed(pygame.mouse.get_pos())
+                if easyPressed:
+                    easyActive = easy_button.getActive()
+                    if easyActive != True:
+                        easy_button.setActive()
+                        difficultyOption = "easy"
+                        medium_button.setUnactive()
+                        hard_button.setUnactive()
+                    else:
+                        easy_button.setUnactive()
+                mediumPressed = medium_button.checkPressed(pygame.mouse.get_pos())
+                if mediumPressed:
+                    mediumActive = medium_button.getActive()
+                    if mediumActive != True:
+                        medium_button.setActive()
+                        difficultyOption = "medium"
+                        easy_button.setUnactive()
+                        hard_button.setUnactive()
+                    else:
+                        medium_button.setUnactive()
+                hardPressed = hard_button.checkPressed(pygame.mouse.get_pos())
+                if hardPressed:
+                    hardActive = hard_button.getActive()
+                    if hardActive != True:
+                        hard_button.setActive()
+                        difficultyOption = "hard"
+                        easy_button.setUnactive()
+                        medium_button.setUnactive()
+                    else:
+                        hard_button.setUnactive()
+                filterTextpressed = filterText_button.checkPressed(pygame.mouse.get_pos())
+                if filterTextpressed:
+                    if dietaryOption != "" or difficultyOption != "": #ensures at least one option selected
+                        filter_button.setUnactive() #removes the pop up menu
+
+
                 searchPressed = search_button.checkPressed(pygame.mouse.get_pos())
                 if searchPressed: #if search button is pressed
                     burger_button.setUnactive()
@@ -527,7 +577,6 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
         settings_button.draw()
         filterBg_box.drawBox()
         filter_button.draw()
-        WIN.blit(checkmarkIcon_image, (850, 205))
         
         burgerActive = burger_button.getActive()
         cakeActive = cake_button.getActive()
@@ -586,8 +635,21 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
         halalActive = halal_button.getActive()
         vegetarianActive = vegetarian_button.getActive()
         veganActive = vegan_button.getActive()
-        #if halalActive:
-            
+        easyActive = easy_button.getActive()
+        mediumActive = medium_button.getActive()
+        hardActive = hard_button.getActive()
+        if halalActive: #if the button is active
+            WIN.blit(scaled_checkmarkIcon, (845,198)) #the checkmark is displayed
+        if vegetarianActive:
+            WIN.blit(scaled_checkmarkIcon, (845,236))
+        if veganActive:
+            WIN.blit(scaled_checkmarkIcon, (845,275))
+        if easyActive: #if the button is active
+            WIN.blit(scaled_checkmarkIcon, (845,354)) #the checkmark is displayed
+        if mediumActive:
+            WIN.blit(scaled_checkmarkIcon, (845,392))
+        if hardActive:
+            WIN.blit(scaled_checkmarkIcon, (845,430))
 
         pygame.display.update()
 

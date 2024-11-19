@@ -99,6 +99,25 @@ def searchRecipe_sql(conn, searchRecipe):
     return recipeFound, recipeName 
     #returns the variables to searchRecipe_main() so it can be returned to mainScreen()
 
+def filterRecipe_sql(conn, dietaryOption, difficultyOption):
+    cur = conn.cursor()
+    cur.execute("""SELECT * FROM recipes""") 
+    records = cur.fetchall() #the total rows
+    recipeFound = False
+    recipeNames = []
+    for row in records: #checks each row
+        if row[1] == dietaryOption[0] and row[4] == difficultyOption: #if the recipe is in the database
+            recipeFound = True #if it does, then it's found
+            recipeNames.append(str(row[0])) #tells us the name of the recipe that was found
+        if row[2] == dietaryOption[1] and row[4] == difficultyOption:
+            recipeFound = True #if it does, then it's found
+            recipeNames.append(str(row[0])) #tells us the name of the recipe that was found
+        if row[3] == dietaryOption[2] and row[4] == difficultyOption:
+            recipeFound = True #if it does, then it's found
+            recipeNames.append(str(row[0])) #tells us the name of the recipe that was found
+    
+    return recipeFound, recipeNames
+
 def addAccount_main(userInput, passInput):
     try:
         with sqlite3.connect("user.db") as conn:
@@ -137,6 +156,15 @@ def searchRecipe_main(searchRecipe):
     try:
         with sqlite3.connect("recipes.db") as conn:
             recipeFound, recipeName = searchRecipe_sql(conn, searchRecipe) #sends recipe to see if it exists
+            return recipeFound, recipeName #returns that to main python file
+    except sqlite3.Error as e:
+        print(e)
+
+def filterRecipe_main(dietaryOption, difficultyOption):
+    try:
+        with sqlite3.connect("recipes.db") as conn:
+            recipeFound, recipeName = searchRecipe_sql(conn, dietaryOption, difficultyOption) 
+            #sends options to see if a recipe matching those requirements exist
             return recipeFound, recipeName #returns that to main python file
     except sqlite3.Error as e:
         print(e)
