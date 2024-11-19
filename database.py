@@ -91,6 +91,10 @@ def searchRecipe_sql(conn, searchRecipe):
         if row[0] == searchRecipe.lower(): #if the recipe is in the database
             recipeFound = True #if it does, then it's found
             recipeName = str(row[0]) #tells us the name of the recipe that was found
+        if searchRecipe == "":
+            recipeFound = True
+            recipeName = ""
+    
 
     return recipeFound, recipeName 
     #returns the variables to searchRecipe_main() so it can be returned to mainScreen()

@@ -501,8 +501,6 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                     errorBg_box.setUnactive()
                     searchRecipe = search_input.getInput() #retrieves search input
                     recipeFound, recipeName = database.searchRecipe_main(searchRecipe) #sends to database functions
-                    print(recipeName)
-                    print(recipeFound)
                     if recipeFound: #if the recipe is found
                         if recipeName == "burger": #checks which recipe it is
                             burger_button.setActive() #actives the correct button so that it will appear
