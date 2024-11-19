@@ -2,6 +2,7 @@ import os
 import pygame
 import time
 import database
+import sys
 
 pygame.init()
 
@@ -239,6 +240,7 @@ def loginScreen(usernameInput1_input, passwordInput1_input, loginLoop, createLoo
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
                 break
             if event.type == pygame.MOUSEBUTTONDOWN:
                 createPressed = create_button.checkPressed(pygame.mouse.get_pos())
@@ -321,6 +323,7 @@ def createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLo
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
                 break
             if event.type == pygame.MOUSEBUTTONDOWN:
                 backPressed = back_button.checkPressed(pygame.mouse.get_pos())
@@ -438,6 +441,7 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
                 break
             if event.type == pygame.MOUSEBUTTONDOWN:
                 shopPressed = shop_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
@@ -525,6 +529,7 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
         settings_button.draw()
         filterBg_box.drawBox()
         filter_button.draw()
+        WIN.blit(checkmarkIcon_image, (850, 205))
         
         burgerActive = burger_button.getActive()
         cakeActive = cake_button.getActive()
@@ -583,8 +588,8 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
         halalActive = halal_button.getActive()
         vegetarianActive = vegetarian_button.getActive()
         veganActive = vegan_button.getActive()
-        if halalActive:
-            WIN.blit(checkmarkIcon_image, (850, 205))
+        #if halalActive:
+            
 
         pygame.display.update()
 
@@ -608,6 +613,7 @@ def shopScreen(mainLoop, shopLoop):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
                 break
             if event.type == pygame.MOUSEBUTTONDOWN:
                 backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
@@ -646,6 +652,7 @@ def settingsScreen(mainLoop, settingsLoop):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
                 break
             if event.type == pygame.MOUSEBUTTONDOWN:
                 backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
@@ -683,6 +690,7 @@ def burgerScreen(mainLoop, burgerLoop):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
                 break
             if event.type == pygame.MOUSEBUTTONDOWN:
                 backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
@@ -721,6 +729,7 @@ def cakeScreen(mainLoop, cakeLoop):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
                 break
             if event.type == pygame.MOUSEBUTTONDOWN:
                 backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
@@ -758,6 +767,7 @@ def sushiScreen(mainLoop, sushiLoop):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
                 break
             if event.type == pygame.MOUSEBUTTONDOWN:
                 backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
