@@ -441,6 +441,7 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
     #this will hold the dietary requirements that have been selected via the filter tool, the values 
     #will change depending on what the user will select
     dietaryOption = [False, False, False]
+    difficultyOption = "None"
 
     while mainLoop:
         for event in pygame.event.get():
@@ -483,7 +484,7 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                     if halalActive != True: #if it isnt already active
                         halal_button.setActive()
                         #sets to active so the filter can be applied and checkmark can appear
-                        dietaryOption[0] = True
+                        dietaryOption[0] = True #stores whether halal has been selected
                     else: #if its already active
                         halal_button.setUnactive() 
                         #sets to unactive (check mark disappears and filter not applied 
@@ -512,36 +513,60 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                     easyActive = easy_button.getActive()
                     if easyActive != True:
                         easy_button.setActive()
-                        difficultyOption = "easy"
+                        difficultyOption = "Easy" #sets the difficulty chosen to easy
                         medium_button.setUnactive()
                         hard_button.setUnactive()
                     else:
                         easy_button.setUnactive()
+                        difficultyOption = "None" #if unselected, it will go back to None
                 mediumPressed = medium_button.checkPressed(pygame.mouse.get_pos())
                 if mediumPressed:
                     mediumActive = medium_button.getActive()
                     if mediumActive != True:
                         medium_button.setActive()
-                        difficultyOption = "medium"
+                        difficultyOption = "Medium"
                         easy_button.setUnactive()
                         hard_button.setUnactive()
                     else:
                         medium_button.setUnactive()
+                        difficultyOption = "None"
                 hardPressed = hard_button.checkPressed(pygame.mouse.get_pos())
                 if hardPressed:
                     hardActive = hard_button.getActive()
                     if hardActive != True:
                         hard_button.setActive()
-                        difficultyOption = "hard"
+                        difficultyOption = "Hard"
                         easy_button.setUnactive()
                         medium_button.setUnactive()
                     else:
                         hard_button.setUnactive()
+                        difficultyOption = "None"
                 filterTextpressed = filterText_button.checkPressed(pygame.mouse.get_pos())
                 if filterTextpressed:
+                    burger_button.setUnactive()
+                    cake_button.setUnactive()
+                    sushi_button.setUnactive()
+                    errorBg_box.setUnactive()
                     if dietaryOption != "" or difficultyOption != "": #ensures at least one option selected
                         filter_button.setUnactive() #removes the pop up menu
-
+                        halal_button.setUnactive()
+                        vegetarian_button.setUnactive()
+                        vegan_button.setUnactive()
+                        easy_button.setUnactive()
+                        medium_button.setUnactive()
+                        hard_button.setUnactive()
+                        recipeFound, recipeName = database.filterRecipe_main(dietaryOption, difficultyOption)
+                        #the values from the database are returned
+                        if recipeFound: #if a recipe has been found
+                            for i in range (len(recipeName)-1): #goes through the list of recipe names
+                                if recipeName[i] == "burger": #checks if it is a recipe
+                                    burger_button.setActive() #sets that recipe button to active
+                                elif recipeName[i] == "cake":
+                                    cake_button.setActive()
+                                elif recipeName[i] == "sushi":
+                                    sushi_button.setActive()
+                        else: #if no recipes have been found
+                            errorBg_box.setActive() #error button is set to active so it can be displayed
 
                 searchPressed = search_button.checkPressed(pygame.mouse.get_pos())
                 if searchPressed: #if search button is pressed

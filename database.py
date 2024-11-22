@@ -34,7 +34,7 @@ def createTable_recipes():
           recipeName text primary key,         
           halal real NOT NULL,
           vegetarian real NOT NULL,
-          vegan real real NOT NULL,
+          vegan real NOT NULL,
           difficulty text NOT NULL
           );"""
     #sql is used to create a table with the above rows
@@ -105,18 +105,25 @@ def filterRecipe_sql(conn, dietaryOption, difficultyOption):
     records = cur.fetchall() #the total rows
     recipeFound = False
     recipeNames = []
+    count = 0
+    dietaryLength = len(dietaryOption)
     for row in records: #checks each row
-        if row[1] == dietaryOption[0] and row[4] == difficultyOption: #if the recipe is in the database
-            recipeFound = True #if it does, then it's found
-            recipeNames.append(str(row[0])) #tells us the name of the recipe that was found
-        if row[2] == dietaryOption[1] and row[4] == difficultyOption:
-            recipeFound = True #if it does, then it's found
-            recipeNames.append(str(row[0])) #tells us the name of the recipe that was found
-        if row[3] == dietaryOption[2] and row[4] == difficultyOption:
-            recipeFound = True #if it does, then it's found
-            recipeNames.append(str(row[0])) #tells us the name of the recipe that was found
-    
-    return recipeFound, recipeNames
+        if row[4] == difficultyOption or difficultyOption == "None": 
+            #ensures that the difficulty is correct or allows for one not to have been selected
+            if dietaryLength != 0: #checks if a dietary requirement has been selected
+                for i in range(3): #for loop for each of the dietary rows
+                    for x in range (dietaryLength-1): #goes through each of the items in the dietaryOption array
+                        if row[i+1] == dietaryOption[x]: #checks if the recipe has the requirement needed
+                            count = count + 1 
+                            #adds one to count, it will go through each requirement so when it finds a recipe 
+                            #with all the requirements ..
+                if count == dietaryLength: 
+                    recipeNames.append(row[0]) #adds it to recipeName to be returned to main program
+                    recipeFound = True #sets that the recipe has been found to true
+            else: #if not, the difficulty option is true so the recipe has been found
+                recipeNames.append(row[0])
+                recipeFound = True
+    return recipeFound, recipeNames #returns to filterRecipe_main()
 
 def addAccount_main(userInput, passInput):
     try:
@@ -163,7 +170,7 @@ def searchRecipe_main(searchRecipe):
 def filterRecipe_main(dietaryOption, difficultyOption):
     try:
         with sqlite3.connect("recipes.db") as conn:
-            recipeFound, recipeName = searchRecipe_sql(conn, dietaryOption, difficultyOption) 
+            recipeFound, recipeName = filterRecipe_sql(conn, dietaryOption, difficultyOption) 
             #sends options to see if a recipe matching those requirements exist
             return recipeFound, recipeName #returns that to main python file
     except sqlite3.Error as e:
