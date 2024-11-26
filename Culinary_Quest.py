@@ -547,7 +547,11 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                     cake_button.setUnactive()
                     sushi_button.setUnactive()
                     errorBg_box.setUnactive()
-                    if dietaryOption != "" or difficultyOption != "": #ensures at least one option selected
+                    dietaryInput = False
+                    for i in range(len(dietaryOption)): #checks if any of the items have been set to true
+                        if dietaryOption[i] == True:
+                            dietaryInput = True #if it has, then a dietary option has been selected
+                    if dietaryInput == True or difficultyOption != "None": #ensures at least one option selected
                         filter_button.setUnactive() #removes the pop up menu
                         halal_button.setUnactive()
                         vegetarian_button.setUnactive()
@@ -555,10 +559,14 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                         easy_button.setUnactive()
                         medium_button.setUnactive()
                         hard_button.setUnactive()
-                        recipeFound, recipeName = database.filterRecipe_main(dietaryOption, difficultyOption)
+                        recipeFound, recipeName = database.filterRecipe_main(dietaryOption, difficultyOption, dietaryInput)
                         #the values from the database are returned
+                        dietaryOption = [False, False, False]
+                        difficultyOption = "None"
+                        print(recipeName)
+                        print(recipeFound)
                         if recipeFound: #if a recipe has been found
-                            for i in range (len(recipeName)-1): #goes through the list of recipe names
+                            for i in range (len(recipeName)): #goes through the list of recipe names
                                 if recipeName[i] == "burger": #checks if it is a recipe
                                     burger_button.setActive() #sets that recipe button to active
                                 elif recipeName[i] == "cake":

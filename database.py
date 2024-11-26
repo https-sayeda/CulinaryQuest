@@ -99,31 +99,29 @@ def searchRecipe_sql(conn, searchRecipe):
     return recipeFound, recipeName 
     #returns the variables to searchRecipe_main() so it can be returned to mainScreen()
 
-def filterRecipe_sql(conn, dietaryOption, difficultyOption):
+def filterRecipe_sql(conn, dietaryOption, difficultyOption, dietaryInput):
     cur = conn.cursor()
     cur.execute("""SELECT * FROM recipes""") 
     records = cur.fetchall() #the total rows
+    print(difficultyOption)
     recipeFound = False
     recipeNames = []
-    count = 0
-    dietaryLength = len(dietaryOption)
+    dietaryRequirements = [False, False, False]
     for row in records: #checks each row
-        if row[4] == difficultyOption or difficultyOption == "None": 
-            #ensures that the difficulty is correct or allows for one not to have been selected
-            if dietaryLength != 0: #checks if a dietary requirement has been selected
-                for i in range(3): #for loop for each of the dietary rows
-                    for x in range (dietaryLength-1): #goes through each of the items in the dietaryOption array
-                        if row[i+1] == dietaryOption[x]: #checks if the recipe has the requirement needed
-                            count = count + 1 
-                            #adds one to count, it will go through each requirement so when it finds a recipe 
-                            #with all the requirements ..
-                if count == dietaryLength: 
-                    recipeNames.append(row[0]) #adds it to recipeName to be returned to main program
-                    recipeFound = True #sets that the recipe has been found to true
-            else: #if not, the difficulty option is true so the recipe has been found
-                recipeNames.append(row[0])
-                recipeFound = True
+        if row[4] == difficultyOption: #if the difficulty is correct
+            recipeFound = True #sets to true
+        if dietaryInput: #checks if there's a dietary input
+            for x in range(2): #goes through each of the items in the dietaryOption array
+                if row[x+1] == dietaryOption[x]: #checks if the recipe has the requirement needed
+                    dietaryRequirements[x] = True
+                    #sets the correct position in the array to True
+            if dietaryRequirements == dietaryOption: #compares to dietaryOption array and if they match
+                recipeNames.append(row[0]) #adds it to recipeName to be returned to main program
+                recipeFound = True #sets that the recipe has been found to true
+        elif recipeFound: #if there is no dietaryInput but the difficulty is correct
+            recipeNames.append(row[0])
     return recipeFound, recipeNames #returns to filterRecipe_main()
+
 
 def addAccount_main(userInput, passInput):
     try:
@@ -167,10 +165,10 @@ def searchRecipe_main(searchRecipe):
     except sqlite3.Error as e:
         print(e)
 
-def filterRecipe_main(dietaryOption, difficultyOption):
+def filterRecipe_main(dietaryOption, difficultyOption, dietaryInput):
     try:
         with sqlite3.connect("recipes.db") as conn:
-            recipeFound, recipeName = filterRecipe_sql(conn, dietaryOption, difficultyOption) 
+            recipeFound, recipeName = filterRecipe_sql(conn, dietaryOption, difficultyOption, dietaryInput) 
             #sends options to see if a recipe matching those requirements exist
             return recipeFound, recipeName #returns that to main python file
     except sqlite3.Error as e:
@@ -181,7 +179,7 @@ if __name__ == '__main__':
     createTable_user()
     createDatabase("recipes.db")
     createTable_recipes()
-    addRecipe_main("burger", True, True, False, "Easy")
+    addRecipe_main("burger", True, True, True, "Easy")
     addRecipe_main("cake", True, True, False, "Medium")
     addRecipe_main("sushi", True, False, False, "Hard")
 
