@@ -392,9 +392,9 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
     overhead_box = Box(0, 0, 75, 1000, main_darkPurple1, True)
     levelNeeded_box = Box(240, 15, 40, 270, main_darkPurple3, False)
     currentLevel_box = Box(160, 15, 40, 120, main_darkPurple2, False)
-    burgerBg_box = Box(130, 180, 180, 200, main_lightPurple2, False)
-    cakeBg_box = Box(340, 180, 180, 200, main_lightPurple2, False)
-    sushiBg_box = Box(550, 180, 180, 200, main_lightPurple2, False)
+    recipeBg1_box = Box(130, 180, 180, 200, main_lightPurple2, False)
+    recipeBg2_box = Box(340, 180, 180, 200, main_lightPurple2, False)
+    recipeBg3_box = Box(550, 180, 180, 200, main_lightPurple2, False)
     filterBg_box = Box(820, 100, 37, 50, login_grey1, False)
     filtertoolBg_box = Box(670, 150, 380, 300, login_grey1, False)
     dietaryBg_box = Box(690, 160, 33, 265, main_darkPurple2, False)
@@ -440,8 +440,10 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
 
     #this will hold the dietary requirements that have been selected via the filter tool, the values 
     #will change depending on what the user will select
-    dietaryOption = [False, False, False]
+    dietaryOption = [0, 0, 0]
     difficultyOption = "None"
+    activeRecipes = [] #will hold the number of recipes that are active
+    recipeBoxes = [recipeBg1_box, recipeBg2_box, recipeBg3_box] #stores all the recipe background boxes
 
     while mainLoop:
         for event in pygame.event.get():
@@ -484,30 +486,30 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                     if halalActive != True: #if it isnt already active
                         halal_button.setActive()
                         #sets to active so the filter can be applied and checkmark can appear
-                        dietaryOption[0] = True #stores whether halal has been selected
+                        dietaryOption[0] = 1 #stores whether halal has been selected
                     else: #if its already active
                         halal_button.setUnactive() 
                         #sets to unactive (check mark disappears and filter not applied 
                         # if user changes their mind)
-                        dietaryOption[0] = False
+                        dietaryOption[0] = 0
                 vegetarianPressed = vegetarian_button.checkPressed(pygame.mouse.get_pos())
                 if vegetarianPressed:
                     vegetarianActive = vegetarian_button.getActive()
                     if vegetarianActive != True:
                         vegetarian_button.setActive()
-                        dietaryOption[1] = True
+                        dietaryOption[1] = 1
                     else:
                         vegetarian_button.setUnactive()
-                        dietaryOption[1] = False
+                        dietaryOption[1] = 0
                 veganPressed = vegan_button.checkPressed(pygame.mouse.get_pos())
                 if veganPressed:
                     veganActive = vegan_button.getActive()
                     if veganActive != True:
                         vegan_button.setActive()
-                        dietaryOption[2] = True
+                        dietaryOption[2] = 1
                     else:
                         vegan_button.setUnactive()
-                        dietaryOption[2] = False
+                        dietaryOption[2] = 0
                 easyPressed = easy_button.checkPressed(pygame.mouse.get_pos())
                 if easyPressed:
                     easyActive = easy_button.getActive()
@@ -549,7 +551,7 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                     errorBg_box.setUnactive()
                     dietaryInput = False
                     for i in range(len(dietaryOption)): #checks if any of the items have been set to true
-                        if dietaryOption[i] == True:
+                        if dietaryOption[i] == 1:
                             dietaryInput = True #if it has, then a dietary option has been selected
                     if dietaryInput == True or difficultyOption != "None": #ensures at least one option selected
                         filter_button.setUnactive() #removes the pop up menu
@@ -561,18 +563,19 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                         hard_button.setUnactive()
                         recipeFound, recipeName = database.filterRecipe_main(dietaryOption, difficultyOption, dietaryInput)
                         #the values from the database are returned
-                        dietaryOption = [False, False, False]
+                        dietaryOption = [0, 0, 0]
                         difficultyOption = "None"
-                        print(recipeName)
-                        print(recipeFound)
                         if recipeFound: #if a recipe has been found
                             for i in range (len(recipeName)): #goes through the list of recipe names
                                 if recipeName[i] == "burger": #checks if it is a recipe
                                     burger_button.setActive() #sets that recipe button to active
+                                    activeRecipes.append(burger_button)
                                 elif recipeName[i] == "cake":
                                     cake_button.setActive()
+                                    activeRecipes.append(cake_button)
                                 elif recipeName[i] == "sushi":
                                     sushi_button.setActive()
+                                    activeRecipes.append(sushi_button)
                         else: #if no recipes have been found
                             errorBg_box.setActive() #error button is set to active so it can be displayed
 
@@ -587,10 +590,13 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                     if recipeFound: #if the recipe is found
                         if recipeName == "burger": #checks which recipe it is
                             burger_button.setActive() #actives the correct button so that it will appear
+                            activeRecipes.append(burger_button)
                         elif recipeName == "cake":
                             cake_button.setActive()
+                            activeRecipes.append(cake_button)
                         elif recipeName == "sushi":
                             sushi_button.setActive()
+                            activeRecipes.append(sushi_button)
                     else: #if there recipe isnt found
                         errorBg_box.setActive() #the error box is set to active so it appears
                 
@@ -611,30 +617,40 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
         filterBg_box.drawBox()
         filter_button.draw()
         
-        burgerActive = burger_button.getActive()
-        cakeActive = cake_button.getActive()
-        sushiActive = sushi_button.getActive()
         errorActive = errorBg_box.getActive() #gets the value of the button / box being active
-        if burgerActive == False and cakeActive == False and sushiActive == False and errorActive == False :
-        #if they are all unactive (there hasn't been a search query)
-            burgerBg_box.drawBox()
+        if len(activeRecipes) == 0 and errorActive == False :
+        #if they are all unactive (there hasn't been a search or filter query)
+            for x in range(len(recipeBoxes)):
+                recipeBoxes[x].drawBox()
             burger_button.draw()
-            cakeBg_box.drawBox()
             cake_button.draw()
-            sushiBg_box.drawBox()
             sushi_button.draw() #they are all drawn to the screen except the error box
-        elif burgerActive: #if only burger button is active
-            burgerBg_box.drawBox() #that is only drawn
+        elif len(activeRecipes) == 3: #if they've all been activated
+            for x in range(len(recipeBoxes)):
+                recipeBoxes[x].drawBox()
+            for i in range(len(activeRecipes)):
+                activeRecipes[i].draw()
+        else:
+            for x in range(len(activeRecipes)):
+                recipeBoxes[x].drawBox()
+            for i in range(len(activeRecipes)):
+                if len(activeRecipes) == 1:
+                    activeRecipes[i].changePosition(145,180)
+                
+            
+
+
+
+        '''elif burgerActive: #if only burger button is active
+            #that is only drawn
             burger_button.draw()
         elif cakeActive:
-            burgerBg_box.drawBox()
             cake_button.changePosition(145, 180)
         elif sushiActive:
-            burgerBg_box.drawBox()
             sushi_button.changePosition(145, 180)
         elif errorActive: #if only the error box is active
             errorBg_box.drawBox() #it gets drawn
-            error_text.drawText()
+            error_text.drawText()'''
 
         filterActive = filter_button.getActive() # gets the value of whether its active
         if filterActive: #if it is..

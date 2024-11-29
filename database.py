@@ -15,7 +15,7 @@ def createTable_user():
           accountID integer primary key,         
           username text NOT NULL,
           password text NOT NULL,
-          measurement_type real NOT NULL,
+          measurement_type bool NOT NULL,
           volume_level integer NOT NULL,
           current_level integer NOT NULL,
           current_points integer NOT NULL
@@ -32,9 +32,9 @@ def createTable_user():
 def createTable_recipes():
     sql = """CREATE TABLE IF NOT EXISTS recipes (
           recipeName text primary key,         
-          halal real NOT NULL,
-          vegetarian real NOT NULL,
-          vegan real NOT NULL,
+          halal bool NOT NULL,
+          vegetarian bool NOT NULL,
+          vegan bool NOT NULL,
           difficulty text NOT NULL
           );"""
     #sql is used to create a table with the above rows
@@ -103,25 +103,23 @@ def filterRecipe_sql(conn, dietaryOption, difficultyOption, dietaryInput):
     cur = conn.cursor()
     cur.execute("""SELECT * FROM recipes""") 
     records = cur.fetchall() #the total rows
-    print(difficultyOption)
     recipeFound = False
     recipeNames = []
-    dietaryRequirements = [False, False, False]
     for row in records: #checks each row
+        dietaryRequirements = [0, 0, 0] #sets to 0 each time a recipe is checked
         if row[4] == difficultyOption: #if the difficulty is correct
             recipeFound = True #sets to true
         if dietaryInput: #checks if there's a dietary input
-            for x in range(2): #goes through each of the items in the dietaryOption array
-                if row[x+1] == dietaryOption[x]: #checks if the recipe has the requirement needed
-                    dietaryRequirements[x] = True
-                    #sets the correct position in the array to True
+            for x in range(3): #goes through each dietary row in the database
+                if row[x+1] == dietaryOption[x]: #checks if the recipe has the same requirements
+                    dietaryRequirements[x] = dietaryOption[x] #if it does, added to another array
             if dietaryRequirements == dietaryOption: #compares to dietaryOption array and if they match
-                recipeNames.append(row[0]) #adds it to recipeName to be returned to main program
-                recipeFound = True #sets that the recipe has been found to true
+                if row[4] == difficultyOption or difficultyOption == "None":
+                    recipeNames.append(row[0]) #adds it to recipeName to be returned to main program
+                    recipeFound = True #sets that the recipe has been found to true
         elif recipeFound: #if there is no dietaryInput but the difficulty is correct
             recipeNames.append(row[0])
     return recipeFound, recipeNames #returns to filterRecipe_main()
-
 
 def addAccount_main(userInput, passInput):
     try:
