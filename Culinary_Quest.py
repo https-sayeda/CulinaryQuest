@@ -549,6 +549,7 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                     cake_button.setUnactive()
                     sushi_button.setUnactive()
                     errorBg_box.setUnactive()
+                    activeRecipes = []
                     dietaryInput = False
                     for i in range(len(dietaryOption)): #checks if any of the items have been set to true
                         if dietaryOption[i] == 1:
@@ -585,6 +586,7 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                     cake_button.setUnactive()
                     sushi_button.setUnactive()
                     errorBg_box.setUnactive()
+                    activeRecipes = []
                     searchRecipe = search_input.getInput() #retrieves search input
                     recipeFound, recipeName = database.searchRecipe_main(searchRecipe) #sends to database functions
                     if recipeFound: #if the recipe is found
@@ -627,30 +629,30 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
             sushi_button.draw() #they are all drawn to the screen except the error box
         elif len(activeRecipes) == 3: #if they've all been activated
             for x in range(len(recipeBoxes)):
-                recipeBoxes[x].drawBox()
-            for i in range(len(activeRecipes)):
+                recipeBoxes[x].drawBox() #draws all the boxes
+            for i in range(len(activeRecipes)): #draws all the recipe buttons
                 activeRecipes[i].draw()
-        else:
-            for x in range(len(activeRecipes)):
+        elif len(activeRecipes) != 0 and len(activeRecipes) != 3 and errorActive == False: 
+            #if they aren't all unactive / active
+            for x in range(len(activeRecipes)): #draw the boxes based on the number of active recipes
                 recipeBoxes[x].drawBox()
-            for i in range(len(activeRecipes)):
-                if len(activeRecipes) == 1:
-                    activeRecipes[i].changePosition(145,180)
-                
-            
-
-
-
-        '''elif burgerActive: #if only burger button is active
-            #that is only drawn
-            burger_button.draw()
-        elif cakeActive:
-            cake_button.changePosition(145, 180)
-        elif sushiActive:
-            sushi_button.changePosition(145, 180)
+            for i in range(len(activeRecipes)): 
+                if len(activeRecipes) == 1: #if there is only one active
+                    if activeRecipes[i] == burger_button: #if the first one is burger
+                        burger_button.draw() #draw burger 
+                        #(the burger image doesn't work with the position below)
+                    else:
+                        activeRecipes[i].changePosition(145,180) #if it isn't burger, draw
+                if len(activeRecipes) == 2: #if there are 2 active recipes
+                    if activeRecipes[i] == burger_button and i == 0: #if it recipe is burger and it's 1st
+                        burger_button.draw() #draw it
+                    elif i == 0: #if it isnt burger but still the first recipe
+                        activeRecipes[i].changePosition(145,180) #draw to that position
+                    elif i == 1: #if second recipe..
+                        activeRecipes[i].changePosition(355, 190) #draw
         elif errorActive: #if only the error box is active
-            errorBg_box.drawBox() #it gets drawn
-            error_text.drawText()'''
+                errorBg_box.drawBox() #it gets drawn
+                error_text.drawText()
 
         filterActive = filter_button.getActive() # gets the value of whether its active
         if filterActive: #if it is..

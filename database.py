@@ -107,8 +107,6 @@ def filterRecipe_sql(conn, dietaryOption, difficultyOption, dietaryInput):
     recipeNames = []
     for row in records: #checks each row
         dietaryRequirements = [0, 0, 0] #sets to 0 each time a recipe is checked
-        if row[4] == difficultyOption: #if the difficulty is correct
-            recipeFound = True #sets to true
         if dietaryInput: #checks if there's a dietary input
             for x in range(3): #goes through each dietary row in the database
                 if row[x+1] == dietaryOption[x]: #checks if the recipe has the same requirements
@@ -117,7 +115,8 @@ def filterRecipe_sql(conn, dietaryOption, difficultyOption, dietaryInput):
                 if row[4] == difficultyOption or difficultyOption == "None":
                     recipeNames.append(row[0]) #adds it to recipeName to be returned to main program
                     recipeFound = True #sets that the recipe has been found to true
-        elif recipeFound: #if there is no dietaryInput but the difficulty is correct
+        elif row[4] == difficultyOption: #if the difficulty is correct
+            recipeFound = True #sets to true: #if there is no dietaryInput but the difficulty is correct
             recipeNames.append(row[0])
     return recipeFound, recipeNames #returns to filterRecipe_main()
 
