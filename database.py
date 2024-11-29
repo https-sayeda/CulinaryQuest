@@ -1,5 +1,6 @@
 import sqlite3
 
+#creating database / tables
 def createDatabase(filename):
     conn = None
     try:
@@ -46,6 +47,7 @@ def createTable_recipes():
     except sqlite3.Error as e:
         print(e) #error displayed if it occurs
 
+#sql subroutines
 def addAccount_sql(conn, UserAccount):
     sql = """INSERT INTO users(username, password, measurement_type, volume_level, current_level, current_points)
             VALUES(?,?,?,?,?,?)"""
@@ -120,6 +122,25 @@ def filterRecipe_sql(conn, dietaryOption, difficultyOption, dietaryInput):
             recipeNames.append(row[0])
     return recipeFound, recipeNames #returns to filterRecipe_main()
 
+def getLevel_sql(conn, username):
+    cur = conn.cursor()
+    cur.execute("""SELECT * FROM users""")
+    records = cur.fetchall()
+    for row in records: #checks each account
+        if row[1] == username: #if the username matches
+            current_level = row[5] #get the level from that account
+    return current_level
+
+def getPoints_sql(conn, username):
+    cur = conn.cursor()
+    cur.execute("""SELECT * FROM users""")
+    records = cur.fetchall()
+    for row in records: #checks each account
+        if row[1] == username: #if the username matches
+            current_points = row[6] #get the points from that account
+    return current_points
+
+#main subroutines
 def addAccount_main(userInput, passInput):
     try:
         with sqlite3.connect("user.db") as conn:
@@ -168,6 +189,22 @@ def filterRecipe_main(dietaryOption, difficultyOption, dietaryInput):
             recipeFound, recipeName = filterRecipe_sql(conn, dietaryOption, difficultyOption, dietaryInput) 
             #sends options to see if a recipe matching those requirements exist
             return recipeFound, recipeName #returns that to main python file
+    except sqlite3.Error as e:
+        print(e)
+
+def getLevel_main(username):
+    try:
+        with sqlite3.connect("user.db") as conn:
+            current_level = getLevel_sql(conn, username) #sends username and returns the level
+            return current_level #returns to main python file
+    except sqlite3.Error as e:
+        print(e)
+
+def getPoints_main(username):
+    try:
+        with sqlite3.connect("user.db") as conn:
+            current_points = getPoints_sql(conn, username) #sends username and returns the points
+            return current_points #returns to main python file
     except sqlite3.Error as e:
         print(e)
 

@@ -288,7 +288,7 @@ def loginScreen(usernameInput1_input, passwordInput1_input, loginLoop, createLoo
 
         pygame.display.update()
 
-    return loginLoop, createLoop, mainLoop #returns to main() to switch / not switch screens
+    return loginLoop, createLoop, mainLoop, userInput #returns to main() to switch / not switch screens
 
 def createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLoop):
 
@@ -383,15 +383,20 @@ def createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLo
 
     return createLoop, loginLoop
 
-def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeLoop, sushiLoop):
+def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeLoop, sushiLoop, username):
+
+    #retrieving from database
+    current_level = str(database.getLevel_main(username))
+    current_points = str(100-(database.getPoints_main(username)))
+
     #scaling the game logo
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (75, 75))
     scaled_checkmarkIcon = pygame.transform.scale(checkmarkIcon_image, (30, 30))
     #box object creation
     recipeBg_box = Box(120, 170, 425, 750, main_lightPurple1, True)
     overhead_box = Box(0, 0, 75, 1000, main_darkPurple1, True)
-    levelNeeded_box = Box(240, 15, 40, 270, main_darkPurple3, False)
-    currentLevel_box = Box(160, 15, 40, 120, main_darkPurple2, False)
+    pointsNeeded_box = Box(240, 15, 40, 300, main_darkPurple3, False)
+    currentLevel_box = Box(160, 15, 40, 90, main_darkPurple2, False)
     recipeBg1_box = Box(130, 180, 180, 200, main_lightPurple2, False)
     recipeBg2_box = Box(340, 180, 180, 200, main_lightPurple2, False)
     recipeBg3_box = Box(550, 180, 180, 200, main_lightPurple2, False)
@@ -419,6 +424,8 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
     medium_text = Text(715, 399, "Medium", white, 22)
     hard_text = Text(732, 437, "Hard", white, 22)
     filterText_text = Text(800, 477, "Filter", white, 22)
+    level_text = Text(170, 20, "Level " + current_level, white, 22)
+    pointsNeeded_text = Text(263, 20, current_points + " points for the next level", white, 22)
 
     #button creation
     search_button = Button(120, 100, 37, 120, main_lightPurple2, False)
@@ -431,7 +438,7 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
     filterText_button = Button(690, 472, 33, 265, main_brightPurple, False)
 
     #image button creation
-    shop_button = ImageButton(600, 13, shopIcon_image, 1)
+    shop_button = ImageButton(600, 10, shopIcon_image, 1)
     settings_button = ImageButton(850, 15, settingsIcon_image, 1)
     burger_button = ImageButton(110, 155, burgerIcon_image, 0.45)
     cake_button = ImageButton(355, 190, cakeIcon_image, 0.3)
@@ -444,6 +451,7 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
     difficultyOption = "None"
     activeRecipes = [] #will hold the number of recipes that are active
     recipeBoxes = [recipeBg1_box, recipeBg2_box, recipeBg3_box] #stores all the recipe background boxes
+
 
     while mainLoop:
         for event in pygame.event.get():
@@ -608,7 +616,7 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
         WIN.blit(mainBg_image, bgPosition)
         recipeBg_box.drawBox()
         overhead_box.drawBox()
-        levelNeeded_box.drawBox()
+        pointsNeeded_box.drawBox()
         currentLevel_box.drawBox()
         WIN.blit(scaled_gameLogo, (30,0))
         search_button.drawBox()
@@ -618,6 +626,8 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
         settings_button.draw()
         filterBg_box.drawBox()
         filter_button.draw()
+        level_text.drawText()
+        pointsNeeded_text.drawText()
         
         errorActive = errorBg_box.getActive() #gets the value of the button / box being active
         if len(activeRecipes) == 0 and errorActive == False :
@@ -913,13 +923,13 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, burgerLoop, ca
     
     while run:
         if loginLoop == True:
-            loginLoop, createLoop, mainLoop = loginScreen(usernameInput1_input, passwordInput1_input, loginLoop, createLoop, mainLoop)
+            loginLoop, createLoop, mainLoop, username = loginScreen(usernameInput1_input, passwordInput1_input, loginLoop, createLoop, mainLoop)
 
         if createLoop == True:
             createLoop, loginLoop = createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLoop)
 
         if mainLoop == True:
-            mainLoop, shopLoop, settingsLoop, burgerLoop, cakeLoop, sushiLoop = mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeLoop, sushiLoop) 
+            mainLoop, shopLoop, settingsLoop, burgerLoop, cakeLoop, sushiLoop = mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeLoop, sushiLoop, username) 
         
         if shopLoop == True:
             mainLoop, shopLoop = shopScreen(mainLoop, shopLoop)
