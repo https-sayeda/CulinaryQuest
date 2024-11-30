@@ -53,6 +53,10 @@ shopIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','shop_ic
 settingsIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','settings_icon.png'))
 filterIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','filter_icon.png'))
 checkmarkIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','checkmark_icon.png'))
+cheeseFondueIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cheeseFondue_icon.png'))
+croissantIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','croissant_icon.png'))
+tofuIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','tofu_icon.png'))
+
 
 #CLASSES
 
@@ -383,7 +387,7 @@ def createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLo
 
     return createLoop, loginLoop
 
-def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeLoop, sushiLoop, username):
+def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen, username):
 
     #retrieving from database
     current_level = str(database.getLevel_main(username))
@@ -400,6 +404,9 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
     recipeBg1_box = Box(130, 180, 180, 200, main_lightPurple2, False)
     recipeBg2_box = Box(340, 180, 180, 200, main_lightPurple2, False)
     recipeBg3_box = Box(550, 180, 180, 200, main_lightPurple2, False)
+    recipeBg4_box = Box(130, 380, 180, 200, main_lightPurple2, False)
+    recipeBg5_box = Box(340, 380, 180, 200, main_lightPurple2, False)
+    recipeBg6_box = Box(550, 380, 180, 200, main_lightPurple2, False)
     filterBg_box = Box(820, 100, 37, 50, login_grey1, False)
     filtertoolBg_box = Box(670, 150, 380, 300, login_grey1, False)
     dietaryBg_box = Box(690, 160, 33, 265, main_darkPurple2, False)
@@ -444,13 +451,19 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
     cake_button = ImageButton(355, 190, cakeIcon_image, 0.3)
     sushi_button = ImageButton(570, 180, sushiIcon_image, 0.3)
     filter_button = ImageButton(830, 102, filterIcon_image, 0.7)
+    cheeseFondue_button = ImageButton(145, 390, cheeseFondueIcon_image, 0.3)
+    croissant_button = ImageButton(355, 390, croissantIcon_image, 0.3)
+    tofu_button = ImageButton(570, 390, tofuIcon_image, 0.3)
+
 
     #this will hold the dietary requirements that have been selected via the filter tool, the values 
     #will change depending on what the user will select
     dietaryOption = [0, 0, 0]
     difficultyOption = "None"
     activeRecipes = [] #will hold the number of recipes that are active
-    recipeBoxes = [recipeBg1_box, recipeBg2_box, recipeBg3_box] #stores all the recipe background boxes
+    recipeBoxes = [recipeBg1_box, recipeBg2_box, recipeBg3_box, recipeBg4_box, recipeBg5_box, recipeBg6_box] #stores all the recipe background boxes
+    recipeCoordinates_x = [145, 355, 570, 145, 355]
+    recipeCoordinates_y = [180, 190, 180, 390, 390]
 
 
     while mainLoop:
@@ -471,15 +484,33 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                 burgerPressed = burger_button.checkPressed(pygame.mouse.get_pos())
                 if burgerPressed:
                     mainLoop = False
-                    burgerLoop = True
+                    recipeLoop = True
+                    recipeChosen = "burger"
                 cakePressed = cake_button.checkPressed(pygame.mouse.get_pos())
                 if cakePressed:
                     mainLoop = False
-                    cakeLoop = True
+                    recipeLoop = True
+                    recipeChosen = "cake"
                 sushiPressed = sushi_button.checkPressed(pygame.mouse.get_pos())
                 if sushiPressed:
                     mainLoop = False
-                    sushiLoop = True
+                    recipeLoop = True
+                    recipeChosen = "sushi"
+                cheeseFonduePressed = cheeseFondue_button.checkPressed(pygame.mouse.get_pos())
+                if cheeseFonduePressed:
+                    mainLoop = False
+                    recipeLoop = True
+                    recipeChosen = "cheese fondue"
+                croissantPressed = croissant_button.checkPressed(pygame.mouse.get_pos())
+                if croissantPressed:
+                    mainLoop = False
+                    recipeLoop = True
+                    recipeChosen = "croissant"
+                tofuPressed = tofu_button.checkPressed(pygame.mouse.get_pos())
+                if tofuPressed:
+                    mainLoop = False
+                    recipeLoop = True
+                    recipeChosen = "tofu"
                 filterPressed = filter_button.checkPressed(pygame.mouse.get_pos()) #checks if it's been pressed
                 if filterPressed: #if it has..
                     filterActive = filter_button.getActive() #checks if the button has been pressed before
@@ -585,6 +616,16 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                                 elif recipeName[i] == "sushi":
                                     sushi_button.setActive()
                                     activeRecipes.append(sushi_button)
+                                elif recipeName[i] == "cheese fondue":
+                                    cheeseFondue_button.setActive()
+                                    activeRecipes.append(cheeseFondue_button)
+                                elif recipeName[i] == "croissant":
+                                    croissant_button.setActive()
+                                    activeRecipes.append(croissant_button)
+                                elif recipeName[i] == "tofu":
+                                    tofu_button.setActive()
+                                    activeRecipes.append(tofu_button)
+                                
                         else: #if no recipes have been found
                             errorBg_box.setActive() #error button is set to active so it can be displayed
 
@@ -607,6 +648,15 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                         elif recipeName == "sushi":
                             sushi_button.setActive()
                             activeRecipes.append(sushi_button)
+                        elif recipeName == "cheese fondue":
+                            cheeseFondue_button.setActive()
+                            activeRecipes.append(cheeseFondue_button)
+                        elif recipeName == "croissant":
+                            croissant_button.setActive()
+                            activeRecipes.append(croissant_button)
+                        elif recipeName == "tofu":
+                            tofu_button.setActive()
+                            activeRecipes.append(tofu_button)
                     else: #if there recipe isnt found
                         errorBg_box.setActive() #the error box is set to active so it appears
                 
@@ -637,12 +687,15 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
             burger_button.draw()
             cake_button.draw()
             sushi_button.draw() #they are all drawn to the screen except the error box
-        elif len(activeRecipes) == 3: #if they've all been activated
+            cheeseFondue_button.draw()
+            croissant_button.draw()
+            tofu_button.draw()
+        elif len(activeRecipes) == 6: #if they've all been activated
             for x in range(len(recipeBoxes)):
                 recipeBoxes[x].drawBox() #draws all the boxes
             for i in range(len(activeRecipes)): #draws all the recipe buttons
                 activeRecipes[i].draw()
-        elif len(activeRecipes) != 0 and len(activeRecipes) != 3 and errorActive == False: 
+        elif len(activeRecipes) != 0 and len(activeRecipes) != 6 and errorActive == False: 
             #if they aren't all unactive / active
             for x in range(len(activeRecipes)): #draw the boxes based on the number of active recipes
                 recipeBoxes[x].drawBox()
@@ -653,13 +706,11 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
                         #(the burger image doesn't work with the position below)
                     else:
                         activeRecipes[i].changePosition(145,180) #if it isn't burger, draw
-                if len(activeRecipes) == 2: #if there are 2 active recipes
+                if len(activeRecipes) > 1: #if there are more than one active recipes
                     if activeRecipes[i] == burger_button and i == 0: #if it recipe is burger and it's 1st
                         burger_button.draw() #draw it
-                    elif i == 0: #if it isnt burger but still the first recipe
-                        activeRecipes[i].changePosition(145,180) #draw to that position
-                    elif i == 1: #if second recipe..
-                        activeRecipes[i].changePosition(355, 190) #draw
+                    else:
+                        activeRecipes[i].changePosition(recipeCoordinates_x[i], recipeCoordinates_y[i])
         elif errorActive: #if only the error box is active
                 errorBg_box.drawBox() #it gets drawn
                 error_text.drawText()
@@ -714,7 +765,7 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeL
 
         pygame.display.update()
 
-    return mainLoop, shopLoop, settingsLoop, burgerLoop, cakeLoop, sushiLoop
+    return mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen
 
 def shopScreen(mainLoop, shopLoop):
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
@@ -793,98 +844,86 @@ def settingsScreen(mainLoop, settingsLoop):
         pygame.display.update()
     return mainLoop, settingsLoop
     
-def burgerScreen(mainLoop, burgerLoop):
+def recipeScreen(mainLoop, recipeLoop, recipeChosen):
+
+    #scaling images
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
+    scaled_burger = pygame.transform.scale(burgerIcon_image, (250, 250))
+    scaled_cake = pygame.transform.scale(cakeIcon_image, (170, 170))
+    scaled_sushi = pygame.transform.scale(sushiIcon_image, (170, 170))
+    scaled_cheeseFondue = pygame.transform.scale(cheeseFondueIcon_image, (170, 170))
+    scaled_croissant = pygame.transform.scale(croissantIcon_image, (170, 170))
+    scaled_tofu = pygame.transform.scale(tofuIcon_image, (170, 170))
+    scaled_halal = pygame.transform.scale(halalIcon_image, (60, 60))
+    scaled_vegetarian = pygame.transform.scale(vegetarianIcon_image, (60, 60))
+    scaled_vegan = pygame.transform.scale(veganIcon_image, (60, 60))
 
     #box object creation
-    burgerBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
-    burgerLabel_box = Box(410, 160, 30, 200, main_darkPurple2, False)
+    recipeBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
+    recipeLabel_box = Box(410, 160, 30, 200, main_darkPurple2, False)
+    informationLabel_box = Box(170, 210, 30, 180, main_darkPurple2, False)
+    attemptsLabel_box = Box(660, 210, 30, 180, main_darkPurple2, False)
+    recipeIconBg_box = Box(390, 210, 195, 235, white, False)
+    difficultyBg_box = Box(170, 330, 30, 180, main_darkPurple1, False)
+    descriptionLabel_box = Box(170, 420, 30, 180, main_darkPurple2, False)
+    leaderboardBg_box = Box(660, 247, 205, 180, main_darkPurple1, False)
+    descriptionBg_box = Box(170, 465, 90, 670, main_darkPurple1, False)
 
     #text object creation
     back_text = Text(80, 55, "<--", white, 50)
+    informationLabel_text = Text(200, 212, "Information", white, 22)
+    attemptsLabel_text = Text(685, 212, "Past Attempts", white, 22)
     burgerLabel_text = Text(480, 162, "Burger", white, 22)
-
-    #button object creation
-    back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
-
-    while burgerLoop:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-                break
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
-                if backPressed:
-                    burgerLoop = False
-                    mainLoop = True
-        
-        #drawing onto screen
-        WIN.blit(mainBg_image, bgPosition)
-        WIN.blit(scaled_gameLogo, (450,10))
-        burgerBg_box.drawBox()
-        back_button.drawBox()
-        back_text.drawText()
-        burgerLabel_box.drawBox()
-        burgerLabel_text.drawText()
-
-        back_activate = back_button.getActive()
-        pygame.display.update()
-        return mainLoop, burgerLoop
-
-def cakeScreen(mainLoop, cakeLoop):
-    scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
-
-    #box object creation
-    cakeBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
-    cakeLabel_box = Box(410, 160, 30, 200, main_darkPurple2, False)
-
-    #text object creation
-    back_text = Text(80, 55, "<--", white, 50)
     cakeLabel_text = Text(485, 162, "Cake", white, 22)
-
-    #button object creation
-    back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
+    sushiLabel_text = Text(485, 162, "Sushi", white, 22)
+    cheeseFondueLabel_text = Text(435, 162, "Cheese Fondue", white, 22)
+    croissantLabel_text = Text(465, 162, "Croissant", white, 22)
+    tofuLabel_text = Text(490, 162, "Tofu", white, 22)
+    easy_text = Text(235, 332, "Easy", white, 22)
+    medium_text = Text(222, 332, "Medium", white, 22)
+    hard_text = Text(235, 332, "Hard", white, 22)
+    fullRecipe_text = Text(205, 377, "Full Recipe", white, 22)
+    description_text = Text(205, 422, "Description", white, 22)
+    start_text = Text(485, 422, "Start", white, 22)
     
-    while cakeLoop:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-                break
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
-                if backPressed:
-                    cakeLoop = False
-                    mainLoop = True
-        
-        #drawing onto screen
-        WIN.blit(mainBg_image, bgPosition)
-        WIN.blit(scaled_gameLogo, (450,10))
-        cakeBg_box.drawBox()
-        back_button.drawBox()
-        back_text.drawText()
-        cakeLabel_box.drawBox()
-        cakeLabel_text.drawText()
+    #description text
+    burgerDescription1_text = Text(180, 467, "A burger consists of a ground meat patty enclosed in a bun. The", white, 22)
+    burgerDescription2_text = Text(180, 487, "patty can be made from beef, chicken, turkey, or even plant-based", white, 22)
+    burgerDescription3_text = Text(180, 507, "alternatives. The bun is typically soft, and holds the burger ingredients", white, 22)
+    burgerDescription4_text = Text(180, 527, "together, which includes lettuce, cheese, tomatoes, and more.", white, 22)
 
-        pygame.display.update()
-    return mainLoop, cakeLoop
+    cakeDescription1_text = Text(180, 467, "Cake is a flour confection made from flour, sugar, and other ingredients", white, 22)
+    cakeDescription2_text = Text(180, 487, "and is usually baked. In their oldest forms, cakes were modifications of", white, 22)
+    cakeDescription3_text = Text(180, 507, "bread, but cakes now cover a wide range of preparations and share", white, 22)
+    cakeDescription4_text = Text(180, 527, "features with desserts such as pastries, meringues, custards, and pies.", white, 22)
 
-def sushiScreen(mainLoop, sushiLoop):
-    scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
+    sushiDescription1_text = Text(180, 467, "A staple rice dish of Japanese cuisine, consisting of cooked rice", white, 22)
+    sushiDescription2_text = Text(180, 487, "flavored with vinegar and a variety of vegetable, egg, or raw seafood", white, 22)
+    sushiDescription3_text = Text(180, 507, "garnishes and served cold. Restaurants specializing in sushi abound", white, 22)
+    sushiDescription4_text = Text(180, 527, "in Japan, and the dish has gained popularity in the USA and elsewhere.", white, 22)
 
-    #box object creation
-    sushiBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
-    sushiLabel_box = Box(410, 160, 30, 200, main_darkPurple2, False)
+    cheeseFondueDescription1_text = Text(180, 467, "A Swiss national dish of melted cheese and wine served in a", white, 22)
+    cheeseFondueDescription2_text = Text(180, 487, "communal pot over a portable stove and eaten by dipping bread,", white, 22)
+    cheeseFondueDescription3_text = Text(180, 507, "vegetables or other foods into the cheese using long-stemmed forks.", white, 22)
+    cheeseFondueDescription4_text = Text(180, 527, "This meal was supposedly to use up stale bread and cheese.", white, 22)
 
-    #text object creation
-    back_text = Text(80, 55, "<--", white, 50)
-    sushiLabel_text = Text(480, 162, "Sushi", white, 22)
+    croissantDescription1_text = Text(180, 467, "It is a buttery, flaky, viennoiserie pastry inspired by the shape of the", white, 22)
+    croissantDescription2_text = Text(180, 487, "Austrian kipferl, but using the French yeast-leavened laminated dough.", white, 22)
+    croissantDescription3_text = Text(180, 507, "Croissants are named for their historical crescent shape and are a", white, 22)
+    croissantDescription4_text = Text(180, 527, "common part of a continental breakfast in many European countries.", white, 22)
+
+    tofuDescription1_text = Text(180, 467, "Tofu, which originates from China, is a vegan cheese alternative and is", white, 22)
+    tofuDescription2_text = Text(180, 487, "condensed soy milk that people press into blocks of different firmness.", white, 22)
+    tofuDescription3_text = Text(180, 507, "It is a nutrient-dense food that is high in protein and contains all the", white, 22)
+    tofuDescription4_text = Text(180, 527, "essential amino acids your body needs.", white, 22)
+    
 
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
+    fullRecipe_button = Button(170, 375, 30, 180, main_darkPurple3, False)
+    start_button = Button(415, 420, 30, 180, main_brightPurple, False)
 
-    while sushiLoop:
+    while recipeLoop:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -893,22 +932,99 @@ def sushiScreen(mainLoop, sushiLoop):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
                 if backPressed:
-                    sushiLoop = False
+                    recipeLoop = False
                     mainLoop = True
         
         #drawing onto screen
         WIN.blit(mainBg_image, bgPosition)
         WIN.blit(scaled_gameLogo, (450,10))
-        sushiBg_box.drawBox()
+        recipeBg_box.drawBox()
         back_button.drawBox()
         back_text.drawText()
-        sushiLabel_box.drawBox()
-        sushiLabel_text.drawText()
+        recipeLabel_box.drawBox()
+        informationLabel_box.drawBox()
+        informationLabel_text.drawText()
+        attemptsLabel_box.drawBox()
+        attemptsLabel_text.drawText()
+        recipeIconBg_box.drawBox()
+        difficultyBg_box.drawBox()
+        fullRecipe_button.drawBox()
+        fullRecipe_text.drawText()
+        descriptionLabel_box.drawBox()
+        description_text.drawText()
+        start_button.drawBox()
+        start_text.drawText()
+        leaderboardBg_box.drawBox()
+        descriptionBg_box.drawBox()
+
+
+        #displaying depending on the recipe that was chosen
+        if recipeChosen == "burger":
+            burgerLabel_text.drawText()
+            WIN.blit(scaled_burger, (380, 180))
+            WIN.blit(scaled_halal, (150, 247))
+            WIN.blit(scaled_vegetarian, (230, 247))
+            WIN.blit(scaled_vegan, (310, 247))
+            easy_text.drawText()
+            burgerDescription1_text.drawText()
+            burgerDescription2_text.drawText()
+            burgerDescription3_text.drawText()
+            burgerDescription4_text.drawText()
+        elif recipeChosen == "cake":
+            cakeLabel_text.drawText()
+            WIN.blit(scaled_cake, (420, 210))
+            WIN.blit(scaled_halal, (190, 247))
+            WIN.blit(scaled_vegetarian, (265, 247))
+            medium_text.drawText()
+            cakeDescription1_text.drawText()
+            cakeDescription2_text.drawText()
+            cakeDescription3_text.drawText()
+            cakeDescription4_text.drawText()
+        elif recipeChosen == "sushi":
+            sushiLabel_text.drawText()
+            WIN.blit(scaled_sushi, (420, 210))
+            WIN.blit(scaled_halal, (230, 247))
+            hard_text.drawText()
+            sushiDescription1_text.drawText()
+            sushiDescription2_text.drawText()
+            sushiDescription3_text.drawText()
+            sushiDescription4_text.drawText()
+        elif recipeChosen == "cheese fondue":
+            cheeseFondueLabel_text.drawText()
+            WIN.blit(scaled_cheeseFondue, (420, 220))
+            WIN.blit(scaled_vegetarian, (230, 247))
+            medium_text.drawText()
+            cheeseFondueDescription1_text.drawText()
+            cheeseFondueDescription2_text.drawText()
+            cheeseFondueDescription3_text.drawText()
+            cheeseFondueDescription4_text.drawText()
+        elif recipeChosen == "croissant":
+            croissantLabel_text.drawText()
+            WIN.blit(scaled_croissant, (420, 220))
+            WIN.blit(scaled_halal, (190, 247))
+            WIN.blit(scaled_vegetarian, (265, 247))
+            easy_text.drawText()
+            croissantDescription1_text.drawText()
+            croissantDescription2_text.drawText()
+            croissantDescription3_text.drawText()
+            croissantDescription4_text.drawText()
+        elif recipeChosen == "tofu":
+            tofuLabel_text.drawText()
+            WIN.blit(scaled_tofu, (420, 220))
+            WIN.blit(scaled_halal, (150, 247))
+            WIN.blit(scaled_vegetarian, (230, 247))
+            WIN.blit(scaled_vegan, (310, 247))
+            medium_text.drawText()
+            tofuDescription1_text.drawText()
+            tofuDescription2_text.drawText()
+            tofuDescription3_text.drawText()
+            tofuDescription4_text.drawText()
 
         pygame.display.update()
-    return mainLoop, sushiLoop
+    return mainLoop, recipeLoop, recipeChosen
 
-def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, burgerLoop, cakeLoop, sushiLoop):
+
+def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
     clock = pygame.time.Clock()
     clock.tick(FPS)
     run = True
@@ -920,6 +1036,7 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, burgerLoop, ca
     usernameInput2_input = Input(480, 230, 37, 280, black, 20, False)
     passwordInput2_input = Input(480, 290, 37, 280, black, 20, True)
     search_input = Input(240, 100, 37, 570, black, 20, False)
+    recipeChosen = "None"
     
     while run:
         if loginLoop == True:
@@ -929,7 +1046,7 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, burgerLoop, ca
             createLoop, loginLoop = createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLoop)
 
         if mainLoop == True:
-            mainLoop, shopLoop, settingsLoop, burgerLoop, cakeLoop, sushiLoop = mainScreen(search_input, mainLoop, shopLoop, settingsLoop, burgerLoop, cakeLoop, sushiLoop, username) 
+            mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen = mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen, username) 
         
         if shopLoop == True:
             mainLoop, shopLoop = shopScreen(mainLoop, shopLoop)
@@ -937,14 +1054,8 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, burgerLoop, ca
         if settingsLoop == True:
             mainLoop, settingsLoop = settingsScreen(mainLoop, settingsLoop)
 
-        if burgerLoop == True:
-            mainLoop, burgerLoop = burgerScreen(mainLoop, burgerLoop)
-
-        if cakeLoop == True:
-            mainLoop, cakeLoop = cakeScreen(mainLoop, cakeLoop)
-
-        if sushiLoop == True:
-            mainLoop, sushiLoop = sushiScreen(mainLoop, sushiLoop)
+        if recipeLoop == True:
+            mainLoop, recipeLoop, recipeChosen = recipeScreen(mainLoop, recipeLoop, recipeChosen)
 
 loginLoop = True
 createLoop = False
@@ -952,9 +1063,7 @@ mainLoop = False
 settingsLoop = False
 shopLoop = False
 recipeLoop = False
-burgerLoop = False
-cakeLoop = False
-sushiLoop = False
+minigameLoop = False
 
-main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, burgerLoop, cakeLoop, sushiLoop)
+main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop)
         

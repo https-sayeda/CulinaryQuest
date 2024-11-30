@@ -216,4 +216,7 @@ if __name__ == '__main__':
     addRecipe_main("burger", True, True, True, "Easy")
     addRecipe_main("cake", True, True, False, "Medium")
     addRecipe_main("sushi", True, False, False, "Hard")
+    addRecipe_main("cheese fondue", False, True, False, "Medium")
+    addRecipe_main("croissant", True, True, False, "Hard")
+    addRecipe_main("tofu", True, True, True, "Easy")
 
