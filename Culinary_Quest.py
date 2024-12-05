@@ -133,6 +133,7 @@ class ImageButton():
     def changePosition(self, newX, newY):
         #changes position of the button if needed
         WIN.blit(self.image, (newX, newY))
+        self.rect.topleft = (newX, newY)
 
     def checkPressed(self, position):
         
@@ -220,6 +221,7 @@ class Input:
 
 def loginScreen(usernameInput1_input, passwordInput1_input, loginLoop, createLoop, mainLoop):
 
+    userInput = "None"
     #creating objects to display
     #boxes
     loginBg_box = Box(280, 260, 200, 500, login_darkPurple1, True)
@@ -447,7 +449,7 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recip
     #image button creation
     shop_button = ImageButton(600, 10, shopIcon_image, 1)
     settings_button = ImageButton(850, 15, settingsIcon_image, 1)
-    burger_button = ImageButton(110, 155, burgerIcon_image, 0.45)
+    burger_button = ImageButton(110, 155, burgerIcon_image, 1)
     cake_button = ImageButton(355, 190, cakeIcon_image, 0.3)
     sushi_button = ImageButton(570, 180, sushiIcon_image, 0.3)
     filter_button = ImageButton(830, 102, filterIcon_image, 0.7)
@@ -587,6 +589,9 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recip
                     burger_button.setUnactive()
                     cake_button.setUnactive()
                     sushi_button.setUnactive()
+                    cheeseFondue_button.setUnactive()
+                    croissant_button.setUnactive()
+                    tofu_button.setUnactive()
                     errorBg_box.setUnactive()
                     activeRecipes = []
                     dietaryInput = False
@@ -634,6 +639,9 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recip
                     burger_button.setUnactive()
                     cake_button.setUnactive()
                     sushi_button.setUnactive()
+                    cheeseFondue_button.setUnactive()
+                    croissant_button.setUnactive()
+                    tofu_button.setUnactive()
                     errorBg_box.setUnactive()
                     activeRecipes = []
                     searchRecipe = search_input.getInput() #retrieves search input
@@ -690,13 +698,8 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recip
             cheeseFondue_button.draw()
             croissant_button.draw()
             tofu_button.draw()
-        elif len(activeRecipes) == 6: #if they've all been activated
-            for x in range(len(recipeBoxes)):
-                recipeBoxes[x].drawBox() #draws all the boxes
-            for i in range(len(activeRecipes)): #draws all the recipe buttons
-                activeRecipes[i].draw()
-        elif len(activeRecipes) != 0 and len(activeRecipes) != 6 and errorActive == False: 
-            #if they aren't all unactive / active
+        if len(activeRecipes) != 0 and errorActive == False: 
+            #if they aren't all unactive
             for x in range(len(activeRecipes)): #draw the boxes based on the number of active recipes
                 recipeBoxes[x].drawBox()
             for i in range(len(activeRecipes)): 
@@ -711,7 +714,7 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recip
                         burger_button.draw() #draw it
                     else:
                         activeRecipes[i].changePosition(recipeCoordinates_x[i], recipeCoordinates_y[i])
-        elif errorActive: #if only the error box is active
+        if errorActive: #if only the error box is active
                 errorBg_box.drawBox() #it gets drawn
                 error_text.drawText()
 
@@ -868,6 +871,7 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen):
     descriptionLabel_box = Box(170, 420, 30, 180, main_darkPurple2, False)
     leaderboardBg_box = Box(660, 247, 205, 180, main_darkPurple1, False)
     descriptionBg_box = Box(170, 465, 90, 670, main_darkPurple1, False)
+    fullRecipeBg_box = Box(310, 100, 480, 410, main_darkPurple3, False)
 
     #text object creation
     back_text = Text(80, 55, "<--", white, 50)
@@ -885,6 +889,8 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen):
     fullRecipe_text = Text(205, 377, "Full Recipe", white, 22)
     description_text = Text(205, 422, "Description", white, 22)
     start_text = Text(485, 422, "Start", white, 22)
+    recipePageR_text = Text(695, 540, ">", white, 27)
+    recipePageL_text = Text(320, 540, "<", white, 27)
     
     #description text
     burgerDescription1_text = Text(180, 467, "A burger consists of a ground meat patty enclosed in a bun. The", white, 22)
@@ -917,11 +923,139 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen):
     tofuDescription3_text = Text(180, 507, "It is a nutrient-dense food that is high in protein and contains all the", white, 22)
     tofuDescription4_text = Text(180, 527, "essential amino acids your body needs.", white, 22)
     
+    #full recipe text objects
+    
+    burgerRecipe1_text = Text(315, 105, "1. Heat the olive oil in a frying pan, add", white, 22)
+    burgerRecipe2_text = Text(337, 125, "the onion and cook for 5 minutes until", white, 22)
+    burgerRecipe3_text = Text(337, 145, "softened and starting to turn golden.", white, 22)
+    burgerRecipe4_text = Text(337, 165, "Set aside", white, 22)
+    burgerRecipe5_text = Text(315, 205, "2. In a bowl, combine the beef mince with ", white, 22)
+    burgerRecipe6_text = Text(337, 225, "the herbs and the egg. Seaston, add the", white, 22)
+    burgerRecipe7_text = Text(337, 245, "onions and mix well. Shape into 4 patties", white, 22)
+    burgerRecipe8_text = Text(337, 265, "(or use store bought patties instead)", white, 22)
+    burgerRecipe9_text = Text(315, 305, "3. Cook the burgers on a preheated pan ", white, 22)
+    burgerRecipe10_text = Text(337, 325, "for 5-6 minutes on each side, while the", white, 22)
+    burgerRecipe11_text = Text(337, 345, "second side is cooking, lay a slice of", white, 22)
+    burgerRecipe12_text = Text(337, 365, "cheese on top to melt slightly (if using)", white, 22)
+    burgerRecipe13_text = Text(315, 405, "4. Meanwhile, lightly toast the cut sides", white, 22)
+    burgerRecipe14_text = Text(337, 425, "on the pan. Fill with the lettuce, burgers", white, 22)
+    burgerRecipe15_text = Text(337, 445, "and tomato slices (and other toppings)", white, 22)
+    burgerRecipe16_text = Text(337, 485, "This can easily fit dietary requirements", white, 22)
+    burgerRecipe17_text = Text(337, 505, "by replacing certain ingredients. Enjoy!!", white, 22)
+
+    cakeRecipe1_text = Text(315, 105, "1. Place the cake flour, all-purpose flour,", white, 22)
+    cakeRecipe2_text = Text(337, 125, "sugar, baking powder, baking soda, in the", white, 22)
+    cakeRecipe3_text = Text(337, 145, "bowl of an electric mixer, and stir on low", white, 22)
+    cakeRecipe4_text = Text(337, 165, "speed to combine.", white, 22)
+    cakeRecipe5_text = Text(315, 205, "2. Add the butter, mixing on medium-low", white, 22)
+    cakeRecipe6_text = Text(337, 225, "speed until the mixture resembles damp", white, 22)
+    cakeRecipe7_text = Text(337, 245, "sand, for about one minute.", white, 22)
+    cakeRecipe8_text = Text(315, 285, "3. Add the eggs, one at a time, scraping the", white, 22)
+    cakeRecipe9_text = Text(337, 305, "bottom and sides of the bowl to be sure", white, 22)
+    cakeRecipe10_text = Text(337, 325, "all the ingredients are fully incorporated", white, 22)
+    cakeRecipe11_text = Text(315, 365, "4. Add the milk and vanilla. Mix on medium", white, 22)
+    cakeRecipe12_text = Text(337, 385, "speed for 2 to 3 minutes, to aerate the", white, 22)
+    cakeRecipe13_text = Text(337, 405, "batter and build the cake’s structure.", white, 22)
+    cakeRecipe14_text = Text(315, 445, "5. Divide the batter equally between the", white, 22)
+    cakeRecipe15_text = Text(337, 465, "prepared pans, and bake for 30 to 40", white, 22)
+    cakeRecipe16_text = Text(337, 485, "minutes, or until a toothpick inserted in", white, 22)
+    cakeRecipe17_text = Text(337, 505, "the thickest part of the cake comes out", white, 22)
+    cakeRecipe18_text = Text(337, 525, "clean or with a few moist crumbs.", white, 22)
+    cakeRecipe19_text = Text(315, 105, "6. Cool completely before frosting", white, 22)
+    cakeRecipe20_text = Text(315, 145, "7. Beat butter with paddle attachment in", white, 22)
+    cakeRecipe21_text = Text(337, 165, "stand mixer for 3 minutes on high until it", white, 22)
+    cakeRecipe22_text = Text(337, 185, " changes from yellow to almost white,", white, 22)
+    cakeRecipe23_text = Text(337, 205, "and it becomes fluffy and creamy.", white, 22)
+    cakeRecipe24_text = Text(315, 245, "8. Add icing sugar / powdered sugar", white, 22)
+    cakeRecipe25_text = Text(337, 265, "gradually in 3 lots, beating slowly then", white, 22)
+    cakeRecipe26_text = Text(337, 285, "once mostly incorporated, beat on high", white, 22)
+    cakeRecipe27_text = Text(337, 305, "for a full 3 minutes until fluffy.", white, 22)
+    cakeRecipe28_text = Text(315, 345, "9. Add vanilla and milk, then beat for a", white, 22)
+    cakeRecipe29_text = Text(337, 365, " further 30 seconds. Use milk only if", white, 22)
+    cakeRecipe30_text = Text(337, 385, "needed to make it lovely and soft but", white, 22)
+    cakeRecipe31_text = Text(337, 405, "still holds its form (e.g. for piping).", white, 22)
+    cakeRecipe32_text = Text(337, 425, "Use immediately.", white, 22)
+
+    #1. Take 1 cup of your rice, rinse well in cold water.
+    #2. place the cup of rice in a pot and add 1.5 cups of water, add the lid and bring to the boil
+    #3.
+    # Once its boiling reduce to simmer for around 8-10 minutes (but keep an eye on it. 
+    # You want the rice to absorb all the water but not burn or stick to the bottom on the pot!)
+    #4. 
+    # cool it quickly by spreading it out on a tray, add 2 to 3 tablespoons of the sushi seasoning 
+    # and mix well
+    #5.
+    # Place your nori sheet longest edge at the bottom, shiny side facing down. 
+    # place this on the sushi mat to help you roll it then place a thin layer of rice across the sheet 
+    # leaving about an inch gap at the top. (Wet your hands to prevent the rice from sticking)
+    #6.
+    # Add salmon, cucumber, avocado that are thinly sliced and a similar length, 
+    # Place your filling half way up the rice and let it hang over the sides
+    #7.
+    # Take the bottom of the sheet and roll it up so that the bottom meets the top line of the rice.
+    #8.
+    # Try to make one full roll of the rice keeping it tight, hold the roll in place. 
+    # Then wet your fingers with the water and slightly dampen the remaining edge of the nori sheet 
+    # then continue to roll the sheet, sealing the roll.
+    #9.
+    # roll the mat around the sushi giving it a gentle yet firm squeeze. 
+    # (You want to compact the roll keeping it round but not squash it.)
+    #10.
+    # Once you have made up all your rolls, make sure your knife is sharp and 
+    # run the edge of the knife under a running tap. 
+    # Cut the roll in half then keep cutting the pieces in half again until you have 8 pieces. 
+    # (Keep running the knife under a little water in between cuts to prevent the rice from sticking to it).
+
+    sushiRecipe1_text = Text(315, 105, "1. Take your rice, rinse well in cold water.", white, 22)
+    sushiRecipe2_text = Text(315, 145, "2. place the rice in a pot and add water, add", white, 22)
+    sushiRecipe3_text = Text(337, 165, "the lid and bring to the boil", white, 22)
+    sushiRecipe4_text = Text(315, 205, "3. Once its boiling reduce to simmer for about", white, 22)
+    sushiRecipe5_text = Text(337, 225, "8-10 minutes (but keep an eye on it, you want", white, 22)
+    sushiRecipe6_text = Text(337, 245, "the rice to absorb all the water but not burn", white, 22)
+    sushiRecipe7_text = Text(337, 265, "or stick to the bottom on the pot)", white, 22)
+    sushiRecipe8_text = Text(315, 305, "4. cool it quickly by spreading it out on a", white, 22)
+    sushiRecipe9_text = Text(337, 325, "tray, add 2 to 3 tablespoons of the sushi", white, 22)
+    sushiRecipe10_text = Text(337, 345, "seasoning and mix well", white, 22)
+    sushiRecipe11_text = Text(315, 385, "5. Place your nori sheet longest edge at", white, 22)
+    sushiRecipe12_text = Text(337, 405, "the bottom, shiny side facing down, on the", white, 22)
+    sushiRecipe13_text = Text(337, 425, "sushi mat to help you roll it.", white, 22)
+    sushiRecipe14_text = Text(315, 465, "6. leaving about an inch gap at the top.", white, 22)
+    sushiRecipe15_text = Text(337, 505, "place a thin layer of rice across the sheet.", white, 22)
+    sushiRecipe16_text = Text(337, 525, "(Wet hands to prevent rice from sticking)", white, 22)
+    sushiRecipe17_text = Text(337, 105, "Add salmon, cucumber, avocado, that are", white, 22)
+    sushiRecipe18_text = Text(337, 125, "thinly sliced and a similar length, place", white, 22)
+    sushiRecipe19_text = Text(337, 145, "your filling half way up the rice and let", white, 22)
+    sushiRecipe20_text = Text(337, 165, "it hang over the sides.", white, 22)
+    sushiRecipe21_text = Text(315, 205, "7. Take the bottom of the sheet and roll it", white, 22)
+    sushiRecipe22_text = Text(337, 225, "up so that the bottom meets the top line of", white, 22)
+    sushiRecipe23_text = Text(337, 245, "the rice.", white, 22)
+    sushiRecipe24_text = Text(315, 285, "8. Try to make one full roll of the rice", white, 22)
+    sushiRecipe25_text = Text(337, 305, "keeping it tight, hold the roll in place.", white, 22)
+    sushiRecipe26_text = Text(337, 325, "Then wet your fingers with the water and", white, 22)
+    sushiRecipe27_text = Text(337, 345, "slightly dampen the remaining edge of the", white, 22)
+    sushiRecipe28_text = Text(337, 365, "nori sheet then continue to roll, sealing it.", white, 22)
+    sushiRecipe29_text = Text(315, 405, "9. roll the mat around the sushi giving it a", white, 22)
+    sushiRecipe30_text = Text(337, 425, "gentle yet firm squeeze (you want to compact", white, 22)
+    sushiRecipe31_text = Text(337, 445, "the roll keeping it round but not squash it)", white, 22)
+    sushiRecipe32_text = Text(315, 485, "10. Once you have made up all your rolls, make", white, 22)
+    sushiRecipe33_text = Text(337, 505, "sure your knife is sharp and run the edge of", white, 22)
+    sushiRecipe34_text = Text(337, 525, "the knife under a running tap to prevent the", white, 22)
+    sushiRecipe35_text = Text(337, 105, "rice from sticking to it. Cut the roll in half", white, 22)
+    sushiRecipe36_text = Text(337, 125, "then keep cutting the pieces in half again", white, 22)
+    sushiRecipe37_text = Text(337, 145, "until you have 8 pieces", white, 22)
+
+
 
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
     fullRecipe_button = Button(170, 375, 30, 180, main_darkPurple3, False)
     start_button = Button(415, 420, 30, 180, main_brightPurple, False)
+    exit_button = Button(705, 85, 40, 40, login_red1, False)
+    recipePageR_button = Button(685, 535, 30, 30, main_darkPurple3, False)
+    recipePageL_button = Button(310, 535, 30, 30, main_darkPurple3, False)
+
+    #variables used
+    count = 0
 
     while recipeLoop:
         for event in pygame.event.get():
@@ -934,6 +1068,19 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen):
                 if backPressed:
                     recipeLoop = False
                     mainLoop = True
+                fullRecipePressed = fullRecipe_button.checkPressed(pygame.mouse.get_pos())
+                if fullRecipePressed:
+                    fullRecipe_button.setActive()
+                    count = 0
+                exitPressed = exit_button.checkPressed(pygame.mouse.get_pos())
+                if exitPressed:
+                    fullRecipe_button.setUnactive()
+                recipePageRPressed = recipePageR_button.checkPressed(pygame.mouse.get_pos())
+                if recipePageRPressed:
+                    count = count + 1
+                recipePageLPressed = recipePageL_button.checkPressed(pygame.mouse.get_pos())
+                if recipePageLPressed:
+                    count = count - 1
         
         #drawing onto screen
         WIN.blit(mainBg_image, bgPosition)
@@ -956,7 +1103,6 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen):
         start_text.drawText()
         leaderboardBg_box.drawBox()
         descriptionBg_box.drawBox()
-
 
         #displaying depending on the recipe that was chosen
         if recipeChosen == "burger":
@@ -1019,6 +1165,130 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen):
             tofuDescription2_text.drawText()
             tofuDescription3_text.drawText()
             tofuDescription4_text.drawText()
+
+        fullRecipeActive = fullRecipe_button.getActive()
+
+        if fullRecipeActive:
+            fullRecipeBg_box.drawBox()
+            exit_button.drawBox()
+            if count == 0:
+                recipePageR_button.drawBox()
+                recipePageR_text.drawText()
+            if recipeChosen == "burger":
+                if count == 1:
+                    recipePageL_button.drawBox()
+                    recipePageL_text.drawText()
+                    burgerRecipe1_text.drawText()
+                    burgerRecipe2_text.drawText()
+                    burgerRecipe3_text.drawText()
+                    burgerRecipe4_text.drawText()
+                    burgerRecipe5_text.drawText()
+                    burgerRecipe6_text.drawText()
+                    burgerRecipe7_text.drawText()
+                    burgerRecipe8_text.drawText()
+                    burgerRecipe9_text.drawText()
+                    burgerRecipe10_text.drawText()
+                    burgerRecipe11_text.drawText()
+                    burgerRecipe12_text.drawText()
+                    burgerRecipe13_text.drawText()
+                    burgerRecipe14_text.drawText()
+                    burgerRecipe15_text.drawText()
+                    burgerRecipe16_text.drawText()
+                    burgerRecipe17_text.drawText()
+                
+            elif recipeChosen == "cake":
+                if count == 1:
+                    recipePageL_button.drawBox()
+                    recipePageL_text.drawText()
+                    recipePageR_button.drawBox()
+                    recipePageR_text.drawText() 
+                    cakeRecipe1_text.drawText()
+                    cakeRecipe2_text.drawText()
+                    cakeRecipe3_text.drawText()
+                    cakeRecipe4_text.drawText()
+                    cakeRecipe5_text.drawText()
+                    cakeRecipe6_text.drawText()
+                    cakeRecipe7_text.drawText()
+                    cakeRecipe8_text.drawText()
+                    cakeRecipe9_text.drawText()
+                    cakeRecipe10_text.drawText()
+                    cakeRecipe11_text.drawText()
+                    cakeRecipe12_text.drawText()
+                    cakeRecipe13_text.drawText()
+                    cakeRecipe14_text.drawText()
+                    cakeRecipe15_text.drawText()
+                    cakeRecipe16_text.drawText()
+                    cakeRecipe17_text.drawText()
+                    cakeRecipe18_text.drawText()        
+                elif count == 2:
+                    recipePageL_button.drawBox()
+                    recipePageL_text.drawText()
+                    cakeRecipe19_text.drawText()
+                    cakeRecipe20_text.drawText()
+                    cakeRecipe21_text.drawText()
+                    cakeRecipe22_text.drawText()
+                    cakeRecipe23_text.drawText()
+                    cakeRecipe24_text.drawText()
+                    cakeRecipe25_text.drawText()
+                    cakeRecipe26_text.drawText()
+                    cakeRecipe27_text.drawText()
+                    cakeRecipe28_text.drawText()
+                    cakeRecipe29_text.drawText()
+                    cakeRecipe30_text.drawText()
+                    cakeRecipe31_text.drawText()
+                    cakeRecipe32_text.drawText()
+                
+            elif recipeChosen == "sushi":
+                if count == 1:
+                    recipePageL_button.drawBox()
+                    recipePageL_text.drawText()
+                    recipePageR_button.drawBox()
+                    recipePageR_text.drawText()
+                    sushiRecipe1_text.drawText()
+                    sushiRecipe2_text.drawText()
+                    sushiRecipe3_text.drawText()
+                    sushiRecipe4_text.drawText()
+                    sushiRecipe5_text.drawText()
+                    sushiRecipe6_text.drawText()
+                    sushiRecipe7_text.drawText()
+                    sushiRecipe8_text.drawText()
+                    sushiRecipe9_text.drawText()
+                    sushiRecipe10_text.drawText()
+                    sushiRecipe11_text.drawText()
+                    sushiRecipe12_text.drawText()
+                    sushiRecipe13_text.drawText()
+                    sushiRecipe14_text.drawText()
+                    sushiRecipe15_text.drawText()
+                    sushiRecipe16_text.drawText()
+                elif count == 2:
+                    recipePageL_button.drawBox()
+                    recipePageL_text.drawText()
+                    recipePageR_button.drawBox()
+                    recipePageR_text.drawText()
+                    sushiRecipe17_text.drawText()
+                    sushiRecipe18_text.drawText()
+                    sushiRecipe19_text.drawText()
+                    sushiRecipe20_text.drawText()
+                    sushiRecipe21_text.drawText()
+                    sushiRecipe22_text.drawText()
+                    sushiRecipe23_text.drawText()
+                    sushiRecipe24_text.drawText()
+                    sushiRecipe25_text.drawText()
+                    sushiRecipe26_text.drawText()
+                    sushiRecipe27_text.drawText()
+                    sushiRecipe28_text.drawText()
+                    sushiRecipe29_text.drawText()
+                    sushiRecipe30_text.drawText()
+                    sushiRecipe31_text.drawText()
+                    sushiRecipe32_text.drawText()
+                    sushiRecipe33_text.drawText()
+                    sushiRecipe34_text.drawText()
+                elif count == 3:
+                    recipePageL_button.drawBox()
+                    recipePageL_text.drawText()
+                    sushiRecipe35_text.drawText()
+                    sushiRecipe36_text.drawText()
+                    sushiRecipe37_text.drawText()
 
         pygame.display.update()
     return mainLoop, recipeLoop, recipeChosen
