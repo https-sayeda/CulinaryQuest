@@ -78,11 +78,11 @@ def verifyAccount_sql(conn, userInput, passInput):
 
 def changePassword_sql(conn, newPassInput, userInput):
     cur = conn.cursor()
-    cur.execute("""SELECT * FROM users""") 
-    records = cur.fetchall() #the total rows
-    for row in records:#checks each row
-        if row[1] == userInput: #if the username matches
-            row[2] = newPassInput #changes the password in the database to the new one
+    cur.execute("""
+            UPDATE users
+            SET password = ?
+            WHERE username = ?;
+        """, (newPassInput, userInput))
 
 def addRecipe_sql(conn, Recipe):
     sql = """INSERT INTO recipes(recipeName, halal, vegetarian, vegan, difficulty)

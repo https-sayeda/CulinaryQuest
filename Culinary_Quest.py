@@ -35,6 +35,7 @@ main_darkPurple2 = pygame.Color(130, 103, 158)
 main_darkPurple3 = pygame.Color(110, 54, 98)
 main_brightPurple = pygame.Color(112, 48, 160)
 main_beige = pygame.Color(232, 220, 211)
+main_green = pygame.Color(68, 166, 84)
 
 #IMAGES
 loginBg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','login1_background.png'))
@@ -820,7 +821,9 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
     measurementLabel_box = Box(140, 460, 30, 210, main_darkPurple2, False)
     oldPasswordLabel_box = Box(140, 250, 30, 210, main_darkPurple3, False)
     newPasswordLabel_box = Box(140, 310, 30, 210, main_darkPurple3, False)
-    errorBg_box = Box(625, 160, 210, 200, login_red1, False)
+    errorBg1_box = Box(655, 180, 30, 200, login_red1, False)
+    errorBg2_box = Box(655, 230, 130, 200, login_red1, False)
+    passwordChangedBg_box = Box(655, 180, 30, 200, main_green, False)
 
     #text object creation
     back_text = Text(80, 55, "<--", white, 50)
@@ -831,6 +834,14 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
     oldPasswordLabel_text = Text(175, 252, "Old Password", white, 22)
     newPasswordLabel_text = Text(175, 312, "New Password", white, 22)
     save_text = Text(385, 202, "Save", white, 22)
+    incorrectPassword_text = Text(660, 182, "Incorrect old password", white, 19)
+    passwordRequirements1_text = Text(660, 232, "Passwords must have :", white, 19)
+    passwordRequirements2_text = Text(660, 252, "- at least 8 characters", white, 18)
+    passwordRequirements3_text = Text(660, 272, "- at least 1 uppercase", white, 18)
+    passwordRequirements4_text = Text(660, 292, "- at least 1 lowercase", white, 18)
+    passwordRequirements5_text = Text(660, 312, "- at least 1 special", white, 18)
+    passwordRequirements6_text = Text(670, 332, "symbol", white, 18)
+    passwordChanged_text = Text(670, 182, "Password changed.", white, 19)
 
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
@@ -849,21 +860,25 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
                     mainLoop = True
                 savePressed = save_button.checkPressed(pygame.mouse.get_pos())
                 if savePressed: #if save button pressed
+                    errorBg1_box.setUnactive() #sets to unactive so they don't remain displayed
+                    errorBg2_box.setUnactive()
+                    passwordChangedBg_box.setUnactive()
                     oldPassInput = oldPassInput_input.getInput() #get input for old pass
                     newPassInput = newPassInput_input.getInput() #get input for new pass
                     passwordVerified = database.verifyPassword_main(oldPassInput, username)
                     #check that old pass matches the one in the database
-                    if passwordVerified: #if it does
-                        passwordValidated = newPassInput_input.passValidate() 
-                        #check that the new pass matches the password requirements
-                        if passwordValidated: #if it does
-                            database.changePassword_main(newPassInput, username)
-                            #change the password to that within the database
-                            errorBg_box.setUnactive() #error box is not active
-                        else: #if it doesnt
-                            errorBg_box.setActive() #error box is active
-                    else:
-                        errorBg_box.setActive()
+                    passwordValidated = newPassInput_input.passValidate() 
+                    #check that the new pass matches the password requirements
+                    if passwordVerified != True: #if it isn't verified
+                        errorBg1_box.setActive() #sets the first error box to active, will be displayed
+                    if passwordValidated != True: #if it isn't validated
+                        errorBg2_box.setActive() #error box is active
+                    if passwordVerified and passwordValidated: #if both are true
+                        database.changePassword_main(newPassInput, username)
+                        #change the password to that within the database
+                        passwordChangedBg_box.setActive() #password changed so box is active
+                        errorBg1_box.setUnactive()
+                        errorBg2_box.setUnactive() #error box is not active
 
             oldPassInput_input.handleEvent(event)
             newPassInput_input.handleEvent(event)
@@ -891,9 +906,23 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
         save_button.drawBox()
         save_text.drawText()
 
-        errorActive = errorBg_box.getActive()
-        if errorActive:
-            errorBg_box.drawBox()
+        error1Active = errorBg1_box.getActive()
+        error2Active = errorBg2_box.getActive()
+        passwordChangedActive = passwordChangedBg_box.getActive() #checks if active
+        if error1Active: #if active
+            errorBg1_box.drawBox() #draw box and text
+            incorrectPassword_text.drawText()
+        if error2Active:
+            errorBg2_box.drawBox()
+            passwordRequirements1_text.drawText()
+            passwordRequirements2_text.drawText()
+            passwordRequirements3_text.drawText()
+            passwordRequirements4_text.drawText()
+            passwordRequirements5_text.drawText()
+            passwordRequirements6_text.drawText()
+        if passwordChangedActive:
+            passwordChangedBg_box.drawBox()
+            passwordChanged_text.drawText()
 
         pygame.display.update()
     return mainLoop, settingsLoop
@@ -1291,8 +1320,8 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
     passwordInput2_input = Input(480, 290, 37, 280, black, 20, True)
     search_input = Input(240, 100, 37, 570, black, 20, False)
     recipeChosen = "None"
-    oldPassInput_input = Input(350, 250, 30, 280, black, 20, True)
-    newPassInput_input = Input(350, 310, 30, 280, black, 20, True)
+    oldPassInput_input = Input(350, 250, 30, 280, black, 20, False)
+    newPassInput_input = Input(350, 310, 30, 280, black, 20, False)
 
     while run:
         if loginLoop == True:
