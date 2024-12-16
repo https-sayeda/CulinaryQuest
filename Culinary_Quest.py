@@ -809,19 +809,32 @@ def shopScreen(mainLoop, shopLoop):
 
     return mainLoop, shopLoop
 
-def settingsScreen(mainLoop, settingsLoop):
+def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_input, username):
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
 
     #box object creation
     settingsBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
     settingsLabel_box = Box(405, 160, 30, 200, main_darkPurple2, False)
+    changePassLabel_box = Box(140, 200, 30, 210, main_darkPurple2, False)
+    volumeLabel_box = Box(140, 360, 30, 210, main_darkPurple2, False)
+    measurementLabel_box = Box(140, 460, 30, 210, main_darkPurple2, False)
+    oldPasswordLabel_box = Box(140, 250, 30, 210, main_darkPurple3, False)
+    newPasswordLabel_box = Box(140, 310, 30, 210, main_darkPurple3, False)
+    errorBg_box = Box(625, 160, 210, 200, login_red1, False)
 
     #text object creation
     back_text = Text(80, 55, "<--", white, 50)
     settingsLabel_text = Text(470, 162, "Settings", white, 22)
+    changePassLabel_text = Text(155, 202, "Change Password", white, 22)
+    volumeLabel_text = Text(175, 362, "Music Volume", white, 22)
+    measurementLabel_text = Text(155, 462, "Measurement Type", white, 22)
+    oldPasswordLabel_text = Text(175, 252, "Old Password", white, 22)
+    newPasswordLabel_text = Text(175, 312, "New Password", white, 22)
+    save_text = Text(385, 202, "Save", white, 22)
 
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
+    save_button = Button(370, 200, 30, 75, main_brightPurple, False)
 
     while settingsLoop:
         for event in pygame.event.get():
@@ -834,6 +847,26 @@ def settingsScreen(mainLoop, settingsLoop):
                 if backPressed:
                     settingsLoop = False
                     mainLoop = True
+                savePressed = save_button.checkPressed(pygame.mouse.get_pos())
+                if savePressed: #if save button pressed
+                    oldPassInput = oldPassInput_input.getInput() #get input for old pass
+                    newPassInput = newPassInput_input.getInput() #get input for new pass
+                    passwordVerified = database.verifyPassword_main(oldPassInput, username)
+                    #check that old pass matches the one in the database
+                    if passwordVerified: #if it does
+                        passwordValidated = newPassInput_input.passValidate() 
+                        #check that the new pass matches the password requirements
+                        if passwordValidated: #if it does
+                            database.changePassword_main(newPassInput, username)
+                            #change the password to that within the database
+                            errorBg_box.setUnactive() #error box is not active
+                        else: #if it doesnt
+                            errorBg_box.setActive() #error box is active
+                    else:
+                        errorBg_box.setActive()
+
+            oldPassInput_input.handleEvent(event)
+            newPassInput_input.handleEvent(event)
         
         #drawing onto screen
         WIN.blit(mainBg_image, bgPosition)
@@ -843,6 +876,24 @@ def settingsScreen(mainLoop, settingsLoop):
         back_text.drawText()
         settingsLabel_box.drawBox()
         settingsLabel_text.drawText()
+        changePassLabel_box.drawBox()
+        changePassLabel_text.drawText()
+        volumeLabel_box.drawBox()
+        volumeLabel_text.drawText()
+        measurementLabel_box.drawBox()
+        measurementLabel_text.drawText()
+        oldPassInput_input.draw()
+        newPassInput_input.draw()
+        oldPasswordLabel_box.drawBox()
+        oldPasswordLabel_text.drawText()
+        newPasswordLabel_box.drawBox()
+        newPasswordLabel_text.drawText()
+        save_button.drawBox()
+        save_text.drawText()
+
+        errorActive = errorBg_box.getActive()
+        if errorActive:
+            errorBg_box.drawBox()
 
         pygame.display.update()
     return mainLoop, settingsLoop
@@ -1227,7 +1278,6 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen):
         pygame.display.update()
     return mainLoop, recipeLoop, recipeChosen
 
-
 def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
     clock = pygame.time.Clock()
     clock.tick(FPS)
@@ -1241,7 +1291,9 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
     passwordInput2_input = Input(480, 290, 37, 280, black, 20, True)
     search_input = Input(240, 100, 37, 570, black, 20, False)
     recipeChosen = "None"
-    
+    oldPassInput_input = Input(350, 250, 30, 280, black, 20, True)
+    newPassInput_input = Input(350, 310, 30, 280, black, 20, True)
+
     while run:
         if loginLoop == True:
             loginLoop, createLoop, mainLoop, username = loginScreen(usernameInput1_input, passwordInput1_input, loginLoop, createLoop, mainLoop)
@@ -1256,7 +1308,7 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
             mainLoop, shopLoop = shopScreen(mainLoop, shopLoop)
 
         if settingsLoop == True:
-            mainLoop, settingsLoop = settingsScreen(mainLoop, settingsLoop)
+            mainLoop, settingsLoop = settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_input, username)
 
         if recipeLoop == True:
             mainLoop, recipeLoop, recipeChosen = recipeScreen(mainLoop, recipeLoop, recipeChosen)

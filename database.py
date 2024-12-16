@@ -76,6 +76,14 @@ def verifyAccount_sql(conn, userInput, passInput):
             verified = True #if it does, then it's verified
     return verified
 
+def changePassword_sql(conn, newPassInput, userInput):
+    cur = conn.cursor()
+    cur.execute("""SELECT * FROM users""") 
+    records = cur.fetchall() #the total rows
+    for row in records:#checks each row
+        if row[1] == userInput: #if the username matches
+            row[2] = newPassInput #changes the password in the database to the new one
+
 def addRecipe_sql(conn, Recipe):
     sql = """INSERT INTO recipes(recipeName, halal, vegetarian, vegan, difficulty)
             VALUES(?,?,?,?,?)""" #inserts information into database
@@ -162,6 +170,21 @@ def verifyAccount_main(userInput, passInput):
         with sqlite3.connect("user.db") as conn:
             verified = verifyAccount_sql(conn, userInput, passInput) #sends user + pass to see if account exists
             return verified #returns that to main python file
+    except sqlite3.Error as e:
+        print(e)
+
+def verifyPassword_main(oldPasswordInput, username):
+    try:
+        with sqlite3.connect("user.db") as conn:
+            verified = verifyAccount_sql(conn, username, oldPasswordInput) #sends user + pass to see if account exists
+            return verified #returns that to main python file
+    except sqlite3.Error as e:
+        print(e)
+
+def changePassword_main(newPassInput, username):
+    try:
+        with sqlite3.connect("user.db") as conn:
+            changePassword_sql(conn, newPassInput, username) #sends user + pass to see if account exists
     except sqlite3.Error as e:
         print(e)
 
