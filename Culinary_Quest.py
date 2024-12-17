@@ -393,8 +393,8 @@ def createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLo
 def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen, username):
 
     #retrieving from database
-    current_level = str(database.getLevel_main(username))
-    current_points = str(100-(database.getPoints_main(username)))
+    current_level = str(database.getData_main(username, "current_level"))
+    current_points = str(100-(database.getData_main(username, "current_points")))
 
     #scaling the game logo
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (75, 75))
@@ -812,6 +812,7 @@ def shopScreen(mainLoop, shopLoop):
 
 def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_input, username):
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
+    scaled_checkmarkIcon = pygame.transform.scale(checkmarkIcon_image, (35, 35))
 
     #box object creation
     settingsBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
@@ -824,6 +825,8 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
     errorBg1_box = Box(655, 180, 30, 200, login_red1, False)
     errorBg2_box = Box(655, 230, 130, 200, login_red1, False)
     passwordChangedBg_box = Box(655, 180, 30, 200, main_green, False)
+    metricLabel_box = Box(140, 520, 30, 200, main_darkPurple3, False)
+    UScustomaryLabel_box = Box(440, 520, 30, 200, main_darkPurple3, False)
 
     #text object creation
     back_text = Text(80, 55, "<--", white, 50)
@@ -842,10 +845,14 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
     passwordRequirements5_text = Text(660, 312, "- at least 1 special", white, 18)
     passwordRequirements6_text = Text(670, 332, "symbol", white, 18)
     passwordChanged_text = Text(670, 182, "Password changed.", white, 19)
+    metricLabel_text = Text(165, 522, "Metric System", white, 22)
+    UScustomaryLabel_text = Text(465, 522, "US Customary", white, 22)
 
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
     save_button = Button(370, 200, 30, 75, main_brightPurple, False)
+    metric_button = Button(370, 518, 33, 33, white, False)
+    UScustomary_button = Button(670, 518, 33, 33, white, False)
 
     while settingsLoop:
         for event in pygame.event.get():
@@ -874,11 +881,18 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
                     if passwordValidated != True: #if it isn't validated
                         errorBg2_box.setActive() #error box is active
                     if passwordVerified and passwordValidated: #if both are true
-                        database.changePassword_main(newPassInput, username)
+                        database.changeData_main("password", newPassInput, username)
                         #change the password to that within the database
                         passwordChangedBg_box.setActive() #password changed so box is active
                         errorBg1_box.setUnactive()
                         errorBg2_box.setUnactive() #error box is not active
+                metricPressed = metric_button.checkPressed(pygame.mouse.get_pos())
+                if metricPressed:
+                    database.changeData_main("measurement_type", True, username)
+                UScustomaryPressed = UScustomary_button.checkPressed(pygame.mouse.get_pos())
+                if UScustomaryPressed:
+                    database.changeData_main("measurement_type", False, username)
+
 
             oldPassInput_input.handleEvent(event)
             newPassInput_input.handleEvent(event)
@@ -905,6 +919,12 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
         newPasswordLabel_text.drawText()
         save_button.drawBox()
         save_text.drawText()
+        metricLabel_box.drawBox()
+        metricLabel_text.drawText()
+        UScustomaryLabel_box.drawBox()
+        UScustomaryLabel_text.drawText()
+        metric_button.drawBox()
+        UScustomary_button.drawBox()
 
         error1Active = errorBg1_box.getActive()
         error2Active = errorBg2_box.getActive()
@@ -923,6 +943,13 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
         if passwordChangedActive:
             passwordChangedBg_box.drawBox()
             passwordChanged_text.drawText()
+
+        measurement_type = database.getData_main(username, "measurement_type") #checks what value
+        print(measurement_type)
+        if measurement_type: #if its true
+            WIN.blit(scaled_checkmarkIcon, (370, 511)) #blit chekcmark where metric system is
+        else: #if false
+            WIN.blit(scaled_checkmarkIcon, (670, 511)) #blit where us customary is
 
         pygame.display.update()
     return mainLoop, settingsLoop
@@ -1320,8 +1347,8 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
     passwordInput2_input = Input(480, 290, 37, 280, black, 20, True)
     search_input = Input(240, 100, 37, 570, black, 20, False)
     recipeChosen = "None"
-    oldPassInput_input = Input(350, 250, 30, 280, black, 20, False)
-    newPassInput_input = Input(350, 310, 30, 280, black, 20, False)
+    oldPassInput_input = Input(350, 250, 30, 280, black, 20, True)
+    newPassInput_input = Input(350, 310, 30, 280, black, 20, True)
 
     while run:
         if loginLoop == True:

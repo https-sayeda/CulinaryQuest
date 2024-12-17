@@ -84,6 +84,40 @@ def changePassword_sql(conn, newPassInput, userInput):
             WHERE username = ?;
         """, (newPassInput, userInput))
 
+def changeData_sql(conn, data, newData, username):
+    cur = conn.cursor()
+    if data == "password": #checks what data is being changed
+        cur.execute("""
+                UPDATE users
+                SET password = ?
+                WHERE username = ?;
+            """, (newData, username)) 
+        #the variables correspond to the question marks, sets the data to the new value for the correct account
+    elif data == "measurement_type":
+        cur.execute("""
+                UPDATE users
+                SET measurement_type = ?
+                WHERE username = ?;
+            """, (newData, username))
+    elif data == "volume_level":
+        cur.execute("""
+                UPDATE users
+                SET volume_level = ?
+                WHERE username = ?;
+            """, (newData, username))
+    elif data == "current_level":
+        cur.execute("""
+                UPDATE users
+                SET current_level = ?
+                WHERE username = ?;
+            """, (newData, username))
+    elif data == "current_points":
+        cur.execute("""
+                UPDATE users
+                SET current_points = ?
+                WHERE username = ?;
+            """, (newData, username))
+
 def addRecipe_sql(conn, Recipe):
     sql = """INSERT INTO recipes(recipeName, halal, vegetarian, vegan, difficulty)
             VALUES(?,?,?,?,?)""" #inserts information into database
@@ -130,23 +164,18 @@ def filterRecipe_sql(conn, dietaryOption, difficultyOption, dietaryInput):
             recipeNames.append(row[0])
     return recipeFound, recipeNames #returns to filterRecipe_main()
 
-def getLevel_sql(conn, username):
+def getData_sql(conn, username, data):
+    dataList = ["measurement_type", "volume_level", "current_level", "current_points"]
+    #there are only 4 things i'll be retrieving from the user table in my database
     cur = conn.cursor()
     cur.execute("""SELECT * FROM users""")
     records = cur.fetchall()
     for row in records: #checks each account
         if row[1] == username: #if the username matches
-            current_level = row[5] #get the level from that account
-    return current_level
-
-def getPoints_sql(conn, username):
-    cur = conn.cursor()
-    cur.execute("""SELECT * FROM users""")
-    records = cur.fetchall()
-    for row in records: #checks each account
-        if row[1] == username: #if the username matches
-            current_points = row[6] #get the points from that account
-    return current_points
+            for i in range(len(dataList)): #goes through the list
+                if data == dataList[i]: #checks if what I want to retrieve matches the item in the list
+                    returnedData = row[i+3] #if it does, store that value in a variable
+    return returnedData #return to getData_main()
 
 #main subroutines
 def addAccount_main(userInput, passInput):
@@ -181,10 +210,10 @@ def verifyPassword_main(oldPasswordInput, username):
     except sqlite3.Error as e:
         print(e)
 
-def changePassword_main(newPassInput, username):
+def changeData_main(data, newData, username):
     try:
         with sqlite3.connect("user.db") as conn:
-            changePassword_sql(conn, newPassInput, username) #sends user + pass to see if account exists
+            changeData_sql(conn, data, newData, username) #sends user + pass to see if account exists
     except sqlite3.Error as e:
         print(e)
 
@@ -215,19 +244,12 @@ def filterRecipe_main(dietaryOption, difficultyOption, dietaryInput):
     except sqlite3.Error as e:
         print(e)
 
-def getLevel_main(username):
+def getData_main(username, data):
     try:
         with sqlite3.connect("user.db") as conn:
-            current_level = getLevel_sql(conn, username) #sends username and returns the level
-            return current_level #returns to main python file
-    except sqlite3.Error as e:
-        print(e)
-
-def getPoints_main(username):
-    try:
-        with sqlite3.connect("user.db") as conn:
-            current_points = getPoints_sql(conn, username) #sends username and returns the points
-            return current_points #returns to main python file
+            returnedData = getData_sql(conn, username, data) 
+            #sends username and the data I want, and returns that data
+            return returnedData #returns to main python file
     except sqlite3.Error as e:
         print(e)
 
