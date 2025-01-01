@@ -58,6 +58,12 @@ cheeseFondueIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS',
 croissantIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','croissant_icon.png'))
 tofuIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','tofu_icon.png'))
 
+#music
+pygame.mixer.init()
+#disc1_music = pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"gingko.mp3"))
+#disc2_music = pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"old_feelings.mp3"))
+#disc3_music = pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"sunday_morning.mp3"))
+
 #CLASSES
 
 class Text:
@@ -91,6 +97,10 @@ class Box:
             boxSurface.set_alpha(200)
             pygame.draw.rect(boxSurface, self.colour, boxSurface.get_rect(), 0, 3)
             WIN.blit(boxSurface, (self.x, self.y))
+    
+    def changeLength(self, size):
+        self.length = self.length + size
+        return self.length
 
     def getActive(self): return self.active
 
@@ -810,6 +820,9 @@ def shopScreen(mainLoop, shopLoop):
     return mainLoop, shopLoop
 
 def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_input, username):
+
+    volume_level = database.getData_main(username, "volume_level")
+
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
     scaled_checkmarkIcon = pygame.transform.scale(checkmarkIcon_image, (35, 35))
 
@@ -826,6 +839,8 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
     passwordChangedBg_box = Box(655, 180, 30, 200, main_green, False)
     metricLabel_box = Box(140, 520, 30, 200, main_darkPurple3, False)
     UScustomaryLabel_box = Box(440, 520, 30, 200, main_darkPurple3, False)
+    volumeBg_box = Box(140, 410, 30, 500, white, False)
+    volumeBar_box = Box(140, 410, 30, volume_level*5, main_darkPurple1, False)
 
     #text object creation
     back_text = Text(80, 55, "<--", white, 50)
@@ -846,12 +861,16 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
     passwordChanged_text = Text(670, 182, "Password changed.", white, 19)
     metricLabel_text = Text(165, 522, "Metric System", white, 22)
     UScustomaryLabel_text = Text(465, 522, "US Customary", white, 22)
+    volumeUp_text = Text(660, 395, "/\\", white, 20)
+    volumeDown_text = Text(660, 423, "\/", white, 20)
 
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
     save_button = Button(370, 200, 30, 75, main_brightPurple, False)
     metric_button = Button(370, 518, 33, 33, white, False)
     UScustomary_button = Button(670, 518, 33, 33, white, False)
+    volumeUp_button = Button(650, 397, 22, 33, main_darkPurple3, False)
+    volumeDown_button = Button(650, 423, 22, 33, main_darkPurple3, False)
 
     while settingsLoop:
         for event in pygame.event.get():
@@ -891,8 +910,27 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
                 UScustomaryPressed = UScustomary_button.checkPressed(pygame.mouse.get_pos())
                 if UScustomaryPressed:
                     database.changeData_main("measurement_type", False, username)
+                volumeUpPressed = volumeUp_button.checkPressed(pygame.mouse.get_pos()) 
+                #checks if volume up button pressed 
+                if volumeUpPressed: #if it has been
+                    if volume_level < 100: #checks that the volume is less than 100
+                        volume = volumeBar_box.changeLength(5) #if it is, increase bar length by 5
+                        volume_level = volume / 5 #convert to volume value so increases by 1
+                    elif volume_level > 100: #if it is more than 100
+                        volume_level = 100 #set volume to 100
+                    database.changeData_main("volume_level", volume_level, username) 
+                    #change volume in database
+                volumeDownPressed = volumeDown_button.checkPressed(pygame.mouse.get_pos()) 
+                #checks if volume down button pressed
+                if volumeDownPressed: #if it has been
+                    if volume_level > 0: #checks that the volume is above 0
+                        volume = volumeBar_box.changeLength(-5) #if it is, decrease bar length by 5
+                        volume_level = volume / 5 #convert to volume value so decreases by 1
+                    elif volume_level < 0: #if less than 0
+                        volume_level = 0 #set to 0
+                    database.changeData_main("volume_level", volume_level, username) #change in database
 
-
+        
             oldPassInput_input.handleEvent(event)
             newPassInput_input.handleEvent(event)
         
@@ -924,6 +962,12 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
         UScustomaryLabel_text.drawText()
         metric_button.drawBox()
         UScustomary_button.drawBox()
+        volumeBg_box.drawBox()
+        volumeBar_box.drawBox()
+        volumeUp_button.drawBox()
+        volumeDown_button.drawBox()
+        volumeUp_text.drawText()
+        volumeDown_text.drawText()
 
         error1Active = errorBg1_box.getActive()
         error2Active = errorBg2_box.getActive()
@@ -944,7 +988,6 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
             passwordChanged_text.drawText()
 
         measurement_type = database.getData_main(username, "measurement_type") #checks what value
-        print(measurement_type)
         if measurement_type: #if its true
             WIN.blit(scaled_checkmarkIcon, (370, 511)) #blit chekcmark where metric system is
         else: #if false
@@ -1249,11 +1292,9 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen, username):
                              cakeUSIngredients13_text, cakeUSIngredients14_text, cakeUSIngredients15_text,
                              cakeUSIngredients16_text, cakeUSIngredients17_text, cakeUSIngredients18_text,
                              cakeUSIngredients19_text]
-    
     sushiMetricIngredients = [sushiMetricIngredients1_text, sushiMetricIngredients2_text, sushiMetricIngredients3_text,
                               sushiMetricIngredients4_text, sushiMetricIngredients5_text, sushiMetricIngredients6_text,
                               sushiMetricIngredients7_text, sushiMetricIngredients8_text]
-    
     sushiUSIngredients = [sushiUSIngredients1_text, sushiUSIngredients2_text, sushiUSIngredients3_text,
                           sushiUSIngredients4_text, sushiUSIngredients5_text, sushiUSIngredients6_text,
                           sushiUSIngredients7_text, sushiUSIngredients8_text]
@@ -1471,7 +1512,6 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen, username):
             elif recipeChosen == "tofu":
                 naRecipe_text.drawText()
 
-
         pygame.display.update()
     return mainLoop, recipeLoop, recipeChosen
 
@@ -1491,20 +1531,29 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
     oldPassInput_input = Input(350, 250, 30, 280, black, 20, True)
     newPassInput_input = Input(350, 310, 30, 280, black, 20, True)
 
+    pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"gingko.mp3"))
+    pygame.mixer.music.play(-1)
+
     while run:
         if loginLoop == True:
+            pygame.mixer.music.set_volume(0)
             loginLoop, createLoop, mainLoop, username = loginScreen(usernameInput1_input, passwordInput1_input, loginLoop, createLoop, mainLoop)
 
         if createLoop == True:
             createLoop, loginLoop = createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLoop)
 
         if mainLoop == True:
+            volume_level = database.getData_main(username, "volume_level")
+            pygame.mixer.music.set_volume((volume_level) / 100)
             mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen = mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen, username) 
         
+
         if shopLoop == True:
             mainLoop, shopLoop = shopScreen(mainLoop, shopLoop)
 
         if settingsLoop == True:
+            volume_level = database.getData_main(username, "volume_level")
+            pygame.mixer.music.set_volume((volume_level) / 100)
             mainLoop, settingsLoop = settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_input, username)
 
         if recipeLoop == True:
