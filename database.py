@@ -1,4 +1,5 @@
 import sqlite3
+import hashlib
 
 #creating database / tables
 def createDatabase(filename):
@@ -12,21 +13,43 @@ def createDatabase(filename):
             conn.close() #closes the database when it is no longer in use
 
 def createTable_user():
-    sql = """CREATE TABLE IF NOT EXISTS users (
+    sql1 = """CREATE TABLE IF NOT EXISTS users (
           accountID integer primary key,         
           username text NOT NULL,
           password text NOT NULL,
           measurement_type bool NOT NULL,
           volume_level integer NOT NULL,
           current_level integer NOT NULL,
-          current_points integer NOT NULL
+          current_points integer NOT NULL,
+          disc_selected text NOT NULL,
+          theme_selected text NOT NULL
+          );"""
+    sql2 = """CREATE TABLE IF NOT EXISTS shop (
+          disc1 bool NOT NULL,
+          disc2 bool NOT NULL,
+          disc3 bool NOT NULL,
+          theme1 bool NOT NULL,
+          theme2 bool NOT NULL,
+          accountID integer,
+          FOREIGN KEY (accountID) REFERENCES users(accountID)
           );"""
     #sql is used to create a table with the above rows
     try:
         with sqlite3.connect("user.db") as conn: #this statement closes the connection automatically
             cursor = conn.cursor() #cursor object created
-            cursor.execute(sql) #iterates through the sql statement and executes them using the method
+            cursor.execute(sql1) #iterates through the sql statement and executes them using the method
+            cursor.execute(sql2) 
             conn.commit() #creates connection to the database
+    except sqlite3.Error as e:
+        print(e) #error displayed if it occurs
+
+def createTable_shop():
+    #sql is used to create a table with the above rows
+    try:
+        with sqlite3.connect("shop.db") as conn: #this statement closes the connection automatically
+            cursor = conn.cursor() #cursor object created
+            #cursor.execute(sql) #iterates through the sql statement and executes them using the method
+            #conn.commit() #creates connection to the database
     except sqlite3.Error as e:
         print(e) #error displayed if it occurs
 
@@ -48,11 +71,15 @@ def createTable_recipes():
         print(e) #error displayed if it occurs
 
 #sql subroutines
-def addAccount_sql(conn, UserAccount):
-    sql = """INSERT INTO users(username, password, measurement_type, volume_level, current_level, current_points)
-            VALUES(?,?,?,?,?,?)"""
+def addAccount_sql(conn, UserAccount, UserItems):
+    sql1 = """INSERT INTO users(username, password, measurement_type, volume_level, current_level, current_points, disc_selected, theme_selected)
+            VALUES(?,?,?,?,?,?,?,?)""" #the sql statements I want to use
+    sql2 = """INSERT INTO shop(disc1, disc2, disc3, theme1, theme2)
+            VALUES(?,?,?,?,?)"""
     cur = conn.cursor()
-    cur.execute(sql, UserAccount) 
+    cur.execute("PRAGMA foreign_keys = ON") #we need to active the foreign key for sqlite3
+    cur.execute(sql1, UserAccount) #inserts the sql statements and the lists
+    cur.execute(sql2, UserItems)
     conn.commit()
     return cur.lastrowid #returns the inserted id in the table using the lastrowid property of cursor
 
@@ -76,17 +103,18 @@ def verifyAccount_sql(conn, userInput, passInput):
             verified = True #if it does, then it's verified
     return verified
 
-def changePassword_sql(conn, newPassInput, userInput):
-    cur = conn.cursor()
-    cur.execute("""
-            UPDATE users
-            SET password = ?
-            WHERE username = ?;
-        """, (newPassInput, userInput))
+#def changePassword_sql(conn, newPassInput, userInput):
+ #   cur = conn.cursor()
+  #  cur.execute("""
+   #         UPDATE users
+    #        SET password = ?
+     #       WHERE username = ?;
+      #  """, (newPassInput, userInput))
 
 def changeData_sql(conn, data, newData, username):
     cur = conn.cursor()
     if data == "password": #checks what data is being changed
+        newData = hashlib.sha256(newData.encode()).hexdigest()
         cur.execute("""
                 UPDATE users
                 SET password = ?
@@ -181,8 +209,11 @@ def getData_sql(conn, username, data):
 def addAccount_main(userInput, passInput):
     try:
         with sqlite3.connect("user.db") as conn:
-            UserAccount = (userInput, passInput, True, 100, 1, 0)
-            accountID = addAccount_sql(conn, UserAccount)
+            passInput = hashlib.sha256(passInput.encode()).hexdigest()
+            #hashing algorithm for password
+            UserAccount = (userInput, passInput, True, 100, 1, 0, "disc1", "theme1")
+            UserItems = (True, False, False, True, False)
+            addAccount_sql(conn, UserAccount, UserItems)
     except sqlite3.Error as e:
         print(e)
 
@@ -197,6 +228,9 @@ def validateUser_main(userInput):
 def verifyAccount_main(userInput, passInput):
     try:
         with sqlite3.connect("user.db") as conn:
+            print(passInput)
+            passInput = hashlib.sha256(passInput.encode()).hexdigest()
+            print(passInput)
             verified = verifyAccount_sql(conn, userInput, passInput) #sends user + pass to see if account exists
             return verified #returns that to main python file
     except sqlite3.Error as e:
@@ -205,6 +239,7 @@ def verifyAccount_main(userInput, passInput):
 def verifyPassword_main(oldPasswordInput, username):
     try:
         with sqlite3.connect("user.db") as conn:
+            oldPasswordInput = hashlib.sha256(oldPasswordInput.encode()).hexdigest()
             verified = verifyAccount_sql(conn, username, oldPasswordInput) #sends user + pass to see if account exists
             return verified #returns that to main python file
     except sqlite3.Error as e:
@@ -254,6 +289,8 @@ def getData_main(username, data):
         print(e)
 
 if __name__ == '__main__':
+    #createDatabase("shop.db")
+    #createTable_shop()
     createDatabase("user.db")
     createTable_user()
     createDatabase("recipes.db")

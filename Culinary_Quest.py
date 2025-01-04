@@ -36,6 +36,7 @@ main_darkPurple3 = pygame.Color(110, 54, 98)
 main_brightPurple = pygame.Color(112, 48, 160)
 main_beige = pygame.Color(232, 220, 211)
 main_green = pygame.Color(68, 166, 84)
+main_orange = pygame.Color(233, 113, 50)
 
 #IMAGES
 loginBg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','login1_background.png'))
@@ -99,8 +100,8 @@ class Box:
             WIN.blit(boxSurface, (self.x, self.y))
     
     def changeLength(self, size):
-        self.length = self.length + size
-        return self.length
+        self.length = self.length + size #adds the value passed to the subroutine to the current length of the box
+        return self.length #returns the length of the box
 
     def getActive(self): return self.active
 
@@ -786,13 +787,33 @@ def shopScreen(mainLoop, shopLoop):
     #box object creation
     shopBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
     shopLabel_box = Box(410, 160, 30, 200, main_darkPurple2, False)
+    musicLabel_box = Box(140, 200, 30, 90, main_darkPurple2, False)
+    disc1Label_box = Box(140, 250, 60, 180, main_darkPurple1, False)
+    disc2Label_box = Box(390, 250, 60, 180, main_darkPurple1, False)
+    disc3Label_box = Box(640, 250, 60, 180, main_darkPurple1, False)
+    themeLabel_box = Box(140, 380, 30, 90, main_darkPurple2, False)
+    theme1Label_box = Box(140, 430, 60, 180, main_darkPurple1, False)
+    theme2Label_box = Box(390, 430, 60, 180, main_orange, False)
+    theme3Label_box = Box(640, 430, 60, 180, main_darkPurple1, False)
+
 
     #text object creation
     back_text = Text(80, 55, "<--", white, 50)
     shopLabel_text = Text(485, 162, "Shop", white, 22)
+    musicLabel_text = Text(144, 202, "Music", white, 22)
+    disc1Label_text = Text(147, 255, "Disc 1", white, 22)
+    disc2Label_text = Text(397, 255, "Disc 2", white, 22)
+    disc3Label_text = Text(647, 255, "Disc 3", white, 22)
+
 
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
+    disc1Unlock_button = Button(140, 330, 30, 180, main_darkPurple3, False)
+    disc2Unlock_button = Button(390, 330, 30, 180, main_darkPurple3, False)
+    disc3Unlock_button = Button(640, 330, 30, 180, main_darkPurple3, False)
+    theme1Unlock_button = Button(140, 510, 30, 180, main_darkPurple3, False)
+    theme2Unlock_button = Button(390, 510, 30, 180, main_darkPurple3, False)
+    theme3Unlock_button = Button(640, 510, 30, 180, main_darkPurple3, False)
 
     while shopLoop:
         for event in pygame.event.get():
@@ -814,6 +835,24 @@ def shopScreen(mainLoop, shopLoop):
         back_text.drawText()
         shopLabel_box.drawBox()
         shopLabel_text.drawText()
+        musicLabel_box.drawBox()
+        disc1Label_box.drawBox()
+        disc2Label_box.drawBox()
+        disc3Label_box.drawBox()
+        disc1Unlock_button.drawBox()
+        disc2Unlock_button.drawBox()
+        disc3Unlock_button.drawBox()
+        themeLabel_box.drawBox()
+        theme1Label_box.drawBox()
+        theme2Label_box.drawBox()
+        theme3Label_box.drawBox()
+        theme1Unlock_button.drawBox()
+        theme2Unlock_button.drawBox()
+        theme3Unlock_button.drawBox()
+        musicLabel_text.drawText()
+        disc1Label_text.drawText()
+        disc2Label_text.drawText()
+        disc3Label_text.drawText()
 
         pygame.display.update()
 
@@ -933,6 +972,7 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
         
             oldPassInput_input.handleEvent(event)
             newPassInput_input.handleEvent(event)
+        pygame.mixer.music.set_volume(volume_level / 100) #sets the volume to that level
         
         #drawing onto screen
         WIN.blit(mainBg_image, bgPosition)
@@ -1190,114 +1230,98 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen, username):
 
     #ingredient text objects
 
-    burgerMetricIngredients1_text = Text(315, 105, "Ingredients: ", white, 22)
-    burgerMetricIngredients2_text = Text(315, 145, "7ml olive oil", white, 22)
-    burgerMetricIngredients3_text = Text(315, 165, "170g onion, peeled and chopped", white, 22)
-    burgerMetricIngredients4_text = Text(315, 185, "500g beef steak mince (or alternatives)", white, 22)
-    burgerMetricIngredients5_text = Text(315, 205, "4g mixed dried herbs", white, 22)
-    burgerMetricIngredients6_text = Text(315, 225, "1 egg, beaten", white, 22)
-    burgerMetricIngredients7_text = Text(315, 245, "75g of cheese (optional)", white, 22)
-    burgerMetricIngredients8_text = Text(315, 265, "4 white rolls", white, 22)
-    burgerMetricIngredients9_text = Text(315, 285, "15g lettuce", white, 22)
-    burgerMetricIngredients10_text = Text(315, 305, "75g tomato, sliced", white, 22)
+    ingredientsLabel_text = Text(315, 105, "Ingredients: ", white, 22)
+    burgerMetricIngredients1_text = Text(315, 145, "7ml olive oil", white, 22)
+    burgerMetricIngredients2_text = Text(315, 165, "170g onion, peeled and chopped", white, 22)
+    burgerMetricIngredients3_text = Text(315, 185, "500g beef steak mince (or alternatives)", white, 22)
+    burgerMetricIngredients4_text = Text(315, 205, "4g mixed dried herbs", white, 22)
+    burgerIngredients5_text = Text(315, 225, "1 egg, beaten", white, 22)
+    burgerMetricIngredients6_text = Text(315, 245, "75g of cheese (optional)", white, 22)
+    burgerIngredients7_text = Text(315, 265, "4 white rolls", white, 22)
+    burgerMetricIngredients8_text = Text(315, 285, "15g lettuce", white, 22)
+    burgerMetricIngredients9_text = Text(315, 305, "75g tomato, sliced", white, 22)
 
-    burgerUSIngredients1_text = Text(315, 105, "Ingredients: ", white, 22)
-    burgerUSIngredients2_text = Text(315, 145, "1/2 tbsp olive oil", white, 22)
-    burgerUSIngredients3_text = Text(315, 165, "1 medium onion, peeled and chopped", white, 22)
-    burgerUSIngredients4_text = Text(315, 185, "500g beef steak mince (or alternatives)", white, 22)
-    burgerUSIngredients5_text = Text(315, 205, "1 tsp mixed dried herbs", white, 22)
-    burgerUSIngredients6_text = Text(315, 225, "1 egg, beaten", white, 22)
-    burgerUSIngredients7_text = Text(315, 245, "4 slices of cheese (optional)", white, 22)
-    burgerUSIngredients8_text = Text(315, 265, "4 white rolls", white, 22)
-    burgerUSIngredients9_text = Text(315, 285, "3 lettuce leaves", white, 22)
-    burgerUSIngredients10_text = Text(315, 305, "1 medium tomato, sliced", white, 22)
+    burgerUSIngredients1_text = Text(315, 145, "1/2 tbsp olive oil", white, 22)
+    burgerUSIngredients2_text = Text(315, 165, "1 medium onion, peeled and chopped", white, 22)
+    burgerUSIngredients3_text = Text(315, 185, "500g beef steak mince (or alternatives)", white, 22)
+    burgerUSIngredients4_text = Text(315, 205, "1 tsp mixed dried herbs", white, 22)
+    burgerUSIngredients6_text = Text(315, 245, "4 slices of cheese (optional)", white, 22)
+    burgerUSIngredients8_text = Text(315, 285, "3 lettuce leaves", white, 22)
+    burgerUSIngredients9_text = Text(315, 305, "1 medium tomato, sliced", white, 22)
 
-    cakeMetricIngredients1_text = Text(315, 105, "Cake Ingredients: ", white, 22)
-    cakeMetricIngredients2_text = Text(315, 145, "187.5g cake flour", white, 22)
-    cakeMetricIngredients3_text = Text(315, 165, "93.75g all-purpose flour", white, 22)
-    cakeMetricIngredients4_text = Text(315, 185, "200g granulated sugar", white, 22)
-    cakeMetricIngredients5_text = Text(315, 205, "4g baking powder", white, 22)
-    cakeMetricIngredients6_text = Text(315, 225, "3g baking soda", white, 22)
-    cakeMetricIngredients7_text = Text(315, 245, "4.5g kosher salt", white, 22)
-    cakeMetricIngredients8_text = Text(315, 265, "170.25g unsalted butter, softened", white, 22)
-    cakeMetricIngredients9_text = Text(315, 285, "2 large eggs", white, 22)
-    cakeMetricIngredients10_text = Text(315, 305, "153g sour cream, Greek yogurt", white, 22)
-    cakeMetricIngredients11_text = Text(315, 325, "or buttermilk (can be substituted)", white, 22)
-    cakeMetricIngredients12_text = Text(315, 345, "122g milk", white, 22)
-    cakeMetricIngredients13_text = Text(315, 365, "8g vanilla extract", white, 22)
-    cakeMetricIngredients14_text = Text(315, 405, "Buttercream Ingredients: ", white, 22)
-    cakeMetricIngredients15_text = Text(315, 445, "225g unsalted butter , softened", white, 22)
-    cakeMetricIngredients16_text = Text(315, 465, "500g soft icing sugar", white, 22)
-    cakeMetricIngredients17_text = Text(315, 485, "/ powdered sugar, SIFTED", white, 22)
-    cakeMetricIngredients18_text = Text(315, 505, "15ml vanilla extract", white, 22)
-    cakeMetricIngredients19_text = Text(315, 525, "19-58ml milk, to adjust thickeness", white, 22)
+    cakeIngredientsLabel_text = Text(315, 105, "Cake Ingredients: ", white, 22)
+    cakeMetricIngredients1_text = Text(315, 145, "187.5g cake flour", white, 22)
+    cakeMetricIngredients2_text = Text(315, 165, "93.75g all-purpose flour", white, 22)
+    cakeMetricIngredients3_text = Text(315, 185, "200g granulated sugar", white, 22)
+    cakeMetricIngredients4_text = Text(315, 205, "4g baking powder", white, 22)
+    cakeMetricIngredients5_text = Text(315, 225, "3g baking soda", white, 22)
+    cakeMetricIngredients6_text = Text(315, 245, "4.5g kosher salt", white, 22)
+    cakeMetricIngredients7_text = Text(315, 265, "170.25g unsalted butter, softened", white, 22)
+    cakeIngredients8_text = Text(315, 285, "2 large eggs", white, 22)
+    cakeMetricIngredients9_text = Text(315, 305, "153g sour cream, Greek yogurt", white, 22)
+    cakeIngredients10_text = Text(315, 325, "or buttermilk (can be substituted)", white, 22)
+    cakeMetricIngredients11_text = Text(315, 345, "122g milk", white, 22)
+    cakeMetricIngredients12_text = Text(315, 365, "8g vanilla extract", white, 22)
+    buttercreamIngredientsLabel_text = Text(315, 405, "Buttercream Ingredients: ", white, 22)
+    cakeMetricIngredients13_text = Text(315, 445, "225g unsalted butter , softened", white, 22)
+    cakeMetricIngredients14_text = Text(315, 465, "500g soft icing sugar", white, 22)
+    cakeIngredients15_text = Text(315, 485, "/ powdered sugar, SIFTED", white, 22)
+    cakeMetricIngredients16_text = Text(315, 505, "15ml vanilla extract", white, 22)
+    cakeMetricIngredients17_text = Text(315, 525, "19-58ml milk, to adjust thickeness", white, 22)
 
-    cakeUSIngredients1_text = Text(315, 105, "Cake Ingredients: ", white, 22)
-    cakeUSIngredients2_text = Text(315, 145, "1 1/2 cups cake flour", white, 22)
-    cakeUSIngredients3_text = Text(315, 165, "3/4 cup all-purpose flour", white, 22)
-    cakeUSIngredients4_text = Text(315, 185, "1 cup granulated sugar", white, 22)
-    cakeUSIngredients5_text = Text(315, 205, "1 teaspoon baking powder", white, 22)
-    cakeUSIngredients6_text = Text(315, 225, "1 teaspoon baking soda", white, 22)
-    cakeUSIngredients7_text = Text(315, 245, "3/4 teaspoon kosher salt", white, 22)
-    cakeUSIngredients8_text = Text(315, 265, "3/4 cup unsalted butter, softened", white, 22)
-    cakeUSIngredients9_text = Text(315, 285, "2 large eggs", white, 22)
-    cakeUSIngredients10_text = Text(315, 305, "2/3 cup sour cream, Greek yogurt", white, 22)
-    cakeUSIngredients11_text = Text(315, 325, "or buttermilk (can be substituted)", white, 22)
-    cakeUSIngredients12_text = Text(315, 345, "1/2 cup milk", white, 22)
-    cakeUSIngredients13_text = Text(315, 365, "2 teaspoons vanilla extract", white, 22)
-    cakeUSIngredients14_text = Text(315, 405, "Buttercream Ingredients: ", white, 22)
-    cakeUSIngredients15_text = Text(315, 445, "1 cup unsalted butter , softened", white, 22)
-    cakeUSIngredients16_text = Text(315, 465, "2 1/2 soft icing sugar", white, 22)
-    cakeUSIngredients17_text = Text(315, 485, "/ powdered sugar, SIFTED", white, 22)
-    cakeUSIngredients18_text = Text(315, 505, "3 tsp vanilla extract", white, 22)
-    cakeUSIngredients19_text = Text(315, 525, "2–4 tbsp milk, to adjust thickeness", white, 22)
+    cakeUSIngredients1_text = Text(315, 145, "1 1/2 cups cake flour", white, 22)
+    cakeUSIngredients2_text = Text(315, 165, "3/4 cup all-purpose flour", white, 22)
+    cakeUSIngredients3_text = Text(315, 185, "1 cup granulated sugar", white, 22)
+    cakeUSIngredients4_text = Text(315, 205, "1 teaspoon baking powder", white, 22)
+    cakeUSIngredients5_text = Text(315, 225, "1 teaspoon baking soda", white, 22)
+    cakeUSIngredients6_text = Text(315, 245, "3/4 teaspoon kosher salt", white, 22)
+    cakeUSIngredients7_text = Text(315, 265, "3/4 cup unsalted butter, softened", white, 22)
+    cakeUSIngredients9_text = Text(315, 305, "2/3 cup sour cream, Greek yogurt", white, 22)
+    cakeUSIngredients11_text = Text(315, 345, "1/2 cup milk", white, 22)
+    cakeUSIngredients12_text = Text(315, 365, "2 teaspoons vanilla extract", white, 22)
+    cakeUSIngredients13_text = Text(315, 445, "1 cup unsalted butter , softened", white, 22)
+    cakeUSIngredients14_text = Text(315, 465, "2 1/2 soft icing sugar", white, 22)
+    cakeUSIngredients16_text = Text(315, 505, "3 tsp vanilla extract", white, 22)
+    cakeUSIngredients17_text = Text(315, 525, "2–4 tbsp milk, to adjust thickeness", white, 22)
 
-    sushiMetricIngredients1_text = Text(315, 105, "Ingredients: ", white, 22)
-    sushiMetricIngredients2_text = Text(315, 145, "5 nori / sushi sheets", white, 22)
-    sushiMetricIngredients3_text = Text(315, 165, "10g of sushi seasoning", white, 22)
-    sushiMetricIngredients4_text = Text(315, 185, "/ sushi vinegar, adjust to taste", white, 22)
-    sushiMetricIngredients5_text = Text(315, 205, "200g sushi rice / short grain rice", white, 22)
-    sushiMetricIngredients6_text = Text(315, 225, "85g of salmon", white, 22)
-    sushiMetricIngredients7_text = Text(315, 245, "Half of a cucumber", white, 22)
-    sushiMetricIngredients8_text = Text(315, 265, "Half of an avocado", white, 22)
+    sushiIngredients1_text = Text(315, 145, "5 nori / sushi sheets", white, 22)
+    sushiMetricIngredients2_text = Text(315, 165, "10g of sushi seasoning", white, 22)
+    sushiIngredients3_text = Text(315, 185, "/ sushi vinegar, adjust to taste", white, 22)
+    sushiMetricIngredients4_text = Text(315, 205, "200g sushi rice / short grain rice", white, 22)
+    sushiMetricIngredients5_text = Text(315, 225, "85g of salmon", white, 22)
+    sushiIngredients6_text = Text(315, 245, "Half of a cucumber", white, 22)
+    sushiIngredients7_text = Text(315, 265, "Half of an avocado", white, 22)
 
-    sushiUSIngredients1_text = Text(315, 105, "Ingredients: ", white, 22)
-    sushiUSIngredients2_text = Text(315, 145, "5 nori / sushi sheets", white, 22)
-    sushiUSIngredients3_text = Text(315, 165, "2/3 tbsp of sushi seasoning", white, 22)
-    sushiUSIngredients4_text = Text(315, 185, "/ sushi vinegar, adjust to taste", white, 22)
-    sushiUSIngredients5_text = Text(315, 205, "1 cup sushi rice / short grain rice", white, 22)
-    sushiUSIngredients6_text = Text(315, 225, "1 packet of salmon", white, 22)
-    sushiUSIngredients7_text = Text(315, 245, "Half of a cucumber", white, 22)
-    sushiUSIngredients8_text = Text(315, 265, "Half of an avocado", white, 22)
+    sushiUSIngredients2_text = Text(315, 165, "2/3 tbsp of sushi seasoning", white, 22)
+    sushiUSIngredients4_text = Text(315, 205, "1 cup sushi rice / short grain rice", white, 22)
+    sushiUSIngredients5_text = Text(315, 225, "1 packet of salmon", white, 22)
 
-    burgerMetricIngredients = [burgerMetricIngredients1_text, burgerMetricIngredients2_text, burgerMetricIngredients3_text,
-                               burgerMetricIngredients4_text, burgerMetricIngredients5_text, burgerMetricIngredients6_text,
-                               burgerMetricIngredients7_text, burgerMetricIngredients8_text, burgerMetricIngredients9_text,
-                               burgerMetricIngredients10_text]
-    burgerUSIngredients = [burgerUSIngredients1_text, burgerUSIngredients2_text, burgerUSIngredients3_text,
-                           burgerUSIngredients4_text, burgerUSIngredients5_text, burgerUSIngredients6_text,
-                           burgerUSIngredients7_text, burgerUSIngredients8_text, burgerUSIngredients9_text,
-                           burgerUSIngredients10_text]
-    cakeMetricIngredients = [cakeMetricIngredients1_text, cakeMetricIngredients2_text, cakeMetricIngredients3_text,
+    burgerMetricIngredients = [ingredientsLabel_text, burgerMetricIngredients1_text, burgerMetricIngredients2_text, burgerMetricIngredients3_text,
+                               burgerMetricIngredients4_text, burgerIngredients5_text, burgerMetricIngredients6_text,
+                               burgerIngredients7_text, burgerMetricIngredients8_text, burgerMetricIngredients9_text,]
+    burgerUSIngredients = [ingredientsLabel_text, burgerUSIngredients1_text, burgerUSIngredients2_text, burgerUSIngredients3_text,
+                           burgerUSIngredients4_text, burgerIngredients5_text, burgerUSIngredients6_text,
+                           burgerIngredients7_text, burgerUSIngredients8_text, burgerUSIngredients9_text,]
+    
+    cakeMetricIngredients = [cakeIngredientsLabel_text, cakeMetricIngredients1_text, cakeMetricIngredients2_text, cakeMetricIngredients3_text,
                              cakeMetricIngredients4_text, cakeMetricIngredients5_text, cakeMetricIngredients6_text,
-                             cakeMetricIngredients7_text, cakeMetricIngredients8_text, cakeMetricIngredients9_text,
-                             cakeMetricIngredients10_text, cakeMetricIngredients11_text, cakeMetricIngredients12_text,
-                             cakeMetricIngredients13_text, cakeMetricIngredients14_text, cakeMetricIngredients15_text,
-                             cakeMetricIngredients16_text, cakeMetricIngredients17_text, cakeMetricIngredients18_text,
-                             cakeMetricIngredients19_text]
-    cakeUSIngredients = [cakeUSIngredients1_text, cakeUSIngredients2_text, cakeUSIngredients3_text,
+                             cakeMetricIngredients7_text, cakeIngredients8_text, cakeMetricIngredients9_text,
+                             cakeIngredients10_text, cakeMetricIngredients11_text, cakeMetricIngredients12_text, buttercreamIngredientsLabel_text,
+                             cakeMetricIngredients13_text, cakeMetricIngredients14_text, cakeIngredients15_text,
+                             cakeMetricIngredients16_text, cakeMetricIngredients17_text]
+    cakeUSIngredients = [cakeIngredientsLabel_text, cakeUSIngredients1_text, cakeUSIngredients2_text, cakeUSIngredients3_text,
                              cakeUSIngredients4_text, cakeUSIngredients5_text, cakeUSIngredients6_text,
-                             cakeUSIngredients7_text, cakeUSIngredients8_text, cakeUSIngredients9_text,
-                             cakeUSIngredients10_text, cakeUSIngredients11_text, cakeUSIngredients12_text,
-                             cakeUSIngredients13_text, cakeUSIngredients14_text, cakeUSIngredients15_text,
-                             cakeUSIngredients16_text, cakeUSIngredients17_text, cakeUSIngredients18_text,
-                             cakeUSIngredients19_text]
-    sushiMetricIngredients = [sushiMetricIngredients1_text, sushiMetricIngredients2_text, sushiMetricIngredients3_text,
-                              sushiMetricIngredients4_text, sushiMetricIngredients5_text, sushiMetricIngredients6_text,
-                              sushiMetricIngredients7_text, sushiMetricIngredients8_text]
-    sushiUSIngredients = [sushiUSIngredients1_text, sushiUSIngredients2_text, sushiUSIngredients3_text,
-                          sushiUSIngredients4_text, sushiUSIngredients5_text, sushiUSIngredients6_text,
-                          sushiUSIngredients7_text, sushiUSIngredients8_text]
+                             cakeUSIngredients7_text, cakeIngredients8_text, cakeUSIngredients9_text,
+                             cakeIngredients10_text, cakeUSIngredients11_text, cakeUSIngredients12_text, buttercreamIngredientsLabel_text,
+                             cakeUSIngredients13_text, cakeUSIngredients14_text, cakeIngredients15_text,
+                             cakeUSIngredients16_text, cakeUSIngredients17_text]
+    
+    sushiMetricIngredients = [ ingredientsLabel_text, sushiIngredients1_text, sushiMetricIngredients2_text, sushiIngredients3_text,
+                              sushiMetricIngredients4_text, sushiMetricIngredients5_text, sushiIngredients6_text,
+                              sushiIngredients7_text]
+    sushiUSIngredients = [ingredientsLabel_text, sushiIngredients1_text, sushiUSIngredients2_text, sushiIngredients3_text,
+                          sushiUSIngredients4_text, sushiUSIngredients5_text, sushiIngredients6_text,
+                          sushiIngredients7_text]
 
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
@@ -1547,13 +1571,10 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
             pygame.mixer.music.set_volume((volume_level) / 100)
             mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen = mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen, username) 
         
-
         if shopLoop == True:
             mainLoop, shopLoop = shopScreen(mainLoop, shopLoop)
 
         if settingsLoop == True:
-            volume_level = database.getData_main(username, "volume_level")
-            pygame.mixer.music.set_volume((volume_level) / 100)
             mainLoop, settingsLoop = settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_input, username)
 
         if recipeLoop == True:
