@@ -78,6 +78,11 @@ class Text:
     def drawText(self):
         drawnText = pygame.font.Font(os.path.join('Culinary Quest ASSETS', 'Aptos.ttf'), self.size).render(self.text, True, self.colour)
         WIN.blit(drawnText, (self.x,self.y))
+    
+    def changePosition(self, newX, newY):
+        drawnText = pygame.font.Font(os.path.join('Culinary Quest ASSETS', 'Aptos.ttf'), self.size).render(self.text, True, self.colour)
+        WIN.blit(drawnText, (newX,newY))
+        
         
 class Box:
     def __init__(self, x, y, height, length, colour, transparent):
@@ -781,7 +786,20 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recip
 
     return mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen
 
-def shopScreen(mainLoop, shopLoop):
+def shopScreen(mainLoop, shopLoop, username):
+
+    #retrieving from database
+    current_level = int(database.getData_main(username, "current_level"))
+    disc_selected = str(database.getData_main(username, "disc_selected"))
+    theme_selected = str(database.getData_main(username, "theme_selected"))
+    disc1_available = bool(database.getShopData_main(username, "disc1"))
+    disc2_available = bool(database.getShopData_main(username, "disc2"))
+    disc3_available = bool(database.getShopData_main(username, "disc3"))
+    theme1_available = bool(database.getShopData_main(username, "theme1"))
+    theme2_available = bool(database.getShopData_main(username, "theme2"))
+
+
+
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
 
     #box object creation
@@ -800,11 +818,28 @@ def shopScreen(mainLoop, shopLoop):
     #text object creation
     back_text = Text(80, 55, "<--", white, 50)
     shopLabel_text = Text(485, 162, "Shop", white, 22)
-    musicLabel_text = Text(144, 202, "Music", white, 22)
-    disc1Label_text = Text(147, 255, "Disc 1", white, 22)
-    disc2Label_text = Text(397, 255, "Disc 2", white, 22)
-    disc3Label_text = Text(647, 255, "Disc 3", white, 22)
-
+    musicLabel_text = Text(155, 202, "Music", white, 22)
+    disc1Label_text = Text(195, 265, "Disc 1", white, 25)
+    disc2Label_text = Text(445, 265, "Disc 2", white, 25)
+    disc3Label_text = Text(695, 265, "Disc 3", white, 25)
+    themeLabel_text = Text(150, 382, "Theme", white, 22)
+    theme1Label_text = Text(190, 445, "Purple", white, 25)
+    theme2Label_text = Text(440, 445, "Orange", white, 25)
+    theme3Label_text = Text(710, 445, "N/A", white, 25)
+    discSelected_text = Text(185, 332, "Selected", white, 22)
+    themeSelected_text = Text(185, 512, "Selected", white, 22)
+    disc2Required_text = Text(405, 332, "Must be level 5", white, 22)
+    disc3Required_text = Text(655, 332, "Must be level 10", white, 22)
+    theme2Required_text = Text(405, 512, "Must be level 10", white, 22)
+    theme3NA_text = Text(715, 512, "N/A", white, 22)
+    disc2Unlock_text = Text(437, 332, "Unlock", white, 22)
+    disc3Unlock_text = Text(687, 332, "Unlock", white, 22)
+    theme2Unlock_text = Text(437, 512, "Unlock", white, 22)
+    disc1Select_text = Text(187, 332, "Select", white, 22)
+    disc2Select_text = Text(437, 332, "Select", white, 22)
+    disc3Select_text = Text(687, 332, "Select", white, 22)
+    theme2Select_text = Text(187, 512, "Select", white, 22)
+    theme1Select_text = Text(437, 512, "Select", white, 22)
 
     #button object creation
     back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
@@ -814,6 +849,9 @@ def shopScreen(mainLoop, shopLoop):
     theme1Unlock_button = Button(140, 510, 30, 180, main_darkPurple3, False)
     theme2Unlock_button = Button(390, 510, 30, 180, main_darkPurple3, False)
     theme3Unlock_button = Button(640, 510, 30, 180, main_darkPurple3, False)
+
+    #discs = ["disc1", "disc2", "disc3"]
+    #themes =["theme1", "theme2"]
 
     while shopLoop:
         for event in pygame.event.get():
@@ -853,6 +891,46 @@ def shopScreen(mainLoop, shopLoop):
         disc1Label_text.drawText()
         disc2Label_text.drawText()
         disc3Label_text.drawText()
+        themeLabel_text.drawText()
+        theme1Label_text.drawText()
+        theme2Label_text.drawText()
+        theme3Label_text.drawText()
+        theme3NA_text.drawText()
+
+        if disc_selected == "disc1": #if the disc has been selected
+            discSelected_text.drawText() #display that it has been selected under that box
+        elif disc1_available == True: #if it hasn't been selected but has been unlocked
+            disc1Select_text.drawText() #display that it can be selected under that box
+        if disc_selected == "disc2":
+            discSelected_text.changePosition(435, 332)
+        elif disc2_available == True:
+            disc2Select_text.drawText()
+        if disc_selected == "disc3":
+            discSelected_text.changePosition(685, 332)
+        elif disc3_available == True:
+            disc3Select_text.drawText()
+
+        if theme_selected == "theme1": #if the theme has been selected
+            themeSelected_text.drawText() #display that it has been selected under that box
+        elif theme1_available == True:
+            theme1Select_text.drawText()
+        if theme_selected == "theme2":
+            themeSelected_text.changePosition(187, 512)
+        elif theme2_available == True:
+            theme2Select_text.drawText()
+
+        if current_level >= 5:
+            disc2Unlock_text.drawText()
+            if current_level >= 10:
+                disc3Unlock_text.drawText()
+                theme2Unlock_text.drawText()
+            else:
+                disc3Required_text.drawText()
+                theme2Required_text.drawText()
+        else:
+            disc2Required_text.drawText()
+            disc3Required_text.drawText()
+            theme2Required_text.drawText()
 
         pygame.display.update()
 
@@ -1572,7 +1650,7 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
             mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen = mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen, username) 
         
         if shopLoop == True:
-            mainLoop, shopLoop = shopScreen(mainLoop, shopLoop)
+            mainLoop, shopLoop = shopScreen(mainLoop, shopLoop, username)
 
         if settingsLoop == True:
             mainLoop, settingsLoop = settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_input, username)

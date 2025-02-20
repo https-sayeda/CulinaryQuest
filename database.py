@@ -13,9 +13,8 @@ def createDatabase(filename):
             conn.close() #closes the database when it is no longer in use
 
 def createTable_user():
-    sql1 = """CREATE TABLE IF NOT EXISTS users (
-          accountID integer primary key,         
-          username text NOT NULL,
+    sql1 = """CREATE TABLE IF NOT EXISTS users (       
+          username text primary key,
           password text NOT NULL,
           measurement_type bool NOT NULL,
           volume_level integer NOT NULL,
@@ -25,13 +24,13 @@ def createTable_user():
           theme_selected text NOT NULL
           );"""
     sql2 = """CREATE TABLE IF NOT EXISTS shop (
+          username text,
           disc1 bool NOT NULL,
           disc2 bool NOT NULL,
           disc3 bool NOT NULL,
           theme1 bool NOT NULL,
           theme2 bool NOT NULL,
-          accountID integer,
-          FOREIGN KEY (accountID) REFERENCES users(accountID)
+          FOREIGN KEY (username) REFERENCES users(username)
           );"""
     #sql is used to create a table with the above rows
     try:
@@ -74,8 +73,8 @@ def createTable_recipes():
 def addAccount_sql(conn, UserAccount, UserItems):
     sql1 = """INSERT INTO users(username, password, measurement_type, volume_level, current_level, current_points, disc_selected, theme_selected)
             VALUES(?,?,?,?,?,?,?,?)""" #the sql statements I want to use
-    sql2 = """INSERT INTO shop(disc1, disc2, disc3, theme1, theme2)
-            VALUES(?,?,?,?,?)"""
+    sql2 = """INSERT INTO shop(username, disc1, disc2, disc3, theme1, theme2)
+            VALUES(?, ?,?,?,?,?)"""
     cur = conn.cursor()
     cur.execute("PRAGMA foreign_keys = ON") #we need to active the foreign key for sqlite3
     cur.execute(sql1, UserAccount) #inserts the sql statements and the lists
@@ -89,7 +88,7 @@ def validateUser_sql(conn, userInput):
     records = cur.fetchall() #the total rows
     validate = True
     for row in records:#checks each row
-        if row[1] == userInput: #if the username is in there
+        if row[0] == userInput: #if the username is in there
             validate = False #it's not validated
     return validate
         
@@ -99,7 +98,7 @@ def verifyAccount_sql(conn, userInput, passInput):
     records = cur.fetchall() #the total rows
     verified = False
     for row in records:#checks each row
-        if row[1] == userInput and row[2] == passInput: #if the user and pass match any of the account
+        if row[0] == userInput and row[1] == passInput: #if the user and pass match any of the account
             verified = True #if it does, then it's verified
     return verified
 
@@ -193,17 +192,30 @@ def filterRecipe_sql(conn, dietaryOption, difficultyOption, dietaryInput):
     return recipeFound, recipeNames #returns to filterRecipe_main()
 
 def getData_sql(conn, username, data):
-    dataList = ["measurement_type", "volume_level", "current_level", "current_points"]
-    #there are only 4 things i'll be retrieving from the user table in my database
+    dataList = ["measurement_type", "volume_level", "current_level", "current_points", "disc_selected", "theme_selected"]
+    #there are only 6 things i'll be retrieving from the user table in my database
     cur = conn.cursor()
     cur.execute("""SELECT * FROM users""")
     records = cur.fetchall()
     for row in records: #checks each account
-        if row[1] == username: #if the username matches
+        if row[0] == username: #if the username matches
             for i in range(len(dataList)): #goes through the list
                 if data == dataList[i]: #checks if what I want to retrieve matches the item in the list
-                    returnedData = row[i+3] #if it does, store that value in a variable
+                    returnedData = row[i+2] #if it does, store that value in a variable
     return returnedData #return to getData_main()
+
+def getShopData_sql(conn, username, data):
+    dataList = ["disc1", "disc2", "disc3", "theme1", "theme2"]
+    #there are only 5 things i'll be retrieving from the shop table in my database
+    cur = conn.cursor()
+    cur.execute("""SELECT * FROM shop""")
+    records = cur.fetchall()
+    for row in records: #checks each account
+        if row[0] == username: #if the username matches
+            for i in range(len(dataList)): #goes through the list
+                if data == dataList[i]: #checks if what I want to retrieve matches the item in the list
+                    returnedData = row[i+1] #if it does, store that value in a variable
+    return returnedData #return to getShopData_main()
 
 #main subroutines
 def addAccount_main(userInput, passInput):
@@ -212,7 +224,7 @@ def addAccount_main(userInput, passInput):
             passInput = hashlib.sha256(passInput.encode()).hexdigest()
             #hashing algorithm for password
             UserAccount = (userInput, passInput, True, 100, 1, 0, "disc1", "theme1")
-            UserItems = (True, False, False, True, False)
+            UserItems = (userInput, True, False, False, True, False)
             addAccount_sql(conn, UserAccount, UserItems)
     except sqlite3.Error as e:
         print(e)
@@ -283,6 +295,15 @@ def getData_main(username, data):
     try:
         with sqlite3.connect("user.db") as conn:
             returnedData = getData_sql(conn, username, data) 
+            #sends username and the data I want, and returns that data
+            return returnedData #returns to main python file
+    except sqlite3.Error as e:
+        print(e)
+
+def getShopData_main(username, data):
+    try:
+        with sqlite3.connect("user.db") as conn:
+            returnedData = getShopData_sql(conn, username, data) 
             #sends username and the data I want, and returns that data
             return returnedData #returns to main python file
     except sqlite3.Error as e:
