@@ -144,6 +144,54 @@ def changeData_sql(conn, data, newData, username):
                 SET current_points = ?
                 WHERE username = ?;
             """, (newData, username))
+    elif data == "disc_selected":
+        cur.execute("""
+                UPDATE users
+                SET disc_selected = ?
+                WHERE username = ?;
+            """, (newData, username))
+    elif data == "theme_selected":
+        cur.execute("""
+                UPDATE users
+                SET theme_selected = ?
+                WHERE username = ?;
+            """, (newData, username))
+    elif data == "disc1":
+        cur.execute("""
+                UPDATE shop
+                SET disc1 = ?
+                WHERE username = ?;
+            """, (newData, username))
+    elif data == "disc2":
+        cur.execute("""
+                UPDATE shop
+                SET disc2 = ?
+                WHERE username = ?;
+            """, (newData, username))
+    elif data == "disc3":
+        cur.execute("""
+                UPDATE shop
+                SET disc3 = ?
+                WHERE username = ?;
+            """, (newData, username))
+    elif data == "theme1":
+        cur.execute("""
+                UPDATE shop
+                SET theme1 = ?
+                WHERE username = ?;
+            """, (newData, username))
+    elif data == "theme2":
+        cur.execute("""
+                UPDATE shop
+                SET theme2 = ?
+                WHERE username = ?;
+            """, (newData, username))
+    elif data == "theme3":
+        cur.execute("""
+                UPDATE shop
+                SET theme3 = ?
+                WHERE username = ?;
+            """, (newData, username))
 
 def addRecipe_sql(conn, Recipe):
     sql = """INSERT INTO recipes(recipeName, halal, vegetarian, vegan, difficulty)
@@ -308,6 +356,8 @@ def getShopData_main(username, data):
             return returnedData #returns to main python file
     except sqlite3.Error as e:
         print(e)
+
+
 
 if __name__ == '__main__':
     #createDatabase("shop.db")

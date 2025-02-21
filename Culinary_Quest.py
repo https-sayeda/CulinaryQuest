@@ -34,13 +34,23 @@ main_darkPurple1 = pygame.Color(168, 120, 169)
 main_darkPurple2 = pygame.Color(130, 103, 158)
 main_darkPurple3 = pygame.Color(110, 54, 98)
 main_brightPurple = pygame.Color(112, 48, 160)
+
+main_lightOrange1 = pygame.Color(231, 189, 161)
+main_lightOrange2 = pygame.Color(195, 129, 93)
+main_darkOrange1 = pygame.Color(201, 129, 75)
+main_darkOrange2 = pygame.Color(189, 88, 69)
+main_darkOrange3 = pygame.Color(139, 50, 19)
+main_brightOrange = pygame.Color(223, 97, 41)
+
 main_beige = pygame.Color(232, 220, 211)
 main_green = pygame.Color(68, 166, 84)
 main_orange = pygame.Color(233, 113, 50)
 
 #IMAGES
 loginBg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','login1_background.png'))
-mainBg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','main1_background.png'))
+main1Bg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','main1_background.png'))
+main2Bg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','main2_background.png'))
+main2Bg_image = pygame.transform.scale(main2Bg_image, (1000, 600))
 gameBg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','game1_background.png'))
 gameLogo_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','logo.png'))
 cursor_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cursor_icon.png'))
@@ -405,36 +415,43 @@ def createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLo
 
     return createLoop, loginLoop
 
-def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen, username):
+def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen, username, theme_selected):
 
     #retrieving from database
     current_level = str(database.getData_main(username, "current_level"))
     current_points = str(100-(database.getData_main(username, "current_points")))
 
+    if theme_selected == "theme1":
+        colours = [main_lightPurple1, main_lightPurple2, main_darkPurple1, main_darkPurple2, main_darkPurple3, main_brightPurple]
+        mainBg_image = main1Bg_image
+    elif theme_selected == "theme2":
+        colours = [main_lightOrange1, main_lightOrange2, main_darkOrange1, main_darkOrange2, main_darkOrange3, main_brightOrange]
+        mainBg_image = main2Bg_image
+
     #scaling the game logo
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (75, 75))
     scaled_checkmarkIcon = pygame.transform.scale(checkmarkIcon_image, (30, 30))
     #box object creation
-    recipeBg_box = Box(120, 170, 425, 750, main_lightPurple1, True)
-    overhead_box = Box(0, 0, 75, 1000, main_darkPurple1, True)
-    pointsNeeded_box = Box(240, 15, 40, 300, main_darkPurple3, False)
-    currentLevel_box = Box(160, 15, 40, 90, main_darkPurple2, False)
-    recipeBg1_box = Box(130, 180, 180, 200, main_lightPurple2, False)
-    recipeBg2_box = Box(340, 180, 180, 200, main_lightPurple2, False)
-    recipeBg3_box = Box(550, 180, 180, 200, main_lightPurple2, False)
-    recipeBg4_box = Box(130, 380, 180, 200, main_lightPurple2, False)
-    recipeBg5_box = Box(340, 380, 180, 200, main_lightPurple2, False)
-    recipeBg6_box = Box(550, 380, 180, 200, main_lightPurple2, False)
+    recipeBg_box = Box(120, 170, 425, 750, colours[0], True)
+    overhead_box = Box(0, 0, 75, 1000, colours[2], True)
+    pointsNeeded_box = Box(240, 15, 40, 300, colours[4], False)
+    currentLevel_box = Box(160, 15, 40, 90, colours[3], False)
+    recipeBg1_box = Box(130, 180, 180, 200, colours[1], False)
+    recipeBg2_box = Box(340, 180, 180, 200, colours[1], False)
+    recipeBg3_box = Box(550, 180, 180, 200, colours[1], False)
+    recipeBg4_box = Box(130, 380, 180, 200, colours[1], False)
+    recipeBg5_box = Box(340, 380, 180, 200, colours[1], False)
+    recipeBg6_box = Box(550, 380, 180, 200, colours[1], False)
     filterBg_box = Box(820, 100, 37, 50, login_grey1, False)
     filtertoolBg_box = Box(670, 150, 380, 300, login_grey1, False)
-    dietaryBg_box = Box(690, 160, 33, 265, main_darkPurple2, False)
-    halalBg_box = Box(690, 200, 33, 130, main_lightPurple1, False)
-    vegeterianBg_box = Box(690, 238, 33, 130, main_lightPurple1, False)
-    veganBg_box = Box(690, 276, 33, 130, main_lightPurple1, False)
-    difficultyBg_box = Box(690, 316, 33, 265, main_darkPurple2, False)
-    easyBg_box = Box(690, 356, 33, 130, main_lightPurple1, False)
-    mediumBg_box = Box(690, 394, 33, 130, main_lightPurple1, False)
-    hardBg_box = Box(690, 432, 33, 130, main_lightPurple1, False)
+    dietaryBg_box = Box(690, 160, 33, 265, colours[3], False)
+    halalBg_box = Box(690, 200, 33, 130, colours[0], False)
+    vegeterianBg_box = Box(690, 238, 33, 130, colours[0], False)
+    veganBg_box = Box(690, 276, 33, 130, colours[0], False)
+    difficultyBg_box = Box(690, 316, 33, 265, colours[3], False)
+    easyBg_box = Box(690, 356, 33, 130, colours[0], False)
+    mediumBg_box = Box(690, 394, 33, 130, colours[0], False)
+    hardBg_box = Box(690, 432, 33, 130, colours[0], False)
     errorBg_box = Box(350, 230, 50, 300, login_red1, False)
 
     #text object creation
@@ -453,14 +470,14 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recip
     pointsNeeded_text = Text(263, 20, current_points + " points for the next level", white, 22)
 
     #button creation
-    search_button = Button(120, 100, 37, 120, main_lightPurple2, False)
+    search_button = Button(120, 100, 37, 120, colours[1], False)
     halal_button = Button(840, 200, 33, 33, white, False)
     vegetarian_button = Button(840, 238, 33, 33, white, False)
     vegan_button = Button(840, 276, 33, 33, white, False)
     easy_button = Button(840, 356, 33, 33, white, False)
     medium_button = Button(840, 394, 33, 33, white, False)
     hard_button = Button(840, 432, 33, 33, white, False)
-    filterText_button = Button(690, 472, 33, 265, main_brightPurple, False)
+    filterText_button = Button(690, 472, 33, 265, colours[5], False)
 
     #image button creation
     shop_button = ImageButton(600, 10, shopIcon_image, 1)
@@ -786,33 +803,31 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recip
 
     return mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen
 
-def shopScreen(mainLoop, shopLoop, username):
+def shopScreen(mainLoop, shopLoop, username, theme_selected):
 
     #retrieving from database
     current_level = int(database.getData_main(username, "current_level"))
-    disc_selected = str(database.getData_main(username, "disc_selected"))
-    theme_selected = str(database.getData_main(username, "theme_selected"))
-    disc1_available = bool(database.getShopData_main(username, "disc1"))
-    disc2_available = bool(database.getShopData_main(username, "disc2"))
-    disc3_available = bool(database.getShopData_main(username, "disc3"))
-    theme1_available = bool(database.getShopData_main(username, "theme1"))
-    theme2_available = bool(database.getShopData_main(username, "theme2"))
 
-
+    if theme_selected == "theme1":
+        colours = [main_lightPurple1, main_lightPurple2, main_darkPurple1, main_darkPurple2, main_darkPurple3, main_brightPurple]
+        mainBg_image = main1Bg_image
+    elif theme_selected == "theme2":
+        colours = [main_lightOrange1, main_lightOrange2, main_darkOrange1, main_darkOrange2, main_darkOrange3, main_brightOrange]
+        mainBg_image = main2Bg_image
 
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
 
     #box object creation
-    shopBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
-    shopLabel_box = Box(410, 160, 30, 200, main_darkPurple2, False)
-    musicLabel_box = Box(140, 200, 30, 90, main_darkPurple2, False)
-    disc1Label_box = Box(140, 250, 60, 180, main_darkPurple1, False)
-    disc2Label_box = Box(390, 250, 60, 180, main_darkPurple1, False)
-    disc3Label_box = Box(640, 250, 60, 180, main_darkPurple1, False)
-    themeLabel_box = Box(140, 380, 30, 90, main_darkPurple2, False)
+    shopBg_box = Box(120, 150, 425, 750, colours[0], True)
+    shopLabel_box = Box(410, 160, 30, 200, colours[3], False)
+    musicLabel_box = Box(140, 200, 30, 90, colours[3], False)
+    disc1Label_box = Box(140, 250, 60, 180, colours[2], False)
+    disc2Label_box = Box(390, 250, 60, 180, colours[2], False)
+    disc3Label_box = Box(640, 250, 60, 180, colours[2], False)
+    themeLabel_box = Box(140, 380, 30, 90, colours[3], False)
     theme1Label_box = Box(140, 430, 60, 180, main_darkPurple1, False)
     theme2Label_box = Box(390, 430, 60, 180, main_orange, False)
-    theme3Label_box = Box(640, 430, 60, 180, main_darkPurple1, False)
+    theme3Label_box = Box(640, 430, 60, 180, colours[2], False)
 
 
     #text object creation
@@ -838,22 +853,29 @@ def shopScreen(mainLoop, shopLoop, username):
     disc1Select_text = Text(187, 332, "Select", white, 22)
     disc2Select_text = Text(437, 332, "Select", white, 22)
     disc3Select_text = Text(687, 332, "Select", white, 22)
-    theme2Select_text = Text(187, 512, "Select", white, 22)
-    theme1Select_text = Text(437, 512, "Select", white, 22)
+    theme1Select_text = Text(187, 512, "Select", white, 22)
+    theme2Select_text = Text(437, 512, "Select", white, 22)
 
     #button object creation
-    back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
-    disc1Unlock_button = Button(140, 330, 30, 180, main_darkPurple3, False)
-    disc2Unlock_button = Button(390, 330, 30, 180, main_darkPurple3, False)
-    disc3Unlock_button = Button(640, 330, 30, 180, main_darkPurple3, False)
-    theme1Unlock_button = Button(140, 510, 30, 180, main_darkPurple3, False)
-    theme2Unlock_button = Button(390, 510, 30, 180, main_darkPurple3, False)
-    theme3Unlock_button = Button(640, 510, 30, 180, main_darkPurple3, False)
-
-    #discs = ["disc1", "disc2", "disc3"]
-    #themes =["theme1", "theme2"]
+    back_button = Button(65, 50, 70, 100, colours[3], False)
+    disc1Unlock_button = Button(140, 330, 30, 180, colours[4], False)
+    disc2Unlock_button = Button(390, 330, 30, 180, colours[4], False)
+    disc3Unlock_button = Button(640, 330, 30, 180, colours[4], False)
+    theme1Unlock_button = Button(140, 510, 30, 180, colours[4], False)
+    theme2Unlock_button = Button(390, 510, 30, 180, colours[4], False)
+    theme3Unlock_button = Button(640, 510, 30, 180, colours[4], False)
 
     while shopLoop:
+
+        disc_selected = str(database.getData_main(username, "disc_selected"))
+        theme_selected = str(database.getData_main(username, "theme_selected"))
+        disc1_available = bool(database.getShopData_main(username, "disc1"))
+        disc2_available = bool(database.getShopData_main(username, "disc2"))
+        disc3_available = bool(database.getShopData_main(username, "disc3"))
+        theme1_available = bool(database.getShopData_main(username, "theme1"))
+        theme2_available = bool(database.getShopData_main(username, "theme2"))
+        print(disc_selected)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -864,6 +886,38 @@ def shopScreen(mainLoop, shopLoop, username):
                 if backPressed:
                     shopLoop = False
                     mainLoop = True
+                disc1Pressed = disc1Unlock_button.checkPressed(pygame.mouse.get_pos())
+                if disc1Pressed: #if the button for disc1 has been pressed
+                    if disc_selected != "disc1": #checks that it isn't already selected
+                        database.changeData_main("disc_selected", "disc1", username)
+                        #changes the selected disc to disc1 in database
+                disc2Pressed = disc2Unlock_button.checkPressed(pygame.mouse.get_pos())
+                if disc2Pressed:
+                    if disc_selected != "disc2": #checks that disc 2 not already selected
+                        if disc2_available == True: #if it has already been unlocked
+                            database.changeData_main("disc_selected", "disc2", username)
+                            #make it become the selected disc
+                        elif current_level >= 5: #if it hasn't been unlocked and the level is at least 5
+                            database.changeData_main("disc2", True, username) #make it so the disc is unlocked
+                disc3Pressed = disc3Unlock_button.checkPressed(pygame.mouse.get_pos())
+                if disc3Pressed:
+                    if disc_selected != "disc3":
+                        if disc3_available == True:
+                            database.changeData_main("disc_selected", "disc3", username)
+                        elif current_level >= 10:
+                            database.changeData_main("disc3", True, username)
+                theme1Pressed = theme1Unlock_button.checkPressed(pygame.mouse.get_pos())
+                if theme1Pressed: #if theme1 button pressed
+                    if theme_selected != "theme1": #checks not already selected
+                        database.changeData_main("theme_selected", "theme1", username)
+                        #if it hasn't been selected, then changes it to be selected
+                theme2Pressed = theme2Unlock_button.checkPressed(pygame.mouse.get_pos())
+                if theme2Pressed:
+                    if theme_selected != "theme2":
+                        if theme2_available == True:
+                            database.changeData_main("theme_selected", "theme2", username)
+                        elif current_level >= 10:
+                            database.changeData_main("theme2", True, username)
             
         #drawing onto screen
         WIN.blit(mainBg_image, bgPosition)
@@ -901,63 +955,72 @@ def shopScreen(mainLoop, shopLoop, username):
             discSelected_text.drawText() #display that it has been selected under that box
         elif disc1_available == True: #if it hasn't been selected but has been unlocked
             disc1Select_text.drawText() #display that it can be selected under that box
+
         if disc_selected == "disc2":
             discSelected_text.changePosition(435, 332)
         elif disc2_available == True:
             disc2Select_text.drawText()
+        elif current_level >= 5:
+            disc2Unlock_text.drawText()
+        else:
+            disc2Required_text.drawText()
+
         if disc_selected == "disc3":
             discSelected_text.changePosition(685, 332)
         elif disc3_available == True:
             disc3Select_text.drawText()
+        elif current_level >= 10:
+            disc3Unlock_text.drawText()
+        else:
+            disc3Required_text.drawText()
 
         if theme_selected == "theme1": #if the theme has been selected
             themeSelected_text.drawText() #display that it has been selected under that box
         elif theme1_available == True:
             theme1Select_text.drawText()
+
         if theme_selected == "theme2":
-            themeSelected_text.changePosition(187, 512)
+            themeSelected_text.changePosition(435, 512)
         elif theme2_available == True:
             theme2Select_text.drawText()
-
-        if current_level >= 5:
-            disc2Unlock_text.drawText()
-            if current_level >= 10:
-                disc3Unlock_text.drawText()
-                theme2Unlock_text.drawText()
-            else:
-                disc3Required_text.drawText()
-                theme2Required_text.drawText()
+        elif current_level >= 10:
+            theme2Unlock_text.drawText()
         else:
-            disc2Required_text.drawText()
-            disc3Required_text.drawText()
             theme2Required_text.drawText()
 
         pygame.display.update()
 
-    return mainLoop, shopLoop
+    return mainLoop, shopLoop, disc_selected, theme_selected
 
-def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_input, username):
+def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_input, username, theme_selected):
 
     volume_level = database.getData_main(username, "volume_level")
+
+    if theme_selected == "theme1":
+        colours = [main_lightPurple1, main_lightPurple2, main_darkPurple1, main_darkPurple2, main_darkPurple3, main_brightPurple]
+        mainBg_image = main1Bg_image
+    elif theme_selected == "theme2":
+        colours = [main_lightOrange1, main_lightOrange2, main_darkOrange1, main_darkOrange2, main_darkOrange3, main_brightOrange]
+        mainBg_image = main2Bg_image
 
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
     scaled_checkmarkIcon = pygame.transform.scale(checkmarkIcon_image, (35, 35))
 
     #box object creation
-    settingsBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
-    settingsLabel_box = Box(405, 160, 30, 200, main_darkPurple2, False)
-    changePassLabel_box = Box(140, 200, 30, 210, main_darkPurple2, False)
-    volumeLabel_box = Box(140, 360, 30, 210, main_darkPurple2, False)
-    measurementLabel_box = Box(140, 460, 30, 210, main_darkPurple2, False)
-    oldPasswordLabel_box = Box(140, 250, 30, 210, main_darkPurple3, False)
-    newPasswordLabel_box = Box(140, 310, 30, 210, main_darkPurple3, False)
+    settingsBg_box = Box(120, 150, 425, 750, colours[0], True)
+    settingsLabel_box = Box(405, 160, 30, 200, colours[3], False)
+    changePassLabel_box = Box(140, 200, 30, 210, colours[3], False)
+    volumeLabel_box = Box(140, 360, 30, 210, colours[3], False)
+    measurementLabel_box = Box(140, 460, 30, 210, colours[3], False)
+    oldPasswordLabel_box = Box(140, 250, 30, 210, colours[4], False)
+    newPasswordLabel_box = Box(140, 310, 30, 210, colours[4], False)
     errorBg1_box = Box(655, 180, 30, 200, login_red1, False)
     errorBg2_box = Box(655, 230, 130, 200, login_red1, False)
     passwordChangedBg_box = Box(655, 180, 30, 200, main_green, False)
-    metricLabel_box = Box(140, 520, 30, 200, main_darkPurple3, False)
-    UScustomaryLabel_box = Box(440, 520, 30, 200, main_darkPurple3, False)
+    metricLabel_box = Box(140, 520, 30, 200, colours[4], False)
+    UScustomaryLabel_box = Box(440, 520, 30, 200, colours[4], False)
     volumeBg_box = Box(140, 410, 30, 500, white, False)
-    volumeBar_box = Box(140, 410, 30, volume_level*5, main_darkPurple1, False)
+    volumeBar_box = Box(140, 410, 30, volume_level*5, colours[2], False)
 
     #text object creation
     back_text = Text(80, 55, "<--", white, 50)
@@ -982,12 +1045,12 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
     volumeDown_text = Text(660, 423, "\/", white, 20)
 
     #button object creation
-    back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
-    save_button = Button(370, 200, 30, 75, main_brightPurple, False)
+    back_button = Button(65, 50, 70, 100, colours[3], False)
+    save_button = Button(370, 200, 30, 75, colours[5], False)
     metric_button = Button(370, 518, 33, 33, white, False)
     UScustomary_button = Button(670, 518, 33, 33, white, False)
-    volumeUp_button = Button(650, 397, 22, 33, main_darkPurple3, False)
-    volumeDown_button = Button(650, 423, 22, 33, main_darkPurple3, False)
+    volumeUp_button = Button(650, 397, 22, 33, colours[4], False)
+    volumeDown_button = Button(650, 423, 22, 33, colours[4], False)
 
     while settingsLoop:
         for event in pygame.event.get():
@@ -1114,8 +1177,15 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
         pygame.display.update()
     return mainLoop, settingsLoop
     
-def recipeScreen(mainLoop, recipeLoop, recipeChosen, username):
+def recipeScreen(mainLoop, recipeLoop, recipeChosen, username, theme_selected):
 
+    if theme_selected == "theme1":
+        colours = [main_lightPurple1, main_lightPurple2, main_darkPurple1, main_darkPurple2, main_darkPurple3, main_brightPurple]
+        mainBg_image = main1Bg_image
+    elif theme_selected == "theme2":
+        colours = [main_lightOrange1, main_lightOrange2, main_darkOrange1, main_darkOrange2, main_darkOrange3, main_brightOrange]
+        mainBg_image = main2Bg_image
+    
     #scaling images
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
     scaled_burger = pygame.transform.scale(burgerIcon_image, (250, 250))
@@ -1129,16 +1199,16 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen, username):
     scaled_vegan = pygame.transform.scale(veganIcon_image, (60, 60))
 
     #box object creation
-    recipeBg_box = Box(120, 150, 425, 750, main_lightPurple1, True)
-    recipeLabel_box = Box(410, 160, 30, 200, main_darkPurple2, False)
-    informationLabel_box = Box(170, 210, 30, 180, main_darkPurple2, False)
-    attemptsLabel_box = Box(660, 210, 30, 180, main_darkPurple2, False)
+    recipeBg_box = Box(120, 150, 425, 750, colours[0], True)
+    recipeLabel_box = Box(410, 160, 30, 200, colours[3], False)
+    informationLabel_box = Box(170, 210, 30, 180, colours[3], False)
+    attemptsLabel_box = Box(660, 210, 30, 180, colours[3], False)
     recipeIconBg_box = Box(390, 210, 195, 235, white, False)
-    difficultyBg_box = Box(170, 330, 30, 180, main_darkPurple1, False)
-    descriptionLabel_box = Box(170, 420, 30, 180, main_darkPurple2, False)
-    leaderboardBg_box = Box(660, 247, 205, 180, main_darkPurple1, False)
-    descriptionBg_box = Box(170, 465, 90, 670, main_darkPurple1, False)
-    fullRecipeBg_box = Box(310, 100, 480, 410, main_darkPurple3, False)
+    difficultyBg_box = Box(170, 330, 30, 180, colours[2], False)
+    descriptionLabel_box = Box(170, 420, 30, 180, colours[3], False)
+    leaderboardBg_box = Box(660, 247, 205, 180, colours[2], False)
+    descriptionBg_box = Box(170, 465, 90, 670, colours[2], False)
+    fullRecipeBg_box = Box(310, 100, 480, 410, colours[4], False)
 
     #text object creation
     back_text = Text(80, 55, "<--", white, 50)
@@ -1402,12 +1472,12 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen, username):
                           sushiIngredients7_text]
 
     #button object creation
-    back_button = Button(65, 50, 70, 100, main_darkPurple2, False)
-    fullRecipe_button = Button(170, 375, 30, 180, main_darkPurple3, False)
-    start_button = Button(415, 420, 30, 180, main_brightPurple, False)
+    back_button = Button(65, 50, 70, 100, colours[3], False)
+    fullRecipe_button = Button(170, 375, 30, 180, colours[4], False)
+    start_button = Button(415, 420, 30, 180, colours[5], False)
     exit_button = Button(705, 85, 40, 40, login_red1, False)
-    recipePageR_button = Button(685, 535, 30, 30, main_darkPurple3, False)
-    recipePageL_button = Button(310, 535, 30, 30, main_darkPurple3, False)
+    recipePageR_button = Button(685, 535, 30, 30, colours[4], False)
+    recipePageL_button = Button(310, 535, 30, 30, colours[4], False)
 
     #variables used
     count = 0
@@ -1617,6 +1687,15 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen, username):
         pygame.display.update()
     return mainLoop, recipeLoop, recipeChosen
 
+def playDisc(disc_selected):
+    if disc_selected == "disc1":
+            pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"gingko.mp3"))
+    elif disc_selected == "disc2":
+        pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"old_feelings.mp3"))
+    elif disc_selected == "disc3":
+        pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"sunday_morning.mp3"))
+    pygame.mixer.music.play(-1)
+
 def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
     clock = pygame.time.Clock()
     clock.tick(FPS)
@@ -1633,30 +1712,32 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
     oldPassInput_input = Input(350, 250, 30, 280, black, 20, True)
     newPassInput_input = Input(350, 310, 30, 280, black, 20, True)
 
-    pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"gingko.mp3"))
-    pygame.mixer.music.play(-1)
-
     while run:
+            
         if loginLoop == True:
             pygame.mixer.music.set_volume(0)
             loginLoop, createLoop, mainLoop, username = loginScreen(usernameInput1_input, passwordInput1_input, loginLoop, createLoop, mainLoop)
+            disc_selected = str(database.getData_main(username, "disc_selected"))
+            playDisc(disc_selected)
 
         if createLoop == True:
             createLoop, loginLoop = createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLoop)
 
         if mainLoop == True:
+            theme_selected = str(database.getData_main(username, "theme_selected"))
             volume_level = database.getData_main(username, "volume_level")
             pygame.mixer.music.set_volume((volume_level) / 100)
-            mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen = mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen, username) 
+            mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen = mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen, username, theme_selected) 
         
         if shopLoop == True:
-            mainLoop, shopLoop = shopScreen(mainLoop, shopLoop, username)
+            mainLoop, shopLoop, disc_selected, theme_selected = shopScreen(mainLoop, shopLoop, username, theme_selected)
+            playDisc(disc_selected)
 
         if settingsLoop == True:
-            mainLoop, settingsLoop = settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_input, username)
+            mainLoop, settingsLoop = settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_input, username, theme_selected)
 
         if recipeLoop == True:
-            mainLoop, recipeLoop, recipeChosen = recipeScreen(mainLoop, recipeLoop, recipeChosen, username)
+            mainLoop, recipeLoop, recipeChosen = recipeScreen(mainLoop, recipeLoop, recipeChosen, username, theme_selected)
 
 loginLoop = True
 createLoop = False
