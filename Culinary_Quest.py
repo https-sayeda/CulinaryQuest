@@ -3,6 +3,7 @@ import pygame
 import time
 import database
 import sys
+import minigames
 
 pygame.init()
 
@@ -92,8 +93,7 @@ class Text:
     def changePosition(self, newX, newY):
         drawnText = pygame.font.Font(os.path.join('Culinary Quest ASSETS', 'Aptos.ttf'), self.size).render(self.text, True, self.colour)
         WIN.blit(drawnText, (newX,newY))
-        
-        
+         
 class Box:
     def __init__(self, x, y, height, length, colour, transparent):
         self.x = x
@@ -1687,6 +1687,24 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen, username, theme_selected):
         pygame.display.update()
     return mainLoop, recipeLoop, recipeChosen
 
+def minigameScreen(minigameLoop):
+
+    draw = True
+
+    arrow = Text(200, 112, "<--", login_red1, 500)
+    while minigameLoop:
+        WIN.blit(main1Bg_image, bgPosition)
+        pygame.display.update()
+
+        while draw:
+            arrow.drawText()
+            draw = minigames.draw(WIN, draw, 334.0, 425.0, 340.0, 620.0, 684.0, 560.0, 129.0, 523.0)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+        
 def playDisc(disc_selected):
     if disc_selected == "disc1":
             pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"gingko.mp3"))
@@ -1713,6 +1731,9 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
     newPassInput_input = Input(350, 310, 30, 280, black, 20, True)
 
     while run:
+
+        minigameLoop = True
+        minigameScreen(minigameLoop)
             
         if loginLoop == True:
             pygame.mixer.music.set_volume(0)

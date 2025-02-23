@@ -1,29 +1,58 @@
-from tkinter import *
+# Imports
+import sys
+import pygame
 
-#drawing lines
-'''def get_x_and_y(event): #gets x and y coordinates when mouse clicked
-    global lasx, lasy 
-    lasx, lasy = event.x, event.y 
-    #updates the starting coordinates by assinging the value of the end coordinates
+def draw(WIN, draw, x1, y1, x2, y2, x3, y3, x4, y4):
 
+    flag1 = False
+    flag2 = False
+    flag3 = False
+    flag4 = False
+    # the colour and size of the brush
+    drawColour = [0, 0, 255]
+    brushSize = 10
+    canvasSize = [800, 800]
 
-def draw_line(event): #draws line on canvas
-    global lasx, lasy
-    canvas.create_line((lasx, lasy, event.x, event.y), fill="red", width=3)
-    lasx, lasy = event.x, event.y
+    # Canvas
+    canvas = pygame.Surface((canvasSize),pygame.SRCALPHA)
+    canvas.set_alpha(200)
 
+    while draw:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+        # Draw the Canvas at the center of the screen
+        x, y = WIN.get_size()
+        WIN.blit(canvas, [x/2 - canvasSize[0]/2, y/2 - canvasSize[1]/2])
+        if flag1 == True and flag2 == True and flag3 == True and flag4 == True:
+            draw = False
+            pygame.display.update()
 
-app = Tk()
-app.geometry("400x400") #the size of the window
-canvas = Canvas(app, bg="black") 
-#creating a canvas onto the window with background colour black
-canvas.pack(anchor="nw", fill = "both", expand = 1)
-#the canvas is anchored at the top left corner of the window and fills the
-#entire window
+        position = "nothing"
+        dx = 0
+        dy = 0
+        # Drawing with the mouse
+        if pygame.mouse.get_pressed()[0]:
+            mx, my = pygame.mouse.get_pos()
 
-canvas.bind("<Button-1>", get_x_and_y)
-canvas.bind("<B1-Motion>", draw_line) 
-#calls the functions when left mouse clicked
+            # Calculate Position on the Canvas
+            dx = mx - x/2 + canvasSize[0]/2
+            dy = my - y/2 + canvasSize[1]/2
 
-app.mainloop()'''
+            pygame.draw.circle(canvas, drawColour,[dx, dy], brushSize)
+
+        if (x1-5.0) <= dx <= (x1+5.0) and (y1-5.0) <= dy <= (y1+5.0):
+            flag1 = True
+        if (x2-5.0) <= dx <= (x2+5.0) and (y2-5.0) <= dy <= (y2+5.0):
+            flag2 = True
+        if (x3-5.0) <= dx <= (x3+5.0) and (y3-5.0) <= dy <= (y3+5.0):
+            flag3 = True
+        if (x4-5.0) <= dx <= (x4+5.0) and (y4-5.0) <= dy <= (y4+5.0):
+            flag4 = True
+
+        pygame.display.update()
+    WIN.blit(canvas, [x/2 - canvasSize[0]/2, y/2 - canvasSize[1]/2])
+    pygame.display.update()
 
