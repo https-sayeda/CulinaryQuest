@@ -1689,7 +1689,8 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen, username, theme_selected):
 
 def minigameScreen(minigameLoop):
 
-    draw = True
+    draw = False
+    assembly = True
 
     arrow = Text(200, 112, "<--", login_red1, 500)
     while minigameLoop:
@@ -1699,6 +1700,8 @@ def minigameScreen(minigameLoop):
         while draw:
             arrow.drawText()
             draw = minigames.draw(WIN, draw, 334.0, 425.0, 340.0, 620.0, 684.0, 560.0, 129.0, 523.0)
+        while assembly:
+            assembly = minigames.assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
