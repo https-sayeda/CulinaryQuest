@@ -60,7 +60,7 @@ def draw(WIN, draw, x1, y1, x2, y2, x3, y3, x4, y4):
     WIN.blit(canvas, [x/2 - canvasSize[0]/2, y/2 - canvasSize[1]/2])
     pygame.display.update()
 
-def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
+def assembly2(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
     hand_width = 100
     hand_height = 100
     hand_x = window_x // 2 - hand_width
@@ -69,8 +69,6 @@ def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
     component_width = 150
     component_height = 250
     component_speed = 5
-    component_x = random.randint(0, window_x - component_width)
-    component_y = -component_height
     count = 0
 
     #images
@@ -101,6 +99,10 @@ def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
     component_y = -component_height
     
     while count != 7 and assembly == True:
+        
+        #WIN.blit(main1Bg_image, bgPosition)
+        hand_rect = WIN.blit(hand_image, (hand_x, hand_y))
+        component_rect = WIN.blit(burgerLayer_images[count], (component_x, component_y))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -109,7 +111,7 @@ def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
                 break
         
         #moving the hand left and right
-        keys = pygame.key.get_pressed()
+        '''keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] == True or keys[pygame.K_a] == True:
             hand_x -= hand_speed
         if keys[pygame.K_RIGHT] == True or keys[pygame.K_d] == True:
@@ -121,11 +123,24 @@ def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
         if hand_x > window_x - component_width:
             hand_x = window_x - hand_width
         
-        component_y += component_speed
+        component_y += component_speed'''
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                hand_x -= hand_speed
+            if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                hand_x -= hand_speed
+        
+        if hand_x <= 0:
+            hand_x = 0
+        elif hand_x >= window_x:
+            hand_x = window_x
 
-        WIN.blit(main1Bg_image, bgPosition)
-        WIN.blit(hand_image, (hand_x, hand_y))
+        if component_y > window_y:
+            component_x = random.randint(0, window_x - component_width)
+            component_y = -component_height
+
+        '''WIN.blit(main1Bg_image, bgPosition)
         #checking whether the user catches the component
         if component_y == window_y:
             if count != 6:
@@ -156,10 +171,92 @@ def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
         WIN.blit(burgerLayer_images[count], (component_x, component_y))
         if count == 6:
             count = count + 1
-            assembly = False
+            assembly = False'''
 
         pygame.display.update()
     
     return assembly
         
+def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
+    hand_width = 150
+    hand_height = 150
+    hand_x = window_x // 2 - hand_width
+    hand_y = window_y - hand_height - 20
+    hand_speed = 10
+    component_width = 200
+    component_height = 100
+    component_speed = 5
+    count = 0
 
+    #images
+    hand_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','hand.png'))
+    topBun_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burger_bun.png'))
+    bottomBun_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burger_bottombun.png'))
+    cheeseLayer_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burger_cheese.png'))
+    lettuceLayer_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burger_lettuce.png'))
+    onionLayer_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burger_onion.png'))
+    meatLayer_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burger_meat.png'))
+    tomatoLayer_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burger_tomato.png'))
+    
+    #transforming images
+    hand_image = pygame.transform.scale(hand_image, (hand_width, hand_height))
+    topBun_image = pygame.transform.scale(topBun_image, (component_width, component_height))
+    bottomBun_image = pygame.transform.scale(bottomBun_image, (component_width, component_height))
+    cheeseLayer_image = pygame.transform.scale(cheeseLayer_image, (component_width, component_height))
+    lettuceLayer_image = pygame.transform.scale(lettuceLayer_image, (component_width, component_height))
+    onionLayer_image = pygame.transform.scale(onionLayer_image, (component_width, component_height))
+    meatLayer_image = pygame.transform.scale(meatLayer_image, (component_width, component_height))
+    tomatoLayer_image = pygame.transform.scale(tomatoLayer_image, (component_width, component_height))
+
+    burgerLayer_images = [bottomBun_image, lettuceLayer_image, meatLayer_image, cheeseLayer_image, tomatoLayer_image, onionLayer_image, topBun_image]
+    burgerLayer_bool = [False, False, False, False, False, False, False]
+
+    #WIN.blit(hand_image, (hand_x, hand_y))
+    component_x = random.randint(0, window_x - component_width)
+    component_y = 0
+    
+    clock = pygame.time.Clock()
+    while assembly == True and count != 8:
+        clock.tick(60)
+        WIN.blit(main1Bg_image, bgPosition)
+        component_rect = WIN.blit(burgerLayer_images[count], (component_x, component_y))
+        hand_rect = WIN.blit(hand_image, (hand_x, hand_y))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] == True or keys[pygame.K_a] == True:
+            hand_x -= hand_speed
+        if keys[pygame.K_RIGHT] == True or keys[pygame.K_d] == True:
+            hand_x += hand_speed
+
+        if hand_x <= 0:
+            hand_x = 0
+        elif hand_x >= (window_x - hand_width):
+            hand_x = (window_x - hand_width)
+        
+        component_y += component_speed
+
+        if component_y > window_y:
+            if count != 7:
+                count = count+1
+            component_x = random.randint(0, window_x - component_width)
+            component_y = 0
+        elif hand_rect.colliderect(component_rect):
+            if count != 7:
+                count = count+1
+            if count == 0:
+                burgerLayer_bool[0] = True
+
+        
+        if count == 7:
+            count = count + 1
+            assembly = False
+
+        pygame.display.update()
+
+    return assembly

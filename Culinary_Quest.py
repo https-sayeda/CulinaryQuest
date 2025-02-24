@@ -1694,8 +1694,8 @@ def minigameScreen(minigameLoop):
 
     arrow = Text(200, 112, "<--", login_red1, 500)
     while minigameLoop:
-        WIN.blit(main1Bg_image, bgPosition)
-        pygame.display.update()
+        #WIN.blit(main1Bg_image, bgPosition)
+        #pygame.display.update()
 
         while draw:
             arrow.drawText()
