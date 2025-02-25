@@ -874,7 +874,6 @@ def shopScreen(mainLoop, shopLoop, username, theme_selected):
         disc3_available = bool(database.getShopData_main(username, "disc3"))
         theme1_available = bool(database.getShopData_main(username, "theme1"))
         theme2_available = bool(database.getShopData_main(username, "theme2"))
-        print(disc_selected)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -1717,6 +1716,8 @@ def playDisc(disc_selected):
         pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"sunday_morning.mp3"))
     pygame.mixer.music.play(-1)
 
+
+
 def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
     clock = pygame.time.Clock()
     clock.tick(FPS)
@@ -1741,8 +1742,9 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
         if loginLoop == True:
             pygame.mixer.music.set_volume(0)
             loginLoop, createLoop, mainLoop, username = loginScreen(usernameInput1_input, passwordInput1_input, loginLoop, createLoop, mainLoop)
-            disc_selected = str(database.getData_main(username, "disc_selected"))
-            playDisc(disc_selected)
+            if mainLoop:
+                disc_selected = str(database.getData_main(username, "disc_selected"))
+                playDisc(disc_selected)
 
         if createLoop == True:
             createLoop, loginLoop = createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLoop)
