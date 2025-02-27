@@ -61,6 +61,7 @@ def draw(WIN, draw, x1, y1, x2, y2, x3, y3, x4, y4):
     pygame.display.update()
       
 def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
+
     hand_width = 150
     hand_height = 150
     hand_x = window_x // 2 - hand_width
@@ -153,3 +154,62 @@ def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
             assembly = False
 
     return assembly
+
+def flip(flip, WIN, bar_x, bar_y, main1Bg_image, bgPosition):
+    
+    arrow_speed = 7.5
+    bar_width = 200
+    bar_height = 500
+    arrow_width = 100
+    arrow_height = 100
+    arrow_x = bar_x - 100
+    bar_bottom = bar_y + (bar_height // 2) + 170
+    bar_top = bar_y - 20
+    arrow_y = bar_bottom
+    top_reached = False
+    bottom_reached = True
+    score = 0
+
+    temperatureBar_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','temperature_bar.png'))
+    arrow_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','arrow.png'))
+
+    temperatureBar_image = pygame.transform.scale(temperatureBar_image, (bar_width, bar_height))
+    arrow_image = pygame.transform.scale(arrow_image, (arrow_width, arrow_height))
+
+    while flip:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+        
+        WIN.blit(main1Bg_image, bgPosition)
+        WIN.blit(temperatureBar_image, (bar_x, bar_y))
+        WIN.blit(arrow_image, (arrow_x, arrow_y))
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE] != True:
+
+            if top_reached != True:
+                arrow_y -= arrow_speed
+                if arrow_y <= bar_top:
+                    top_reached = True
+                    bottom_reached = False
+            elif bottom_reached != True:
+                arrow_y += arrow_speed
+                if arrow_y >= bar_bottom:
+                    bottom_reached = True
+                    top_reached = False
+
+        else:
+            WIN.blit(arrow_image, (arrow_x, arrow_y))
+            flip = False
+
+
+        pygame.display.update()
+
+
+
+
+
