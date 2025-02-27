@@ -209,6 +209,35 @@ def flip(flip, WIN, bar_x, bar_y, main1Bg_image, bgPosition):
 
         pygame.display.update()
 
+def fill(fill, WIN, fill_colour, fillBg_box, fill_box, main1Bg_image, bgPosition):
+    fill_box.changeColour(fill_colour)
+    fill_height = 0
+    spacebar_down = False
+
+    while fill:
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    spacebar_down = True  # spacebar is pressed
+            
+        WIN.blit(main1Bg_image, bgPosition)
+        fillBg_box.drawBox()
+        fill_box.drawBox()
+
+        if spacebar_down == True and fill_height < 500:
+            fill_height = fill_box.changeHeight(5)
+
+        
+        pygame.display.update()
+        
+
+
+
 
 
 

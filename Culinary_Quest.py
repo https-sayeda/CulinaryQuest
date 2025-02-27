@@ -47,6 +47,9 @@ main_beige = pygame.Color(232, 220, 211)
 main_green = pygame.Color(68, 166, 84)
 main_orange = pygame.Color(233, 113, 50)
 
+#other colours
+water_blue = pygame.Color(115, 203, 251)
+
 #IMAGES
 loginBg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','login1_background.png'))
 main1Bg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','main1_background.png'))
@@ -117,6 +120,14 @@ class Box:
     def changeLength(self, size):
         self.length = self.length + size #adds the value passed to the subroutine to the current length of the box
         return self.length #returns the length of the box
+
+    def changeHeight(self, size):
+        self.height = self.height + size #adds the value passed to the subroutine to the current length of the box
+        return self.height #returns the length of the box
+    
+    
+    def changeColour(self, colour):
+        self.colour = colour
 
     def getActive(self): return self.active
 
@@ -1690,20 +1701,26 @@ def minigameScreen(minigameLoop):
     
     draw = False
     assembly = False
-    flip = True
+    flip = False
+    fill = True
 
-    arrow = Text(200, 112, "<--", login_red1, 500)
+    arrow_text = Text(200, 112, "<--", login_red1, 500)
+    fillBg_box = Box(300, 50, 500, 400, black, False)
+    fill_box = Box(302, 540, 10, 396, white, True)
+
     while minigameLoop:
         #WIN.blit(main1Bg_image, bgPosition)
         #pygame.display.update()
 
         while draw:
-            arrow.drawText()
+            arrow_text.drawText()
             draw = minigames.draw(WIN, draw, 334.0, 425.0, 340.0, 620.0, 684.0, 560.0, 129.0, 523.0)
         while assembly:
             assembly = minigames.assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly)
         while flip:
             flip = minigames.flip(flip, WIN, 300, 50, main1Bg_image, bgPosition)
+        while fill:
+            fill = minigames.fill(fill, WIN, water_blue, fillBg_box, fill_box, main1Bg_image, bgPosition)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
