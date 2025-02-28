@@ -213,6 +213,8 @@ def fill(fill, WIN, fill_colour, fillBg_box, fill_box, main1Bg_image, bgPosition
     fill_box.changeColour(fill_colour)
     fill_height = 0
     spacebar_down = False
+    fill_y = 540
+
 
     while fill:
         
@@ -224,17 +226,47 @@ def fill(fill, WIN, fill_colour, fillBg_box, fill_box, main1Bg_image, bgPosition
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     spacebar_down = True  # spacebar is pressed
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    spacebar_down = False  # spacebar is pressed
             
         WIN.blit(main1Bg_image, bgPosition)
         fillBg_box.drawBox()
         fill_box.drawBox()
 
         if spacebar_down == True and fill_height < 500:
+            fill_y = fill_box.changeY(fill_y - 5)
             fill_height = fill_box.changeHeight(5)
 
         
         pygame.display.update()
         
+def mixing(mixing, WIN, main1Bg_image, bgPosition, image, image_x, image_y):
+
+    orientation = "right"
+    rect = image.get_rect()
+    while mixing:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                    orientation = "right"
+                elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                    orientation = "left"
+        
+        WIN.blit(main1Bg_image, bgPosition)
+        if orientation == "right":
+            WIN.blit(image, (image_x, image_y))
+        elif orientation == "left":
+            WIN.blit(pygame.transform.flip(image, False, True), (image, (image_x, image_y)))
+
+        pygame.display.update()
+        
+
 
 
 

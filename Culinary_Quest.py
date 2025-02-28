@@ -75,9 +75,6 @@ tofuIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','tofu_ic
 
 #music
 pygame.mixer.init()
-#disc1_music = pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"gingko.mp3"))
-#disc2_music = pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"old_feelings.mp3"))
-#disc3_music = pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"sunday_morning.mp3"))
 
 #CLASSES
 
@@ -124,6 +121,10 @@ class Box:
     def changeHeight(self, size):
         self.height = self.height + size #adds the value passed to the subroutine to the current length of the box
         return self.height #returns the length of the box
+
+    def changeY(self, y_coordinate):
+        self.y = y_coordinate
+        return self.y
     
     
     def changeColour(self, colour):
@@ -1702,7 +1703,8 @@ def minigameScreen(minigameLoop):
     draw = False
     assembly = False
     flip = False
-    fill = True
+    fill = False
+    mixing = True
 
     arrow_text = Text(200, 112, "<--", login_red1, 500)
     fillBg_box = Box(300, 50, 500, 400, black, False)
@@ -1721,6 +1723,8 @@ def minigameScreen(minigameLoop):
             flip = minigames.flip(flip, WIN, 300, 50, main1Bg_image, bgPosition)
         while fill:
             fill = minigames.fill(fill, WIN, water_blue, fillBg_box, fill_box, main1Bg_image, bgPosition)
+        while mixing:
+            mixing = minigames.mixing(mixing, WIN, main1Bg_image, bgPosition, sushiIcon_image, 300, 50)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -1735,8 +1739,6 @@ def playDisc(disc_selected):
     elif disc_selected == "disc3":
         pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"sunday_morning.mp3"))
     pygame.mixer.music.play(-1)
-
-
 
 def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
     clock = pygame.time.Clock()
@@ -1794,4 +1796,3 @@ recipeLoop = False
 minigameLoop = False
 
 main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop)
-        
