@@ -244,7 +244,11 @@ def fill(fill, WIN, fill_colour, fillBg_box, fill_box, main1Bg_image, bgPosition
 def mixing(mixing, WIN, main1Bg_image, bgPosition, image, image_x, image_y):
 
     orientation = "right"
-    rect = image.get_rect()
+    time_down = 0.0
+    time_elapsed = 0.0
+    count = 0
+    rate = pygame.time.Clock()
+
     while mixing:
 
         for event in pygame.event.get():
@@ -253,20 +257,65 @@ def mixing(mixing, WIN, main1Bg_image, bgPosition, image, image_x, image_y):
                 sys.exit()
                 break
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    orientation = "right"
-                elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     orientation = "left"
+                    time_down = pygame.time.get_ticks()
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                    orientation = "right"
+                    time_elapsed = (pygame.time.get_ticks() - time_down) / 1000.0
         
         WIN.blit(main1Bg_image, bgPosition)
         if orientation == "right":
             WIN.blit(image, (image_x, image_y))
         elif orientation == "left":
-            WIN.blit(pygame.transform.flip(image, False, True), (image, (image_x, image_y)))
+            image2 = pygame.transform.flip(image, True, False)
+            WIN.blit(image2, (image_x, image_y))
+        if 0 < time_elapsed < 0.30:
+            print("Too fast!")
+            time_down = 0.0
+            time_elapsed = 0.0
+            count = count + 1
+        if count >= 5:
+            print("The mixture has spilled.")
+
+        rate.tick()
 
         pygame.display.update()
         
+def seasoning(seasoning, WIN, window_x, window_y, main1Bg_image, bgPosition, image, image_x, image_y, colour):
+    seasoningShaker_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seasoning_shaker.png'))
+    seasoningShaker_image.convert()
+    shaker_rect = seasoningShaker_image.get_rect()
+    shaker_rect.center = window_x//2, window_y//2
+    moving = False
 
+    while seasoning:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if shaker_rect.collidepoint(event.pos):
+                    moving = True
+ 
+            elif event.type == pygame.MOUSEBUTTONUP:
+                moving = False
+    
+            # Make your image move continuously
+            elif event.type == pygame.MOUSEMOTION and moving:
+                shaker_rect.move_ip(event.rel)
+
+        WIN.blit(main1Bg_image, bgPosition)
+        WIN.blit(seasoningShaker_image, (image_x, image_y))
+
+        pygame.display.update()
+ 
+
+
+
+    
 
 
 
