@@ -76,7 +76,6 @@ tofuIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','tofu_ic
 #ingredients
 rawPatty_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burgerpatty.png'))
 
-
 #music
 pygame.mixer.init()
 
@@ -1731,7 +1730,7 @@ def minigameScreen(minigameLoop):
         while mixing:
             mixing = minigames.mixing(mixing, WIN, main1Bg_image, bgPosition, sushiIcon_image, 300, 50)
         while seasoning:
-            seasoning = minigames.seasoning(seasoning, WIN, window_x, window_y, main1Bg_image, bgPosition, rawPatty_image, 300, 50, white)
+            seasoning = minigames.seasoning(seasoning, WIN, window_x, window_y, main1Bg_image, bgPosition, rawPatty_image, 350, 250, white)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()

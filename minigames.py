@@ -283,11 +283,26 @@ def mixing(mixing, WIN, main1Bg_image, bgPosition, image, image_x, image_y):
         pygame.display.update()
         
 def seasoning(seasoning, WIN, window_x, window_y, main1Bg_image, bgPosition, image, image_x, image_y, colour):
-    seasoningShaker_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seasoning_shaker.png'))
-    seasoningShaker_image.convert()
-    shaker_rect = seasoningShaker_image.get_rect()
-    shaker_rect.center = window_x//2, window_y//2
-    moving = False
+    
+    shaker_width = 100
+    shaker_height = 100
+    image_width = 200
+    image_height = 200
+    seasoning_width = 25
+    seasoning_height = 25
+    mouse_y_position = []
+    shaking = False
+    seasoning_amount = []
+    seasoning_position_x = []
+    seasoning_position_y = []
+    
+    shaker_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seasoning_shaker.png'))
+    shaker_image = pygame.transform.scale(shaker_image, (shaker_width, shaker_height))
+    shaker_image = pygame.transform.flip(shaker_image, False, True)
+    image = pygame.transform.scale(image, (image_width, image_height))
+    seasoning_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seasoning.png'))
+    seasoning_image = pygame.transform.scale(seasoning_image, (seasoning_width, seasoning_height))
+
 
     while seasoning:
 
@@ -296,19 +311,29 @@ def seasoning(seasoning, WIN, window_x, window_y, main1Bg_image, bgPosition, ima
                 pygame.quit()
                 sys.exit()
                 break
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if shaker_rect.collidepoint(event.pos):
-                    moving = True
- 
-            elif event.type == pygame.MOUSEBUTTONUP:
-                moving = False
-    
-            # Make your image move continuously
-            elif event.type == pygame.MOUSEMOTION and moving:
-                shaker_rect.move_ip(event.rel)
-
+        
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        mouse_y_position.append(mouse_y)
         WIN.blit(main1Bg_image, bgPosition)
-        WIN.blit(seasoningShaker_image, (image_x, image_y))
+        WIN.blit(image, (image_x, image_y))
+        WIN.blit(shaker_image, (mouse_x - 50, mouse_y - 50))
+        if len(mouse_y_position) == 2:
+            if mouse_y_position[0] >= mouse_y_position[1] + 10:
+                shaking = True
+            mouse_y_position = []
+            
+        if len(seasoning_amount) != 0:
+            for i in range(len(seasoning_amount)-1):
+                x = random.randint(image_x, image_x + image_width - 20)
+                y = random.randint(image_y, image_y + image_height - 20)
+                seasoning_position_x.append(x)
+                seasoning_position_y.append(y)
+                WIN.blit(seasoning_image, (seasoning_position_x[i], seasoning_position_y[i]))
+        
+        if shaking == True and image_x <= mouse_x <= image_x + image_width:
+            seasoning_amount.append(True)
+            shaking = False
+
 
         pygame.display.update()
  
