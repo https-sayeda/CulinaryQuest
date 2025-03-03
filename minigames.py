@@ -316,7 +316,6 @@ def seasoning(seasoning, WIN, window_x, window_y, main1Bg_image, bgPosition, ima
         mouse_y_position.append(mouse_y)
         WIN.blit(main1Bg_image, bgPosition)
         WIN.blit(image, (image_x, image_y))
-        WIN.blit(shaker_image, (mouse_x - 50, mouse_y - 50))
         if len(mouse_y_position) == 2:
             if mouse_y_position[0] >= mouse_y_position[1] + 10:
                 shaking = True
@@ -324,8 +323,8 @@ def seasoning(seasoning, WIN, window_x, window_y, main1Bg_image, bgPosition, ima
             
         if len(seasoning_amount) != 0:
             for i in range(len(seasoning_amount)-1):
-                x = random.randint(image_x, image_x + image_width - 20)
-                y = random.randint(image_y, image_y + image_height - 20)
+                x = random.randint(image_x + 20, image_x + image_width - 40)
+                y = random.randint(image_y + 20, image_y + image_height - 40)
                 seasoning_position_x.append(x)
                 seasoning_position_y.append(y)
                 WIN.blit(seasoning_image, (seasoning_position_x[i], seasoning_position_y[i]))
@@ -333,6 +332,11 @@ def seasoning(seasoning, WIN, window_x, window_y, main1Bg_image, bgPosition, ima
         if shaking == True and image_x <= mouse_x <= image_x + image_width:
             seasoning_amount.append(True)
             shaking = False
+        
+        if len(seasoning_amount) == 35:
+            seasoning = False
+        
+        WIN.blit(shaker_image, (mouse_x - 50, mouse_y - 50))
 
 
         pygame.display.update()
