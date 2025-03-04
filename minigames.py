@@ -4,13 +4,11 @@ import pygame
 import random
 import os
 
-#website where drawing thing came from :
-#https://thepythoncode.com/article/make-a-drawing-program-with-python#:~:text=In%20this%20tutorial%2C%20we%20will%20make%20a%20simple,feature.%20As%20always%2C%20we%20start%20with%20the%20imports.
 def draw(WIN, draw, x1, y1, x2, y2, x3, y3, x4, y4):
 
-    flag1 = False
-    flag2 = False
-    flag3 = False
+    flag1 = False #these flags represent whether the drawn circle has touched a coordinate
+    flag2 = False #there are 4 points to the arrow, so four coordinates (x1, y2), (x2, y2) etc. = four flags
+    flag3 = False 
     flag4 = False
     # the colour and size of the brush
     drawColour = [0, 0, 255]
@@ -19,36 +17,39 @@ def draw(WIN, draw, x1, y1, x2, y2, x3, y3, x4, y4):
 
     # Canvas
     canvas = pygame.Surface((canvasSize),pygame.SRCALPHA)
-    canvas.set_alpha(200)
+    canvas.set_alpha(200) 
+    #makes the canvas transparent so that it doesn't cover the background image
 
-    while draw:
+    while draw: #ensures that the user only draws when they havent drawn the arrow
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
                 break
         # Draw the Canvas at the center of the screen
-        x, y = WIN.get_size()
+        x, y = WIN.get_size() 
         WIN.blit(canvas, [x/2 - canvasSize[0]/2, y/2 - canvasSize[1]/2])
-        if flag1 == True and flag2 == True and flag3 == True and flag4 == True:
+        if flag1 == True and flag2 == True and flag3 == True and flag4 == True: 
+            #if all the flags have been set to true, they can no longer draw
             draw = False
-            pygame.display.update()
+            pygame.display.update() #updates the screen to show the final arrow 
 
-        position = "nothing"
-        dx = 0
+        dx = 0 
         dy = 0
         # Drawing with the mouse
-        if pygame.mouse.get_pressed()[0]:
-            mx, my = pygame.mouse.get_pos()
+        if pygame.mouse.get_pressed()[0]: #if the mouse is pressed
+            mx, my = pygame.mouse.get_pos() #get the position of the mouse
 
-            # Calculate Position on the Canvas
+            # Calculate the position of the mouse on the Canvas
             dx = mx - x/2 + canvasSize[0]/2
             dy = my - y/2 + canvasSize[1]/2
 
-            pygame.draw.circle(canvas, drawColour,[dx, dy], brushSize)
+            pygame.draw.circle(canvas, drawColour,[dx, dy], brushSize) #draws the circle
 
-        if (x1-5.0) <= dx <= (x1+5.0) and (y1-5.0) <= dy <= (y1+5.0):
-            flag1 = True
+        if (x1-5.0) <= dx <= (x1+5.0) and (y1-5.0) <= dy <= (y1+5.0): 
+            #this  ensures that the user doesnt need to get an exact coordinate, but instead a range within
+            #a certain area
+            flag1 = True #if the circle is drawn in the range, then the flag is set to true
         if (x2-5.0) <= dx <= (x2+5.0) and (y2-5.0) <= dy <= (y2+5.0):
             flag2 = True
         if (x3-5.0) <= dx <= (x3+5.0) and (y3-5.0) <= dy <= (y3+5.0):
@@ -56,9 +57,7 @@ def draw(WIN, draw, x1, y1, x2, y2, x3, y3, x4, y4):
         if (x4-5.0) <= dx <= (x4+5.0) and (y4-5.0) <= dy <= (y4+5.0):
             flag4 = True
 
-        pygame.display.update()
-    WIN.blit(canvas, [x/2 - canvasSize[0]/2, y/2 - canvasSize[1]/2])
-    pygame.display.update()
+        pygame.display.update() #updates the screen
       
 def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
 

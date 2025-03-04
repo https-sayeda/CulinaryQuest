@@ -1701,26 +1701,29 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen, username, theme_selected):
         pygame.display.update()
     return mainLoop, recipeLoop, recipeChosen
 
+
 def minigameScreen(minigameLoop):
     
-    draw = False
+    #checks which minigame should be ran
+    draw = True
     assembly = False
     flip = False
     fill = False
     mixing = False
-    seasoning = True
+    seasoning = False
 
-    arrow_text = Text(200, 112, "<--", login_red1, 500)
+    arrow_text = Text(200, 112, "<--", login_red1, 500) #a temporary arrow object
     fillBg_box = Box(300, 50, 500, 400, black, False)
     fill_box = Box(302, 540, 10, 396, white, True)
+    
+    while minigameLoop: #while the minigame loop is true
+        WIN.blit(main1Bg_image, bgPosition) #displays the background image
+        pygame.display.update()
 
-    while minigameLoop:
-        #WIN.blit(main1Bg_image, bgPosition)
-        #pygame.display.update()
-
-        while draw:
-            arrow_text.drawText()
+        while draw: #while draw is true
+            arrow_text.drawText() #draws the arrow
             draw = minigames.draw(WIN, draw, 334.0, 425.0, 340.0, 620.0, 684.0, 560.0, 129.0, 523.0)
+            #calls the subroutine and returns the value of draw so that it can be updated to be False
         while assembly:
             assembly = minigames.assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly)
         while flip:
