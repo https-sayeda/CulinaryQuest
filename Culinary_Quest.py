@@ -75,6 +75,8 @@ tofuIcon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','tofu_ic
 
 #ingredients
 rawPatty_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burgerpatty.png'))
+mixingBowl_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','mixingbowl.png'))
+mixingBowlSpilled_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','mixingbowl_spilled.png'))
 
 #music
 pygame.mixer.init()
@@ -1705,20 +1707,21 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen, username, theme_selected):
 def minigameScreen(minigameLoop):
     
     #checks which minigame should be ran
-    draw = True
+    draw = False
     assembly = False
     flip = False
     fill = False
     mixing = False
-    seasoning = False
+    seasoning = True
 
     arrow_text = Text(200, 112, "<--", login_red1, 500) #a temporary arrow object
     fillBg_box = Box(300, 50, 500, 400, black, False)
     fill_box = Box(302, 540, 10, 396, white, True)
+    fill_line = Box(300, 100, 10, 400, login_red1, False)
     
     while minigameLoop: #while the minigame loop is true
-        WIN.blit(main1Bg_image, bgPosition) #displays the background image
-        pygame.display.update()
+        #WIN.blit(main1Bg_image, bgPosition) #displays the background image
+        #pygame.display.update()
 
         while draw: #while draw is true
             arrow_text.drawText() #draws the arrow
@@ -1729,11 +1732,11 @@ def minigameScreen(minigameLoop):
         while flip:
             flip = minigames.flip(flip, WIN, 300, 50, main1Bg_image, bgPosition)
         while fill:
-            fill = minigames.fill(fill, WIN, water_blue, fillBg_box, fill_box, main1Bg_image, bgPosition)
+            fill = minigames.fill(fill, WIN, water_blue, fillBg_box, fill_box, fill_line, main1Bg_image, bgPosition)
         while mixing:
-            mixing = minigames.mixing(mixing, WIN, main1Bg_image, bgPosition, sushiIcon_image, 300, 50)
+            mixing = minigames.mixing(mixing, WIN, main1Bg_image, bgPosition, mixingBowl_image, 300, 50)
         while seasoning:
-            seasoning = minigames.seasoning(seasoning, WIN, window_x, window_y, main1Bg_image, bgPosition, rawPatty_image, 350, 250, white)
+            seasoning = minigames.seasoning(seasoning, WIN, main1Bg_image, bgPosition, rawPatty_image, 350, 250, "herbs")
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
