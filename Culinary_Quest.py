@@ -4,6 +4,7 @@ import time
 import database
 import sys
 import minigames
+from collections import deque
 
 pygame.init()
 
@@ -1709,9 +1710,13 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
 
 def minigameScreen(minigameLoop, recipeLoop, recipeChosen, username, theme_selected):
 
-    startingScreen = True
+    startingScreen = True #the starting screen will show all the steps, this will reappear every time the user finishes a minigame
+    exitMessage = False #this will be set to true when the user presses the back button
+    stack = deque([]) #creates a stack to traverse through the nodes within the tree
+    visitedNodes = [] #contains all the visited nodes
+    flag = True #indicates whether to traverse the tree
 
-    if theme_selected == "theme1":
+    if theme_selected == "theme1": #changes the colours of the boxes and buttons depending on the theme that has been chosen
             colours = [main_lightPurple1, main_lightPurple2, main_darkPurple1, main_darkPurple2, main_darkPurple3, main_brightPurple]
             gameBg_image = game1Bg_image
     elif theme_selected == "theme2":
@@ -1723,12 +1728,39 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, username, theme_selec
     burgerLabel_text = Text(480, 55, "Burger", white, 22)
     cakeLabel_text = Text(480, 55, "Cake", white, 22)
     sushiLabel_text = Text(480, 55, "Sushi", white, 22)
+
     gameLabel1_burger_text = Text(330, 153, "Frying", white, 24)
     gameLabel2_burger_text = Text(330, 233, "Mixing", white, 24)
     gameLabel3_burger_text = Text(320, 313, "Shaping", white, 24)
     gameLabel4_burger_text = Text(320, 393, "Grilling", white, 24)
     gameLabel5_burger_text = Text(320, 473, "Assembly", white, 24)
 
+    gameLabel1_cake_text = Text(330, 153, "Mixing", white, 24)
+    gameLabel2_cake_text = Text(330, 233, "Baking", white, 24)
+    gameLabel3_cake_text = Text(320, 313, "Frosting", white, 24)
+    gameLabel4_cake_text = Text(320, 393, "Decoration", white, 24)
+
+    gameLabel1_sushi_text = Text(330, 153, "Cooking", white, 24)
+    gameLabel2_sushi_text = Text(330, 233, "Assembly", white, 24)
+    gameLabel3_sushi_text = Text(320, 313, "Cutting", white, 24)
+
+    start_text = Text(615, 153, "Start", white, 24)
+
+    locked2_text = Text(610, 233, "Locked", white, 24)
+    locked3_text = Text(610, 313, "Locked", white, 24)
+    locked4_text = Text(610, 393, "Locked", white, 24)
+    locked5_text = Text(610, 473, "Locked", white, 24)
+
+    completed1_text = Text(610, 153, "Completed", white, 24)
+    completed2_text = Text(610, 233, "Completed", white, 24)
+    completed3_text = Text(610, 313, "Completed", white, 24)
+    completed4_text = Text(610, 393, "Completed", white, 24)
+
+
+    exitMessage1_text = Text(285, 172, "Are you sure you want to exit?", white, 35)
+    exitMessage2_text = Text(330, 212, "Your progress will not save.", white, 30)
+    exitYes_text = Text(347, 292, "Yes", (100, 0, 0), 24)
+    exitNo_text = Text(637, 292, "No", (100, 0, 0), 24)
 
     #boxes
     recipeLabel_box = Box(410, 50, 40, 200, colours[5], False)
@@ -1737,6 +1769,7 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, username, theme_selec
     gameLabel3_box = Box(260, 310, 40, 200, colours[1], False)
     gameLabel4_box = Box(260, 390, 40, 200, colours[1], False)
     gameLabel5_box = Box(260, 470, 40, 200, colours[1], False)
+    exitMessage_box = Box(260, 150, 200, 500, login_red1, False)
 
     #buttons
     back_button = Button(65, 50, 70, 100, colours[3], False)
@@ -1745,22 +1778,37 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, username, theme_selec
     start3_button = Button(550, 310, 40, 200, colours[2], False)
     start4_button = Button(550, 390, 40, 200, colours[2], False)
     start5_button = Button(550, 470, 40, 200, colours[2], False)
+    exitYes_button = Button(320, 290, 40, 100, white, False)
+    exitNo_button = Button(610, 290, 40, 100, white, False)
 
 
     while minigameLoop:
 
-        for event in pygame.event.get():
+        for event in pygame.event.get(): #allows user to quit the window
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
                 break
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if startingScreen:
-                    backPressed = back_button.checkPressed(pygame.mouse.get_pos())
-                    if backPressed:
+                if startingScreen: #the back button will only be available on the starting screen so if it's true
+                    backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if it has been pressed
+                    if backPressed: #if it has
+                        exitMessage = True #output the exit message
+                    exitYesPressed = exitYes_button.checkPressed(pygame.mouse.get_pos()) 
+                    if exitYesPressed: #if yes has been pressed
                         minigameLoop = False
-                        recipeLoop = True
+                        recipeLoop = True #go back to recipe screen
+                    exitNoPressed = exitNo_button.checkPressed(pygame.mouse.get_pos())
+                    if exitNoPressed: #if no has been pressed
+                        exitMessage = False #remove the exit message
+
+        #tree traversal
+        if flag:
+            value, stack, visitedNodes = minigames.treeTraversal(recipeChosen, stack, visitedNodes)
+            print(value)
+            flag = False
         
+        #displaying onto the screen
         WIN.blit(gameBg_image, bgPosition)
 
         if startingScreen:
@@ -1785,14 +1833,96 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, username, theme_selec
                 gameLabel3_burger_text.drawText()
                 gameLabel4_burger_text.drawText()
                 gameLabel5_burger_text.drawText()
+                
+                if value == "Frying":
+                    start_text.drawText()
+                    locked2_text.drawText()
+                    locked3_text.drawText()
+                    locked4_text.drawText()
+                    locked5_text.drawText()
+                elif value == "Mixing":
+                    completed1_text.drawText()
+                    start_text.changePosition(615,233)
+                    locked3_text.drawText()
+                    locked4_text.drawText()
+                    locked5_text.drawText()
+                elif value == "Shaping":
+                    completed1_text.drawText()
+                    completed2_text.drawText()
+                    start_text.changePosition(615,313)
+                    locked4_text.drawText()
+                    locked5_text.drawText()
+                elif value == "Grilling":
+                    completed1_text.drawText()
+                    completed2_text.drawText()
+                    completed3_text.drawText()
+                    start_text.changePosition(615,393)
+                    locked5_text.drawText()
+                elif value == "Grilling":
+                    completed1_text.drawText()
+                    completed2_text.drawText()
+                    completed3_text.drawText()
+                    completed4_text.drawText()
+                    start_text.changePosition(615,473)
+                
 
             elif recipeChosen == "cake":
                 cakeLabel_text.drawText()
                 gameLabel4_box.drawBox()
                 start4_button.drawBox()
+                gameLabel1_cake_text.drawText()
+                gameLabel2_cake_text.drawText()
+                gameLabel3_cake_text.drawText()
+                gameLabel4_cake_text.drawText()
+
+                if value == "Mixing":
+                    start_text.drawText()
+                    locked2_text.drawText()
+                    locked3_text.drawText()
+                    locked4_text.drawText()
+                elif value == "Baking":
+                    completed1_text.drawText()
+                    start_text.changePosition(615,233)
+                    locked3_text.drawText()
+                    locked4_text.drawText()
+                elif value == "Frosting":
+                    completed1_text.drawText()
+                    completed2_text.drawText()
+                    start_text.changePosition(615,313)
+                    locked4_text.drawText()
+                elif value == "Assembly":
+                    completed1_text.drawText()
+                    completed2_text.drawText()
+                    completed3_text.drawText()
+                    start_text.changePosition(615,393)
 
             elif recipeChosen == "sushi":
                 sushiLabel_text.drawText()
+                gameLabel1_sushi_text.drawText()
+                gameLabel2_sushi_text.drawText()
+                gameLabel3_sushi_text.drawText()
+
+                if value == "Cooking":
+                    start_text.drawText()
+                    locked2_text.drawText()
+                    locked3_text.drawText()
+                elif value == "Assembly":
+                    completed1_text.drawText()
+                    start_text.changePosition(615,233)
+                    locked3_text.drawText()
+                elif value == "Cutting":
+                    completed1_text.drawText()
+                    completed2_text.drawText()
+                    start_text.changePosition(615,313)
+            
+            if exitMessage:
+                exitMessage_box.drawBox()
+                exitMessage1_text.drawText()
+                exitMessage2_text.drawText()
+                exitYes_button.drawBox()
+                exitYes_text.drawText()
+                exitNo_button.drawBox()
+                exitNo_text.drawText()
 
         pygame.display.update()
     
