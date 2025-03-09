@@ -55,7 +55,7 @@ loginBg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','login1_b
 main1Bg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','main1_background.png'))
 main2Bg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','main2_background.png'))
 main2Bg_image = pygame.transform.scale(main2Bg_image, (1000, 600))
-gameBg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','game1_background.png'))
+game1Bg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','game1_background.png'))
 gameLogo_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','logo.png'))
 cursor_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cursor_icon.png'))
 
@@ -1193,7 +1193,7 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
         pygame.display.update()
     return mainLoop, settingsLoop
     
-def recipeScreen(mainLoop, recipeLoop, recipeChosen, username, theme_selected):
+def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, theme_selected):
 
     if theme_selected == "theme1":
         colours = [main_lightPurple1, main_lightPurple2, main_darkPurple1, main_darkPurple2, main_darkPurple3, main_brightPurple]
@@ -1522,6 +1522,10 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen, username, theme_selected):
                 recipePageLPressed = recipePageL_button.checkPressed(pygame.mouse.get_pos())
                 if recipePageLPressed: #if left arrow is pressed
                     count = count - 1 #decrease count by 1
+                startPressed = start_button.checkPressed(pygame.mouse.get_pos())
+                if startPressed:
+                    recipeLoop = False
+                    minigameLoop = True
         
         #drawing onto screen
         WIN.blit(mainBg_image, bgPosition)
@@ -1701,10 +1705,100 @@ def recipeScreen(mainLoop, recipeLoop, recipeChosen, username, theme_selected):
                 naRecipe_text.drawText()
 
         pygame.display.update()
-    return mainLoop, recipeLoop, recipeChosen
+    return mainLoop, recipeLoop, minigameLoop, recipeChosen
+
+def minigameScreen(minigameLoop, recipeLoop, recipeChosen, username, theme_selected):
+
+    startingScreen = True
+
+    if theme_selected == "theme1":
+            colours = [main_lightPurple1, main_lightPurple2, main_darkPurple1, main_darkPurple2, main_darkPurple3, main_brightPurple]
+            gameBg_image = game1Bg_image
+    elif theme_selected == "theme2":
+        colours = [main_lightOrange1, main_lightOrange2, main_darkOrange1, main_darkOrange2, main_darkOrange3, main_brightOrange]
+        gameBg_image = gameBg_image
+
+    #text
+    back_text = Text(80, 55, "<--", white, 50)
+    burgerLabel_text = Text(480, 55, "Burger", white, 22)
+    cakeLabel_text = Text(480, 55, "Cake", white, 22)
+    sushiLabel_text = Text(480, 55, "Sushi", white, 22)
+    gameLabel1_burger_text = Text(330, 153, "Frying", white, 24)
+    gameLabel2_burger_text = Text(330, 233, "Mixing", white, 24)
+    gameLabel3_burger_text = Text(320, 313, "Shaping", white, 24)
+    gameLabel4_burger_text = Text(320, 393, "Grilling", white, 24)
+    gameLabel5_burger_text = Text(320, 473, "Assembly", white, 24)
 
 
-def minigameScreen(minigameLoop):
+    #boxes
+    recipeLabel_box = Box(410, 50, 40, 200, colours[5], False)
+    gameLabel1_box = Box(260, 150, 40, 200, colours[1], False)
+    gameLabel2_box = Box(260, 230, 40, 200, colours[1], False)
+    gameLabel3_box = Box(260, 310, 40, 200, colours[1], False)
+    gameLabel4_box = Box(260, 390, 40, 200, colours[1], False)
+    gameLabel5_box = Box(260, 470, 40, 200, colours[1], False)
+
+    #buttons
+    back_button = Button(65, 50, 70, 100, colours[3], False)
+    start1_button = Button(550, 150, 40, 200, colours[2], False)
+    start2_button = Button(550, 230, 40, 200, colours[2], False)
+    start3_button = Button(550, 310, 40, 200, colours[2], False)
+    start4_button = Button(550, 390, 40, 200, colours[2], False)
+    start5_button = Button(550, 470, 40, 200, colours[2], False)
+
+
+    while minigameLoop:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if startingScreen:
+                    backPressed = back_button.checkPressed(pygame.mouse.get_pos())
+                    if backPressed:
+                        minigameLoop = False
+                        recipeLoop = True
+        
+        WIN.blit(gameBg_image, bgPosition)
+
+        if startingScreen:
+            back_button.drawBox()
+            back_text.drawText()
+            recipeLabel_box.drawBox()
+            gameLabel1_box.drawBox()
+            gameLabel2_box.drawBox()
+            gameLabel3_box.drawBox()
+            start1_button.drawBox()
+            start2_button.drawBox()
+            start3_button.drawBox()
+
+            if recipeChosen == "burger":
+                burgerLabel_text.drawText()
+                gameLabel4_box.drawBox()
+                gameLabel5_box.drawBox()
+                start4_button.drawBox()
+                start5_button.drawBox()
+                gameLabel1_burger_text.drawText()
+                gameLabel2_burger_text.drawText()
+                gameLabel3_burger_text.drawText()
+                gameLabel4_burger_text.drawText()
+                gameLabel5_burger_text.drawText()
+
+            elif recipeChosen == "cake":
+                cakeLabel_text.drawText()
+                gameLabel4_box.drawBox()
+                start4_button.drawBox()
+
+            elif recipeChosen == "sushi":
+                sushiLabel_text.drawText()
+
+        pygame.display.update()
+    
+    return minigameLoop, recipeLoop, recipeChosen
+
+def temp_minigameScreen(minigameLoop):
     
     #checks which minigame should be ran
     draw = False
@@ -1752,7 +1846,7 @@ def playDisc(disc_selected):
         pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"sunday_morning.mp3"))
     pygame.mixer.music.play(-1)
 
-def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
+def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop, minigameLoop):
     clock = pygame.time.Clock()
     clock.tick(FPS)
     run = True
@@ -1770,8 +1864,8 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
 
     while run:
 
-        minigameLoop = True
-        minigameScreen(minigameLoop)
+        #minigameLoop = True
+        #minigameScreen(minigameLoop)
             
         if loginLoop == True:
             pygame.mixer.music.set_volume(0)
@@ -1797,7 +1891,10 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop):
             mainLoop, settingsLoop = settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_input, username, theme_selected)
 
         if recipeLoop == True:
-            mainLoop, recipeLoop, recipeChosen = recipeScreen(mainLoop, recipeLoop, recipeChosen, username, theme_selected)
+            mainLoop, recipeLoop, minigameLoop, recipeChosen = recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, theme_selected)
+
+        if minigameLoop == True:
+            minigameLoop, recipeLoop, recipeChosen = minigameScreen(minigameLoop, recipeLoop, recipeChosen, username, theme_selected)
 
 loginLoop = True
 createLoop = False
@@ -1807,4 +1904,4 @@ shopLoop = False
 recipeLoop = False
 minigameLoop = False
 
-main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop)
+main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop, minigameLoop)

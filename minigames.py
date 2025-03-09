@@ -10,18 +10,18 @@ class RecipeTree:
 
     def __init__(self, value):
         self.value = value
-        #self.recipe = recipe
         self.children = []
     
     def add_child(self, child_node):
         self.children.append(child_node)
     
-    def preorder(root):
+    def preorder(root, stack, visitedNodes):
  
-        stack = deque([]) #creates a stack to traverse through the nodes within the tree
-        visitedNodes = [] #contains all the visited nodes
-        visitedNodes.append(root.value) #adds the root node to the array
-        stack.append(root) #adds the root to the stack (it has been visited)
+        #stack = deque([]) #creates a stack to traverse through the nodes within the tree
+        #visitedNodes = [] #contains all the visited nodes
+        if len(visitedNodes) == 0 and len(stack) == 0:
+            visitedNodes.append(root.value) #adds the root node to the array
+            stack.append(root) #adds the root to the stack (it has been visited)
 
         while len(stack) > 0: #while there are still nodes in the stack
             all_children_visited = True 
@@ -33,13 +33,16 @@ class RecipeTree:
                     stack.append(parent.children[i]) #push it to the stack
                     visitedNodes.append(parent.children[i].value) #add it to the array of visited nodes
                     all_children_visited = False #then all the children haven't been visited
-                    break
+                    print(visitedNodes)
+                    return (parent.children[i].value) #stops at each node
+                    #break
     
             if all_children_visited == True: #if all the children of the parent have been visited
                 stack.pop() #remove the parent from the stack 
         print(visitedNodes)
         
 def treeTraversal():
+
     burgerRoot = RecipeTree("Burger")
     burgerRoot.children = [RecipeTree("Frying"), RecipeTree("Mixing"), RecipeTree("Shaping"), RecipeTree("Grilling"), RecipeTree("Assembly")]
     burgerRoot.children[0].children = [RecipeTree("Frying 1"), RecipeTree("Frying 2"), RecipeTree("Frying 3"), RecipeTree("Frying 4")]
@@ -47,8 +50,26 @@ def treeTraversal():
     burgerRoot.children[2].children = [RecipeTree("Shaping 1")]
     burgerRoot.children[3].children = [RecipeTree("Grilling 1"), RecipeTree("Grilling 2")]
     burgerRoot.children[4].children = [RecipeTree("Assembly 1")]
-    burgerRoot.preorder()
+    stack = deque([]) #creates a stack to traverse through the nodes within the tree
+    visitedNodes = [] #contains all the visited nodes
+    for count in range(7):
+        value = burgerRoot.preorder(stack, visitedNodes)
+        print(value)
 
+    cakeRoot = RecipeTree("Cake")
+    cakeRoot.children = [RecipeTree("Mixing"), RecipeTree("Baking"), RecipeTree("Frosting"), RecipeTree("Decoration")]
+    cakeRoot.children[0].children = [RecipeTree("Mixing 1")]
+    cakeRoot.children[1].children = [RecipeTree("Baking 1"), RecipeTree("Baking 2"), RecipeTree("Baking 3")]
+    cakeRoot.children[2].children = [RecipeTree("Frosting 1")]
+    cakeRoot.children[3].children = [RecipeTree("Decoration 1"), RecipeTree("Decoration 2"), RecipeTree("Decoration 3")]
+    #cakeRoot.preorder()
+
+    sushiRoot = RecipeTree("Sushi")
+    sushiRoot.children = [RecipeTree("Cooking"), RecipeTree("Assembly"), RecipeTree("Cutting")]
+    sushiRoot.children[0].children = [RecipeTree("Cooking 1"), RecipeTree("Cooking 2"), RecipeTree("Cooking 3")]
+    sushiRoot.children[1].children = [RecipeTree("Assembly 1"), RecipeTree("Assembly 2"), RecipeTree("Assembly 3"), RecipeTree("Assembly 4"), RecipeTree("Assembly 5"),]
+    sushiRoot.children[2].children = [RecipeTree("Cutting 1")]
+    #sushiRoot.preorder()
 
 def draw(WIN, draw, x1, y1, x2, y2, x3, y3, x4, y4):
 
