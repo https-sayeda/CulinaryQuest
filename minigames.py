@@ -4,6 +4,27 @@ import pygame
 import random
 import os
 from collections import deque
+import classes
+from Culinary_Quest import WIN
+
+#loading images
+mixingBowl_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','mixingbowl.png'))
+mixingBowlSpilled_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','mixingbowl_spilled.png'))
+pointingHand_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','pointinghand.png'))
+cuttingBoard_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cuttingboard.png'))
+
+#burger images
+rawPatty_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burgerpatty.png'))
+beefMince_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','beefmince.png'))
+cookedPatty_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cookedPatty.png'))
+cooker_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cooker.png'))
+fryingPan_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','fryingpan.png'))
+oilBottle_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','oilBottle.png'))
+onioncut1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut1.png'))
+onioncut2_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut2.png'))
+onioncut3_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut3.png'))
+onioncut4_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.png'))
+
 
 
 class RecipeTree:
@@ -62,12 +83,12 @@ def treeTraversal(recipeChosen, stack, visitedNodes):
     sushiRoot.children[1].children = [RecipeTree("Assembly 1"), RecipeTree("Assembly 2"), RecipeTree("Assembly 3"), RecipeTree("Assembly 4"), RecipeTree("Assembly 5"),]
     sushiRoot.children[2].children = [RecipeTree("Cutting 1")]
     
-    if recipeChosen == "burger":
+    if recipeChosen == "burger": #determines which tree is being traversed
         value = burgerRoot.preorder(stack, visitedNodes)
     elif recipeChosen == "cake":
         value = cakeRoot.preorder(stack, visitedNodes)
     elif recipeChosen == "sushi":
-        value = cakeRoot.preorder(stack, visitedNodes)
+        value = sushiRoot.preorder(stack, visitedNodes)
     
     return value, stack, visitedNodes
 
@@ -440,6 +461,96 @@ def seasoning(seasoning, WIN, main1Bg_image, bgPosition, image, image_x, image_y
 
         pygame.display.update()
  
+def burgerGame(value):
+
+    #the steps are initially set to false
+    frying = False
+    mixing = False
+    shaping = False
+    grilling = False
+    assembly = False
+
+    if value == "frying": 
+        #they are set to true based on what is stored in value, this will run the correct step
+        frying = True
+    elif value == "mixing":
+        mixing = True
+    elif value == "shaping":
+        shaping = True
+    elif value == "grilling":
+        grilling = True
+    elif value == "assembly":
+        assembly = True
+    
+    while frying:
+        for event in pygame.event.get(): #allows user to quit the window
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+        
+        WIN.blit(cuttingBoard_image, (450, 450))
+    
+    while mixing:
+        for event in pygame.event.get(): #allows user to quit the window
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+    
+    while shaping:
+        for event in pygame.event.get(): #allows user to quit the window
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+    
+    while grilling:
+        for event in pygame.event.get(): #allows user to quit the window
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+    
+    while assembly:
+
+        for event in pygame.event.get(): #allows user to quit the window
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+    
+
+def cakeGame(value):
+    mixing = False
+    baking = False
+    frosting = False
+    assembly = False
+
+    if value == "mixing":
+        mixing = True
+    elif value == "baking":
+        baking = True
+    elif value == "frosting":
+        frosting = True
+    elif value == "assembly":
+        assembly = True
+
+def sushiGame(value):
+    cooking = False
+    assembly = False
+    cutting = False
+
+    if value == "cooking":
+        cooking = True
+    elif value == "assembly":
+        assembly = True
+    elif value == "cutting":
+        cutting = True
+
+
+
+
 
 
     

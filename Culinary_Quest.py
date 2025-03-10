@@ -5,19 +5,16 @@ import database
 import sys
 import minigames
 from collections import deque
+import classes
+import globalvariables
 
 pygame.init()
 
 pygame.display.set_caption('Culinary Quest')
-window_x = 1000
-window_y = 600
-WIN = pygame.display.set_mode((window_x, window_y))
-
-FPS = 60
 
 #Commonly Used Variables
 bgPosition = (0,0)
-specialCharacters = "!£$%^&*()_+-={['#~.,<>/?|\¬`;:}]@"
+
 
 #COLOURS
 white = (255, 255, 255)
@@ -82,184 +79,6 @@ mixingBowlSpilled_image = pygame.image.load(os.path.join('Culinary Quest ASSETS'
 #music
 pygame.mixer.init()
 
-#CLASSES
-
-class Text:
-    def __init__(self, x, y, text, colour, size):
-        self.x = x
-        self.y = y
-        self.text = text
-        self.colour = colour
-        self.size = size
-
-    def drawText(self):
-        drawnText = pygame.font.Font(os.path.join('Culinary Quest ASSETS', 'Aptos.ttf'), self.size).render(self.text, True, self.colour)
-        WIN.blit(drawnText, (self.x,self.y))
-    
-    def changePosition(self, newX, newY):
-        drawnText = pygame.font.Font(os.path.join('Culinary Quest ASSETS', 'Aptos.ttf'), self.size).render(self.text, True, self.colour)
-        WIN.blit(drawnText, (newX,newY))
-         
-class Box:
-    def __init__(self, x, y, height, length, colour, transparent):
-        self.x = x
-        self.y = y
-        self.height = height
-        self.length = length
-        self.colour = colour
-        self.transparent = transparent
-        self.rect = pygame.Rect(self.x, self.y, self.length, self.height)
-        self.active = False
-        
-    def drawBox(self):
-        if self.transparent != True:
-            pygame.draw.rect(WIN, self.colour, pygame.Rect(self.x, self.y, self.length, self.height) ,0, 3)
-        else:
-            boxSurface = pygame.Surface((self.length, self.height),pygame.SRCALPHA)
-            boxSurface.set_alpha(200)
-            pygame.draw.rect(boxSurface, self.colour, boxSurface.get_rect(), 0, 3)
-            WIN.blit(boxSurface, (self.x, self.y))
-    
-    def changeLength(self, size):
-        self.length = self.length + size #adds the value passed to the subroutine to the current length of the box
-        return self.length #returns the length of the box
-
-    def changeHeight(self, size):
-        self.height = self.height + size #adds the value passed to the subroutine to the current length of the box
-        return self.height #returns the length of the box
-
-    def changeY(self, y_coordinate):
-        self.y = y_coordinate
-        return self.y
-    
-    
-    def changeColour(self, colour):
-        self.colour = colour
-
-    def getActive(self): return self.active
-
-    def setActive(self): self.active = True
-
-    def setUnactive(self): self.active = False
-    
-class Button(Box):
-    def __init__(self, x, y, height, length, colour, transparent):
-        super().__init__(x, y, height, length, colour, transparent)
-        self.pressed = False
-        self.active = False
-
-    def checkPressed(self, position):
-        if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
-            self.mouseHovering = True
-        else:
-            self.mouseHovering = False
-        if self.mouseHovering:
-            self.pressed = True
-        else:
-            self.pressed = False
-        return self.pressed
-
-class ImageButton():
-    def __init__(self, x, y, image, size):
-        self.image = image
-        width = image.get_width()
-        height = image.get_width()
-        self.image = pygame.transform.scale(image, (int(width * size), int(height * size)))
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x,y)
-        self.pressed = False
-        self.active = False
-
-    def draw(self):
-        #draws image button screen
-        WIN.blit(self.image, (self.rect.x, self.rect.y))
-    
-    def changePosition(self, newX, newY):
-        #changes position of the button if needed
-        WIN.blit(self.image, (newX, newY))
-        self.rect.topleft = (newX, newY)
-
-    def checkPressed(self, position):
-        
-        if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
-            self.mouseHovering = True
-        else:
-            self.mouseHovering = False
-        if self.mouseHovering:
-            self.pressed = True
-        else:
-            self.pressed = False
-        return self.pressed
-
-    def getActive(self): return self.active
-    def setActive(self): self.active = True
-    def setUnactive(self): self.active = False
-
-class Input:
-    def __init__(self, x, y, height, length, colourText, size, censored):
-        self.x = x
-        self.y = y
-        self.height = height
-        self.length = length
-        self.colourText = colourText
-        self.size = size
-        self.colourBox = login_grey1
-        self.input = ''
-        self.selected = False
-        self.rect = pygame.Rect(x, y, length, height)
-        self.censored = censored
-        self.text_surface = pygame.font.Font(os.path.join('Culinary Quest ASSETS', 'Aptos.ttf'), self.size).render(self.input, True, self.colourText)
-        self.passValidated = False
-
-    def handleEvent(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(pygame.mouse.get_pos()):
-                self.selected = True
-            else:
-                self.selected = False
-        if event.type == pygame.KEYDOWN and self.selected:
-            if event.key == pygame.K_RETURN:
-                self.selected = False
-            if event.key == pygame.K_BACKSPACE:
-                self.input = self.input[:-1] #will remove the previous character if backspace
-            else:
-                self.input += event.unicode #will display the corresponding characters
-                if self.text_surface.get_width() > self.rect.w - 20:
-                    self.input = self.input[:-1]
-
-            if self.censored:
-                self.text_surface = pygame.font.Font(os.path.join('Culinary Quest ASSETS', 'Aptos.ttf'), self.size).render(('*' * len(self.input)), True, self.colourText)
-            else:
-                self.text_surface = pygame.font.Font(os.path.join('Culinary Quest ASSETS', 'Aptos.ttf'), self.size).render(self.input, True, self.colourText)
-    
-    def draw(self):
-        pygame.draw.rect(WIN, self.colourBox, self.rect, 0, 3)
-        WIN.blit(self.text_surface, (self.rect.x+5, self.rect.y+5))
-
-    def passValidate(self):
-        passwordInput = self.input
-        lower = False
-        upper = False
-        special = False
-        if len(passwordInput) >= 8: #makes sure pass is above 8 chars
-            for character in passwordInput: #checks all the characters in the password
-                if character.islower(): #checks if there's lowercase
-                    lower = True
-                if character.isupper(): #checks for uppercase
-                    upper = True
-                if character in specialCharacters: #checks through the string of special chars
-                    special = True
-            if lower and upper and special:
-                self.passValidated = True #if all is met, then it is validated
-            else:
-                self.passValidated = False #if not, then it is not validated
-        else:
-            self.passValidated = False
-        print(self.passValidated)
-        return self.passValidated #returns it to create account loop
-    
-    def getInput(self): return self.input #getter method for inputs
-
 #SCREENS 
 
 def loginScreen(usernameInput1_input, passwordInput1_input, loginLoop, createLoop, mainLoop):
@@ -267,23 +86,23 @@ def loginScreen(usernameInput1_input, passwordInput1_input, loginLoop, createLoo
     userInput = "None"
     #creating objects to display
     #boxes
-    loginBg_box = Box(280, 260, 200, 500, login_darkPurple1, True)
-    doneBg1_box = Box(150, 490, 80, 330, login_darkPurple1, True)
-    createBg1_box = Box(545, 490, 80, 330, login_darkPurple1, True)
-    loginLabel_box = Box(370, 270, 37, 300, login_lightPurple1, False)
-    usernameLabel_box = Box(300, 330, 37, 150, login_lightPurple1, False)
-    passwordLabel_box = Box(300, 400, 37, 150, login_lightPurple1, False)
-    accountError_box = Box(300, 371, 25, 460, login_red1, False)
+    loginBg_box = classes.Box(280, 260, 200, 500, login_darkPurple1, True)
+    doneBg1_box = classes.Box(150, 490, 80, 330, login_darkPurple1, True)
+    createBg1_box = classes.Box(545, 490, 80, 330, login_darkPurple1, True)
+    loginLabel_box = classes.Box(370, 270, 37, 300, login_lightPurple1, False)
+    usernameLabel_box = classes.Box(300, 330, 37, 150, login_lightPurple1, False)
+    passwordLabel_box = classes.Box(300, 400, 37, 150, login_lightPurple1, False)
+    accountError_box = classes.Box(300, 371, 25, 460, login_red1, False)
     #buttons
-    done1_button = Button(165, 500, 60, 300, login_lightPurple1, False)
-    create_button = Button(560, 500, 60, 300, login_lightPurple1, False)
+    done1_button = classes.Button(165, 500, 60, 300, login_lightPurple1, False)
+    create_button = classes.Button(560, 500, 60, 300, login_lightPurple1, False)
     #text
-    loginLabel_text = Text(495, 275, "Login", white, 22)
-    done1_text = Text(285, 510, "Done", white, 27)
-    create_text = Text(615, 510, "Create Account", white, 27)
-    usernameLabel_text = Text(327, 335, "Username", white, 22)
-    passwordLabel_text = Text(327, 405, "Password", white, 22)
-    accountError_text = Text(323, 371, "Please enter the correct username / password", white, 21)
+    loginLabel_text = classes.Text(495, 275, "Login", white, 22)
+    done1_text = classes.Text(285, 510, "Done", white, 27)
+    create_text = classes.Text(615, 510, "Create Account", white, 27)
+    usernameLabel_text = classes.Text(327, 335, "Username", white, 22)
+    passwordLabel_text = classes.Text(327, 405, "Password", white, 22)
+    accountError_text = classes.Text(323, 371, "Please enter the correct username / password", white, 21)
 
     while loginLoop:
         for event in pygame.event.get():
@@ -312,8 +131,8 @@ def loginScreen(usernameInput1_input, passwordInput1_input, loginLoop, createLoo
             passwordInput1_input.handleEvent(event)
 
         #drawing to screen
-        WIN.blit(loginBg_image, bgPosition)
-        WIN.blit(gameLogo_image, (410,20))
+        globalvariables.WIN.blit(loginBg_image, bgPosition)
+        globalvariables.WIN.blit(gameLogo_image, (410,20))
 
         loginBg_box.drawBox()
         doneBg1_box.drawBox()
@@ -346,28 +165,28 @@ def createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLo
     #images
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
     #boxes
-    createBg_box = Box(280, 150, 200, 500, login_darkPurple1, True)
-    doneBg2_box = Box(405, 360, 60, 230, login_darkPurple1, True)
-    createLabel_box = Box(370, 160, 37, 300, login_lightPurple1, False)
-    usernameLabel2_box = Box(300, 230, 37, 150, login_lightPurple1, False)
-    passwordLabel2_box = Box(300, 290, 37, 150, login_lightPurple1, False)
-    userError_box = Box(340, 430, 37, 350, login_red1, False)
-    passError_box = Box(340, 475, 115, 350, login_red1, False)
+    createBg_box = classes.Box(280, 150, 200, 500, login_darkPurple1, True)
+    doneBg2_box = classes.Box(405, 360, 60, 230, login_darkPurple1, True)
+    createLabel_box = classes.Box(370, 160, 37, 300, login_lightPurple1, False)
+    usernameLabel2_box = classes.Box(300, 230, 37, 150, login_lightPurple1, False)
+    passwordLabel2_box = classes.Box(300, 290, 37, 150, login_lightPurple1, False)
+    userError_box = classes.Box(340, 430, 37, 350, login_red1, False)
+    passError_box = classes.Box(340, 475, 115, 350, login_red1, False)
     #buttons
-    done2_button = Button(420, 370, 40, 200, login_lightPurple1, False)
-    back_button = Button(40, 70, 70, 100, login_darkPurple1, True)
+    done2_button = classes.Button(420, 370, 40, 200, login_lightPurple1, False)
+    back_button = classes.Button(40, 70, 70, 100, login_darkPurple1, True)
     #text
-    createLabel_text = Text(450, 165, "Create Account", white, 22)
-    usernameLabel2_text = Text(327, 235, "Username", white, 22)
-    passwordLabel2_text = Text(327, 295, "Password", white, 22)
-    done2_text = Text(500, 375, "Done", white, 22)
-    back_text = Text(50, 75, "<--", white, 50)
-    userError_text = Text(365, 435, "Please enter a unique username", white, 22)
-    passError1_text = Text(355, 475, "Passwords must include at least:", white, 22)
-    passError2_text = Text(355, 500, "- 8 characters", white, 22)
-    passError3_text = Text(355, 520, "- 1 lowercase character", white, 22)
-    passError4_text = Text(355, 540, "- 1 uppercase character", white, 22)
-    passError5_text = Text(355, 560, "- 1 special symbol", white, 22)
+    createLabel_text = classes.Text(450, 165, "Create Account", white, 22)
+    usernameLabel2_text = classes.Text(327, 235, "Username", white, 22)
+    passwordLabel2_text = classes.Text(327, 295, "Password", white, 22)
+    done2_text = classes.Text(500, 375, "Done", white, 22)
+    back_text = classes.Text(50, 75, "<--", white, 50)
+    userError_text = classes.Text(365, 435, "Please enter a unique username", white, 22)
+    passError1_text = classes.Text(355, 475, "Passwords must include at least:", white, 22)
+    passError2_text = classes.Text(355, 500, "- 8 characters", white, 22)
+    passError3_text = classes.Text(355, 520, "- 1 lowercase character", white, 22)
+    passError4_text = classes.Text(355, 540, "- 1 uppercase character", white, 22)
+    passError5_text = classes.Text(355, 560, "- 1 special symbol", white, 22)
 
     while createLoop:
         for event in pygame.event.get():
@@ -399,8 +218,8 @@ def createScreen(usernameInput2_input, passwordInput2_input, createLoop, loginLo
             passwordInput2_input.handleEvent(event)
 
         #drawing the objects
-        WIN.blit(loginBg_image, bgPosition)
-        WIN.blit(scaled_gameLogo, (470,10))
+        globalvariables.WIN.blit(loginBg_image, bgPosition)
+        globalvariables.WIN.blit(scaled_gameLogo, (470,10))
         createBg_box.drawBox()
         doneBg2_box.drawBox()
         createLabel_box.drawBox()
@@ -450,63 +269,63 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recip
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (75, 75))
     scaled_checkmarkIcon = pygame.transform.scale(checkmarkIcon_image, (30, 30))
     #box object creation
-    recipeBg_box = Box(120, 170, 425, 750, colours[0], True)
-    overhead_box = Box(0, 0, 75, 1000, colours[2], True)
-    pointsNeeded_box = Box(240, 15, 40, 300, colours[4], False)
-    currentLevel_box = Box(160, 15, 40, 90, colours[3], False)
-    recipeBg1_box = Box(130, 180, 180, 200, colours[1], False)
-    recipeBg2_box = Box(340, 180, 180, 200, colours[1], False)
-    recipeBg3_box = Box(550, 180, 180, 200, colours[1], False)
-    recipeBg4_box = Box(130, 380, 180, 200, colours[1], False)
-    recipeBg5_box = Box(340, 380, 180, 200, colours[1], False)
-    recipeBg6_box = Box(550, 380, 180, 200, colours[1], False)
-    filterBg_box = Box(820, 100, 37, 50, login_grey1, False)
-    filtertoolBg_box = Box(670, 150, 380, 300, login_grey1, False)
-    dietaryBg_box = Box(690, 160, 33, 265, colours[3], False)
-    halalBg_box = Box(690, 200, 33, 130, colours[0], False)
-    vegeterianBg_box = Box(690, 238, 33, 130, colours[0], False)
-    veganBg_box = Box(690, 276, 33, 130, colours[0], False)
-    difficultyBg_box = Box(690, 316, 33, 265, colours[3], False)
-    easyBg_box = Box(690, 356, 33, 130, colours[0], False)
-    mediumBg_box = Box(690, 394, 33, 130, colours[0], False)
-    hardBg_box = Box(690, 432, 33, 130, colours[0], False)
-    errorBg_box = Box(350, 230, 50, 300, login_red1, False)
+    recipeBg_box = classes.Box(120, 170, 425, 750, colours[0], True)
+    overhead_box = classes.Box(0, 0, 75, 1000, colours[2], True)
+    pointsNeeded_box = classes.Box(240, 15, 40, 300, colours[4], False)
+    currentLevel_box = classes.Box(160, 15, 40, 90, colours[3], False)
+    recipeBg1_box = classes.Box(130, 180, 180, 200, colours[1], False)
+    recipeBg2_box = classes.Box(340, 180, 180, 200, colours[1], False)
+    recipeBg3_box = classes.Box(550, 180, 180, 200, colours[1], False)
+    recipeBg4_box = classes.Box(130, 380, 180, 200, colours[1], False)
+    recipeBg5_box = classes.Box(340, 380, 180, 200, colours[1], False)
+    recipeBg6_box = classes.Box(550, 380, 180, 200, colours[1], False)
+    filterBg_box = classes.Box(820, 100, 37, 50, login_grey1, False)
+    filtertoolBg_box = classes.Box(670, 150, 380, 300, login_grey1, False)
+    dietaryBg_box = classes.Box(690, 160, 33, 265, colours[3], False)
+    halalBg_box = classes.Box(690, 200, 33, 130, colours[0], False)
+    vegeterianBg_box = classes.Box(690, 238, 33, 130, colours[0], False)
+    veganBg_box = classes.Box(690, 276, 33, 130, colours[0], False)
+    difficultyBg_box = classes.Box(690, 316, 33, 265, colours[3], False)
+    easyBg_box = classes.Box(690, 356, 33, 130, colours[0], False)
+    mediumBg_box = classes.Box(690, 394, 33, 130, colours[0], False)
+    hardBg_box = classes.Box(690, 432, 33, 130, colours[0], False)
+    errorBg_box = classes.Box(350, 230, 50, 300, login_red1, False)
 
     #text object creation
-    searchLabel_text = Text(150, 105, "Search", white, 22)
-    error_text = Text(405, 240, "Recipe not found", white, 25)
-    dietary_text = Text(720, 165, "Dietary Requirements", white, 22)
-    halal_text = Text(727, 205, "Halal", white, 22)
-    vegetarian_text = Text(703, 243, "Vegetarian", white, 22)
-    vegan_text = Text(725, 281, "Vegan", white, 22)
-    difficulty_text = Text(775, 321, "Difficulty", white, 22)
-    easy_text = Text(732, 361, "Easy", white, 22)
-    medium_text = Text(715, 399, "Medium", white, 22)
-    hard_text = Text(732, 437, "Hard", white, 22)
-    filterText_text = Text(800, 477, "Filter", white, 22)
-    level_text = Text(170, 20, "Level " + current_level, white, 22)
-    pointsNeeded_text = Text(263, 20, current_points + " points for the next level", white, 22)
+    searchLabel_text = classes.Text(150, 105, "Search", white, 22)
+    error_text = classes.Text(405, 240, "Recipe not found", white, 25)
+    dietary_text = classes.Text(720, 165, "Dietary Requirements", white, 22)
+    halal_text = classes.Text(727, 205, "Halal", white, 22)
+    vegetarian_text = classes.Text(703, 243, "Vegetarian", white, 22)
+    vegan_text = classes.Text(725, 281, "Vegan", white, 22)
+    difficulty_text = classes.Text(775, 321, "Difficulty", white, 22)
+    easy_text = classes.Text(732, 361, "Easy", white, 22)
+    medium_text = classes.Text(715, 399, "Medium", white, 22)
+    hard_text = classes.Text(732, 437, "Hard", white, 22)
+    filterText_text = classes.Text(800, 477, "Filter", white, 22)
+    level_text = classes.Text(170, 20, "Level " + current_level, white, 22)
+    pointsNeeded_text = classes.Text(263, 20, current_points + " points for the next level", white, 22)
 
     #button creation
-    search_button = Button(120, 100, 37, 120, colours[1], False)
-    halal_button = Button(840, 200, 33, 33, white, False)
-    vegetarian_button = Button(840, 238, 33, 33, white, False)
-    vegan_button = Button(840, 276, 33, 33, white, False)
-    easy_button = Button(840, 356, 33, 33, white, False)
-    medium_button = Button(840, 394, 33, 33, white, False)
-    hard_button = Button(840, 432, 33, 33, white, False)
-    filterText_button = Button(690, 472, 33, 265, colours[5], False)
+    search_button = classes.Button(120, 100, 37, 120, colours[1], False)
+    halal_button = classes.Button(840, 200, 33, 33, white, False)
+    vegetarian_button = classes.Button(840, 238, 33, 33, white, False)
+    vegan_button = classes.Button(840, 276, 33, 33, white, False)
+    easy_button = classes.Button(840, 356, 33, 33, white, False)
+    medium_button = classes.Button(840, 394, 33, 33, white, False)
+    hard_button = classes.Button(840, 432, 33, 33, white, False)
+    filterText_button = classes.Button(690, 472, 33, 265, colours[5], False)
 
     #image button creation
-    shop_button = ImageButton(600, 10, shopIcon_image, 1)
-    settings_button = ImageButton(850, 15, settingsIcon_image, 1)
-    burger_button = ImageButton(110, 155, burgerIcon_image, 0.45)
-    cake_button = ImageButton(355, 190, cakeIcon_image, 0.3)
-    sushi_button = ImageButton(570, 180, sushiIcon_image, 0.3)
-    filter_button = ImageButton(830, 102, filterIcon_image, 0.7)
-    cheeseFondue_button = ImageButton(145, 390, cheeseFondueIcon_image, 0.3)
-    croissant_button = ImageButton(355, 390, croissantIcon_image, 0.3)
-    tofu_button = ImageButton(570, 390, tofuIcon_image, 0.3)
+    shop_button = classes.ImageButton(600, 10, shopIcon_image, 1)
+    settings_button = classes.ImageButton(850, 15, settingsIcon_image, 1)
+    burger_button = classes.ImageButton(110, 155, burgerIcon_image, 0.45)
+    cake_button = classes.ImageButton(355, 190, cakeIcon_image, 0.3)
+    sushi_button = classes.ImageButton(570, 180, sushiIcon_image, 0.3)
+    filter_button = classes.ImageButton(830, 102, filterIcon_image, 0.7)
+    cheeseFondue_button = classes.ImageButton(145, 390, cheeseFondueIcon_image, 0.3)
+    croissant_button = classes.ImageButton(355, 390, croissantIcon_image, 0.3)
+    tofu_button = classes.ImageButton(570, 390, tofuIcon_image, 0.3)
 
 
     #this will hold the dietary requirements that have been selected via the filter tool, the values 
@@ -722,12 +541,12 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recip
             search_input.handleEvent(event)
 
         #drawing onto screen
-        WIN.blit(mainBg_image, bgPosition)
+        globalvariables.WIN.blit(mainBg_image, bgPosition)
         recipeBg_box.drawBox()
         overhead_box.drawBox()
         pointsNeeded_box.drawBox()
         currentLevel_box.drawBox()
-        WIN.blit(scaled_gameLogo, (30,0))
+        globalvariables.WIN.blit(scaled_gameLogo, (30,0))
         search_button.drawBox()
         search_input.draw()
         searchLabel_text.drawText()
@@ -805,17 +624,17 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recip
         mediumActive = medium_button.getActive()
         hardActive = hard_button.getActive()
         if halalActive: #if the button is active
-            WIN.blit(scaled_checkmarkIcon, (845,198)) #the checkmark is displayed
+            globalvariables.WIN.blit(scaled_checkmarkIcon, (845,198)) #the checkmark is displayed
         if vegetarianActive:
-            WIN.blit(scaled_checkmarkIcon, (845,236))
+            globalvariables.WIN.blit(scaled_checkmarkIcon, (845,236))
         if veganActive:
-            WIN.blit(scaled_checkmarkIcon, (845,275))
+            globalvariables.WIN.blit(scaled_checkmarkIcon, (845,275))
         if easyActive: #if the button is active
-            WIN.blit(scaled_checkmarkIcon, (845,354)) #the checkmark is displayed
+            globalvariables.WIN.blit(scaled_checkmarkIcon, (845,354)) #the checkmark is displayed
         if mediumActive:
-            WIN.blit(scaled_checkmarkIcon, (845,392))
+            globalvariables.WIN.blit(scaled_checkmarkIcon, (845,392))
         if hardActive:
-            WIN.blit(scaled_checkmarkIcon, (845,430))
+            globalvariables.WIN.blit(scaled_checkmarkIcon, (845,430))
 
         pygame.display.update()
 
@@ -836,52 +655,52 @@ def shopScreen(mainLoop, shopLoop, username, theme_selected):
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
 
     #box object creation
-    shopBg_box = Box(120, 150, 425, 750, colours[0], True)
-    shopLabel_box = Box(410, 160, 30, 200, colours[3], False)
-    musicLabel_box = Box(140, 200, 30, 90, colours[3], False)
-    disc1Label_box = Box(140, 250, 60, 180, colours[2], False)
-    disc2Label_box = Box(390, 250, 60, 180, colours[2], False)
-    disc3Label_box = Box(640, 250, 60, 180, colours[2], False)
-    themeLabel_box = Box(140, 380, 30, 90, colours[3], False)
-    theme1Label_box = Box(140, 430, 60, 180, main_darkPurple1, False)
-    theme2Label_box = Box(390, 430, 60, 180, main_orange, False)
-    theme3Label_box = Box(640, 430, 60, 180, colours[2], False)
+    shopBg_box = classes.Box(120, 150, 425, 750, colours[0], True)
+    shopLabel_box = classes.Box(410, 160, 30, 200, colours[3], False)
+    musicLabel_box = classes.Box(140, 200, 30, 90, colours[3], False)
+    disc1Label_box = classes.Box(140, 250, 60, 180, colours[2], False)
+    disc2Label_box = classes.Box(390, 250, 60, 180, colours[2], False)
+    disc3Label_box = classes.Box(640, 250, 60, 180, colours[2], False)
+    themeLabel_box = classes.Box(140, 380, 30, 90, colours[3], False)
+    theme1Label_box = classes.Box(140, 430, 60, 180, main_darkPurple1, False)
+    theme2Label_box = classes.Box(390, 430, 60, 180, main_orange, False)
+    theme3Label_box = classes.Box(640, 430, 60, 180, colours[2], False)
 
 
     #text object creation
-    back_text = Text(80, 55, "<--", white, 50)
-    shopLabel_text = Text(485, 162, "Shop", white, 22)
-    musicLabel_text = Text(155, 202, "Music", white, 22)
-    disc1Label_text = Text(195, 265, "Disc 1", white, 25)
-    disc2Label_text = Text(445, 265, "Disc 2", white, 25)
-    disc3Label_text = Text(695, 265, "Disc 3", white, 25)
-    themeLabel_text = Text(150, 382, "Theme", white, 22)
-    theme1Label_text = Text(190, 445, "Purple", white, 25)
-    theme2Label_text = Text(440, 445, "Orange", white, 25)
-    theme3Label_text = Text(710, 445, "N/A", white, 25)
-    discSelected_text = Text(185, 332, "Selected", white, 22)
-    themeSelected_text = Text(185, 512, "Selected", white, 22)
-    disc2Required_text = Text(405, 332, "Must be level 5", white, 22)
-    disc3Required_text = Text(655, 332, "Must be level 10", white, 22)
-    theme2Required_text = Text(405, 512, "Must be level 10", white, 22)
-    theme3NA_text = Text(715, 512, "N/A", white, 22)
-    disc2Unlock_text = Text(437, 332, "Unlock", white, 22)
-    disc3Unlock_text = Text(687, 332, "Unlock", white, 22)
-    theme2Unlock_text = Text(437, 512, "Unlock", white, 22)
-    disc1Select_text = Text(187, 332, "Select", white, 22)
-    disc2Select_text = Text(437, 332, "Select", white, 22)
-    disc3Select_text = Text(687, 332, "Select", white, 22)
-    theme1Select_text = Text(187, 512, "Select", white, 22)
-    theme2Select_text = Text(437, 512, "Select", white, 22)
+    back_text = classes.Text(80, 55, "<--", white, 50)
+    shopLabel_text = classes.Text(485, 162, "Shop", white, 22)
+    musicLabel_text = classes.Text(155, 202, "Music", white, 22)
+    disc1Label_text = classes.Text(195, 265, "Disc 1", white, 25)
+    disc2Label_text = classes.Text(445, 265, "Disc 2", white, 25)
+    disc3Label_text = classes.Text(695, 265, "Disc 3", white, 25)
+    themeLabel_text = classes.Text(150, 382, "Theme", white, 22)
+    theme1Label_text = classes.Text(190, 445, "Purple", white, 25)
+    theme2Label_text = classes.Text(440, 445, "Orange", white, 25)
+    theme3Label_text = classes.Text(710, 445, "N/A", white, 25)
+    discSelected_text = classes.Text(185, 332, "Selected", white, 22)
+    themeSelected_text = classes.Text(185, 512, "Selected", white, 22)
+    disc2Required_text = classes.Text(405, 332, "Must be level 5", white, 22)
+    disc3Required_text = classes.Text(655, 332, "Must be level 10", white, 22)
+    theme2Required_text = classes.Text(405, 512, "Must be level 10", white, 22)
+    theme3NA_text = classes.Text(715, 512, "N/A", white, 22)
+    disc2Unlock_text = classes.Text(437, 332, "Unlock", white, 22)
+    disc3Unlock_text = classes.Text(687, 332, "Unlock", white, 22)
+    theme2Unlock_text = classes.Text(437, 512, "Unlock", white, 22)
+    disc1Select_text = classes.Text(187, 332, "Select", white, 22)
+    disc2Select_text = classes.Text(437, 332, "Select", white, 22)
+    disc3Select_text = classes.Text(687, 332, "Select", white, 22)
+    theme1Select_text = classes.Text(187, 512, "Select", white, 22)
+    theme2Select_text = classes.Text(437, 512, "Select", white, 22)
 
     #button object creation
-    back_button = Button(65, 50, 70, 100, colours[3], False)
-    disc1Unlock_button = Button(140, 330, 30, 180, colours[4], False)
-    disc2Unlock_button = Button(390, 330, 30, 180, colours[4], False)
-    disc3Unlock_button = Button(640, 330, 30, 180, colours[4], False)
-    theme1Unlock_button = Button(140, 510, 30, 180, colours[4], False)
-    theme2Unlock_button = Button(390, 510, 30, 180, colours[4], False)
-    theme3Unlock_button = Button(640, 510, 30, 180, colours[4], False)
+    back_button = classes.Button(65, 50, 70, 100, colours[3], False)
+    disc1Unlock_button = classes.Button(140, 330, 30, 180, colours[4], False)
+    disc2Unlock_button = classes.Button(390, 330, 30, 180, colours[4], False)
+    disc3Unlock_button = classes.Button(640, 330, 30, 180, colours[4], False)
+    theme1Unlock_button = classes.Button(140, 510, 30, 180, colours[4], False)
+    theme2Unlock_button = classes.Button(390, 510, 30, 180, colours[4], False)
+    theme3Unlock_button = classes.Button(640, 510, 30, 180, colours[4], False)
 
     while shopLoop:
 
@@ -937,8 +756,8 @@ def shopScreen(mainLoop, shopLoop, username, theme_selected):
                             database.changeData_main("theme2", True, username)
             
         #drawing onto screen
-        WIN.blit(mainBg_image, bgPosition)
-        WIN.blit(scaled_gameLogo, (450,10))
+        globalvariables.WIN.blit(mainBg_image, bgPosition)
+        globalvariables.WIN.blit(scaled_gameLogo, (450,10))
         shopBg_box.drawBox()
         back_button.drawBox()
         back_text.drawText()
@@ -1024,50 +843,50 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
     scaled_checkmarkIcon = pygame.transform.scale(checkmarkIcon_image, (35, 35))
 
     #box object creation
-    settingsBg_box = Box(120, 150, 425, 750, colours[0], True)
-    settingsLabel_box = Box(405, 160, 30, 200, colours[3], False)
-    changePassLabel_box = Box(140, 200, 30, 210, colours[3], False)
-    volumeLabel_box = Box(140, 360, 30, 210, colours[3], False)
-    measurementLabel_box = Box(140, 460, 30, 210, colours[3], False)
-    oldPasswordLabel_box = Box(140, 250, 30, 210, colours[4], False)
-    newPasswordLabel_box = Box(140, 310, 30, 210, colours[4], False)
-    errorBg1_box = Box(655, 180, 30, 200, login_red1, False)
-    errorBg2_box = Box(655, 230, 130, 200, login_red1, False)
-    passwordChangedBg_box = Box(655, 180, 30, 200, main_green, False)
-    metricLabel_box = Box(140, 520, 30, 200, colours[4], False)
-    UScustomaryLabel_box = Box(440, 520, 30, 200, colours[4], False)
-    volumeBg_box = Box(140, 410, 30, 500, white, False)
-    volumeBar_box = Box(140, 410, 30, volume_level*5, colours[2], False)
+    settingsBg_box = classes.Box(120, 150, 425, 750, colours[0], True)
+    settingsLabel_box = classes.Box(405, 160, 30, 200, colours[3], False)
+    changePassLabel_box = classes.Box(140, 200, 30, 210, colours[3], False)
+    volumeLabel_box = classes.Box(140, 360, 30, 210, colours[3], False)
+    measurementLabel_box = classes.Box(140, 460, 30, 210, colours[3], False)
+    oldPasswordLabel_box = classes.Box(140, 250, 30, 210, colours[4], False)
+    newPasswordLabel_box = classes.Box(140, 310, 30, 210, colours[4], False)
+    errorBg1_box = classes.Box(655, 180, 30, 200, login_red1, False)
+    errorBg2_box = classes.Box(655, 230, 130, 200, login_red1, False)
+    passwordChangedBg_box = classes.Box(655, 180, 30, 200, main_green, False)
+    metricLabel_box = classes.Box(140, 520, 30, 200, colours[4], False)
+    UScustomaryLabel_box = classes.Box(440, 520, 30, 200, colours[4], False)
+    volumeBg_box = classes.Box(140, 410, 30, 500, white, False)
+    volumeBar_box = classes.Box(140, 410, 30, volume_level*5, colours[2], False)
 
     #text object creation
-    back_text = Text(80, 55, "<--", white, 50)
-    settingsLabel_text = Text(470, 162, "Settings", white, 22)
-    changePassLabel_text = Text(155, 202, "Change Password", white, 22)
-    volumeLabel_text = Text(175, 362, "Music Volume", white, 22)
-    measurementLabel_text = Text(155, 462, "Measurement Type", white, 22)
-    oldPasswordLabel_text = Text(175, 252, "Old Password", white, 22)
-    newPasswordLabel_text = Text(175, 312, "New Password", white, 22)
-    save_text = Text(385, 202, "Save", white, 22)
-    incorrectPassword_text = Text(660, 182, "Incorrect old password", white, 19)
-    passwordRequirements1_text = Text(660, 232, "Passwords must have :", white, 19)
-    passwordRequirements2_text = Text(660, 252, "- at least 8 characters", white, 18)
-    passwordRequirements3_text = Text(660, 272, "- at least 1 uppercase", white, 18)
-    passwordRequirements4_text = Text(660, 292, "- at least 1 lowercase", white, 18)
-    passwordRequirements5_text = Text(660, 312, "- at least 1 special", white, 18)
-    passwordRequirements6_text = Text(670, 332, "symbol", white, 18)
-    passwordChanged_text = Text(670, 182, "Password changed.", white, 19)
-    metricLabel_text = Text(165, 522, "Metric System", white, 22)
-    UScustomaryLabel_text = Text(465, 522, "US Customary", white, 22)
-    volumeUp_text = Text(660, 395, "/\\", white, 20)
-    volumeDown_text = Text(660, 423, "\/", white, 20)
+    back_text = classes.Text(80, 55, "<--", white, 50)
+    settingsLabel_text = classes.Text(470, 162, "Settings", white, 22)
+    changePassLabel_text = classes.Text(155, 202, "Change Password", white, 22)
+    volumeLabel_text = classes.Text(175, 362, "Music Volume", white, 22)
+    measurementLabel_text = classes.Text(155, 462, "Measurement Type", white, 22)
+    oldPasswordLabel_text = classes.Text(175, 252, "Old Password", white, 22)
+    newPasswordLabel_text = classes.Text(175, 312, "New Password", white, 22)
+    save_text = classes.Text(385, 202, "Save", white, 22)
+    incorrectPassword_text = classes.Text(660, 182, "Incorrect old password", white, 19)
+    passwordRequirements1_text = classes.Text(660, 232, "Passwords must have :", white, 19)
+    passwordRequirements2_text = classes.Text(660, 252, "- at least 8 characters", white, 18)
+    passwordRequirements3_text = classes.Text(660, 272, "- at least 1 uppercase", white, 18)
+    passwordRequirements4_text = classes.Text(660, 292, "- at least 1 lowercase", white, 18)
+    passwordRequirements5_text = classes.Text(660, 312, "- at least 1 special", white, 18)
+    passwordRequirements6_text = classes.Text(670, 332, "symbol", white, 18)
+    passwordChanged_text = classes.Text(670, 182, "Password changed.", white, 19)
+    metricLabel_text = classes.Text(165, 522, "Metric System", white, 22)
+    UScustomaryLabel_text = classes.Text(465, 522, "US Customary", white, 22)
+    volumeUp_text = classes.Text(660, 395, "/\\", white, 20)
+    volumeDown_text = classes.Text(660, 423, "\/", white, 20)
 
     #button object creation
-    back_button = Button(65, 50, 70, 100, colours[3], False)
-    save_button = Button(370, 200, 30, 75, colours[5], False)
-    metric_button = Button(370, 518, 33, 33, white, False)
-    UScustomary_button = Button(670, 518, 33, 33, white, False)
-    volumeUp_button = Button(650, 397, 22, 33, colours[4], False)
-    volumeDown_button = Button(650, 423, 22, 33, colours[4], False)
+    back_button = classes.Button(65, 50, 70, 100, colours[3], False)
+    save_button = classes.Button(370, 200, 30, 75, colours[5], False)
+    metric_button = classes.Button(370, 518, 33, 33, white, False)
+    UScustomary_button = classes.Button(670, 518, 33, 33, white, False)
+    volumeUp_button = classes.Button(650, 397, 22, 33, colours[4], False)
+    volumeDown_button = classes.Button(650, 423, 22, 33, colours[4], False)
 
     while settingsLoop:
         for event in pygame.event.get():
@@ -1133,8 +952,8 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
         pygame.mixer.music.set_volume(volume_level / 100) #sets the volume to that level
         
         #drawing onto screen
-        WIN.blit(mainBg_image, bgPosition)
-        WIN.blit(scaled_gameLogo, (450,10))
+        globalvariables.WIN.blit(mainBg_image, bgPosition)
+        globalvariables.WIN.blit(scaled_gameLogo, (450,10))
         settingsBg_box.drawBox()
         back_button.drawBox()
         back_text.drawText()
@@ -1216,162 +1035,162 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
     scaled_vegan = pygame.transform.scale(veganIcon_image, (60, 60))
 
     #box object creation
-    recipeBg_box = Box(120, 150, 425, 750, colours[0], True)
-    recipeLabel_box = Box(410, 160, 30, 200, colours[3], False)
-    informationLabel_box = Box(170, 210, 30, 180, colours[3], False)
-    attemptsLabel_box = Box(660, 210, 30, 180, colours[3], False)
-    recipeIconBg_box = Box(390, 210, 195, 235, white, False)
-    difficultyBg_box = Box(170, 330, 30, 180, colours[2], False)
-    descriptionLabel_box = Box(170, 420, 30, 180, colours[3], False)
-    leaderboardBg_box = Box(660, 247, 205, 180, colours[2], False)
-    descriptionBg_box = Box(170, 465, 90, 670, colours[2], False)
-    fullRecipeBg_box = Box(310, 100, 480, 410, colours[4], False)
+    recipeBg_box = classes.Box(120, 150, 425, 750, colours[0], True)
+    recipeLabel_box = classes.Box(410, 160, 30, 200, colours[3], False)
+    informationLabel_box = classes.Box(170, 210, 30, 180, colours[3], False)
+    attemptsLabel_box = classes.Box(660, 210, 30, 180, colours[3], False)
+    recipeIconBg_box = classes.Box(390, 210, 195, 235, white, False)
+    difficultyBg_box = classes.Box(170, 330, 30, 180, colours[2], False)
+    descriptionLabel_box = classes.Box(170, 420, 30, 180, colours[3], False)
+    leaderboardBg_box = classes.Box(660, 247, 205, 180, colours[2], False)
+    descriptionBg_box = classes.Box(170, 465, 90, 670, colours[2], False)
+    fullRecipeBg_box = classes.Box(310, 100, 480, 410, colours[4], False)
 
     #text object creation
-    back_text = Text(80, 55, "<--", white, 50)
-    informationLabel_text = Text(200, 212, "Information", white, 22)
-    attemptsLabel_text = Text(685, 212, "Past Attempts", white, 22)
-    burgerLabel_text = Text(480, 162, "Burger", white, 22)
-    cakeLabel_text = Text(485, 162, "Cake", white, 22)
-    sushiLabel_text = Text(485, 162, "Sushi", white, 22)
-    cheeseFondueLabel_text = Text(435, 162, "Cheese Fondue", white, 22)
-    croissantLabel_text = Text(465, 162, "Croissant", white, 22)
-    tofuLabel_text = Text(490, 162, "Tofu", white, 22)
-    easy_text = Text(235, 332, "Easy", white, 22)
-    medium_text = Text(222, 332, "Medium", white, 22)
-    hard_text = Text(235, 332, "Hard", white, 22)
-    fullRecipe_text = Text(205, 377, "Full Recipe", white, 22)
-    description_text = Text(205, 422, "Description", white, 22)
-    start_text = Text(485, 422, "Start", white, 22)
-    exit_text = Text(717, 86, "X", white, 30)
-    recipePageR_text = Text(695, 540, ">", white, 27)
-    recipePageL_text = Text(320, 540, "<", white, 27)
+    back_text = classes.Text(80, 55, "<--", white, 50)
+    informationLabel_text = classes.Text(200, 212, "Information", white, 22)
+    attemptsLabel_text = classes.Text(685, 212, "Past Attempts", white, 22)
+    burgerLabel_text = classes.Text(480, 162, "Burger", white, 22)
+    cakeLabel_text = classes.Text(485, 162, "Cake", white, 22)
+    sushiLabel_text = classes.Text(485, 162, "Sushi", white, 22)
+    cheeseFondueLabel_text = classes.Text(435, 162, "Cheese Fondue", white, 22)
+    croissantLabel_text = classes.Text(465, 162, "Croissant", white, 22)
+    tofuLabel_text = classes.Text(490, 162, "Tofu", white, 22)
+    easy_text = classes.Text(235, 332, "Easy", white, 22)
+    medium_text = classes.Text(222, 332, "Medium", white, 22)
+    hard_text = classes.Text(235, 332, "Hard", white, 22)
+    fullRecipe_text = classes.Text(205, 377, "Full Recipe", white, 22)
+    description_text = classes.Text(205, 422, "Description", white, 22)
+    start_text = classes.Text(485, 422, "Start", white, 22)
+    exit_text = classes.Text(717, 86, "X", white, 30)
+    recipePageR_text = classes.Text(695, 540, ">", white, 27)
+    recipePageL_text = classes.Text(320, 540, "<", white, 27)
     
     #description text
-    burgerDescription1_text = Text(180, 467, "A burger consists of a ground meat patty enclosed in a bun. The", white, 22)
-    burgerDescription2_text = Text(180, 487, "patty can be made from beef, chicken, turkey, or even plant-based", white, 22)
-    burgerDescription3_text = Text(180, 507, "alternatives. The bun is typically soft, and holds the burger ingredients", white, 22)
-    burgerDescription4_text = Text(180, 527, "together, which includes lettuce, cheese, tomatoes, and more.", white, 22)
+    burgerDescription1_text = classes.Text(180, 467, "A burger consists of a ground meat patty enclosed in a bun. The", white, 22)
+    burgerDescription2_text = classes.Text(180, 487, "patty can be made from beef, chicken, turkey, or even plant-based", white, 22)
+    burgerDescription3_text = classes.Text(180, 507, "alternatives. The bun is typically soft, and holds the burger ingredients", white, 22)
+    burgerDescription4_text = classes.Text(180, 527, "together, which includes lettuce, cheese, tomatoes, and more.", white, 22)
 
-    cakeDescription1_text = Text(180, 467, "Cake is a flour confection made from flour, sugar, and other ingredients", white, 22)
-    cakeDescription2_text = Text(180, 487, "and is usually baked. In their oldest forms, cakes were modifications of", white, 22)
-    cakeDescription3_text = Text(180, 507, "bread, but cakes now cover a wide range of preparations and share", white, 22)
-    cakeDescription4_text = Text(180, 527, "features with desserts such as pastries, meringues, custards, and pies.", white, 22)
+    cakeDescription1_text = classes.Text(180, 467, "Cake is a flour confection made from flour, sugar, and other ingredients", white, 22)
+    cakeDescription2_text = classes.Text(180, 487, "and is usually baked. In their oldest forms, cakes were modifications of", white, 22)
+    cakeDescription3_text = classes.Text(180, 507, "bread, but cakes now cover a wide range of preparations and share", white, 22)
+    cakeDescription4_text = classes.Text(180, 527, "features with desserts such as pastries, meringues, custards, and pies.", white, 22)
 
-    sushiDescription1_text = Text(180, 467, "A staple rice dish of Japanese cuisine, consisting of cooked rice", white, 22)
-    sushiDescription2_text = Text(180, 487, "flavored with vinegar and a variety of vegetable, egg, or raw seafood", white, 22)
-    sushiDescription3_text = Text(180, 507, "garnishes and served cold. Restaurants specializing in sushi abound", white, 22)
-    sushiDescription4_text = Text(180, 527, "in Japan, and the dish has gained popularity in the USA and elsewhere.", white, 22)
+    sushiDescription1_text = classes.Text(180, 467, "A staple rice dish of Japanese cuisine, consisting of cooked rice", white, 22)
+    sushiDescription2_text = classes.Text(180, 487, "flavored with vinegar and a variety of vegetable, egg, or raw seafood", white, 22)
+    sushiDescription3_text = classes.Text(180, 507, "garnishes and served cold. Restaurants specializing in sushi abound", white, 22)
+    sushiDescription4_text = classes.Text(180, 527, "in Japan, and the dish has gained popularity in the USA and elsewhere.", white, 22)
 
-    cheeseFondueDescription1_text = Text(180, 467, "A Swiss national dish of melted cheese and wine served in a", white, 22)
-    cheeseFondueDescription2_text = Text(180, 487, "communal pot over a portable stove and eaten by dipping bread,", white, 22)
-    cheeseFondueDescription3_text = Text(180, 507, "vegetables or other foods into the cheese using long-stemmed forks.", white, 22)
-    cheeseFondueDescription4_text = Text(180, 527, "This meal was supposedly to use up stale bread and cheese.", white, 22)
+    cheeseFondueDescription1_text = classes.Text(180, 467, "A Swiss national dish of melted cheese and wine served in a", white, 22)
+    cheeseFondueDescription2_text = classes.Text(180, 487, "communal pot over a portable stove and eaten by dipping bread,", white, 22)
+    cheeseFondueDescription3_text = classes.Text(180, 507, "vegetables or other foods into the cheese using long-stemmed forks.", white, 22)
+    cheeseFondueDescription4_text = classes.Text(180, 527, "This meal was supposedly to use up stale bread and cheese.", white, 22)
 
-    croissantDescription1_text = Text(180, 467, "It is a buttery, flaky, viennoiserie pastry inspired by the shape of the", white, 22)
-    croissantDescription2_text = Text(180, 487, "Austrian kipferl, but using the French yeast-leavened laminated dough.", white, 22)
-    croissantDescription3_text = Text(180, 507, "Croissants are named for their historical crescent shape and are a", white, 22)
-    croissantDescription4_text = Text(180, 527, "common part of a continental breakfast in many European countries.", white, 22)
+    croissantDescription1_text = classes.Text(180, 467, "It is a buttery, flaky, viennoiserie pastry inspired by the shape of the", white, 22)
+    croissantDescription2_text = classes.Text(180, 487, "Austrian kipferl, but using the French yeast-leavened laminated dough.", white, 22)
+    croissantDescription3_text = classes.Text(180, 507, "Croissants are named for their historical crescent shape and are a", white, 22)
+    croissantDescription4_text = classes.Text(180, 527, "common part of a continental breakfast in many European countries.", white, 22)
 
-    tofuDescription1_text = Text(180, 467, "Tofu, which originates from China, is a vegan cheese alternative and is", white, 22)
-    tofuDescription2_text = Text(180, 487, "condensed soy milk that people press into blocks of different firmness.", white, 22)
-    tofuDescription3_text = Text(180, 507, "It is a nutrient-dense food that is high in protein and contains all the", white, 22)
-    tofuDescription4_text = Text(180, 527, "essential amino acids your body needs.", white, 22)
+    tofuDescription1_text = classes.Text(180, 467, "Tofu, which originates from China, is a vegan cheese alternative and is", white, 22)
+    tofuDescription2_text = classes.Text(180, 487, "condensed soy milk that people press into blocks of different firmness.", white, 22)
+    tofuDescription3_text = classes.Text(180, 507, "It is a nutrient-dense food that is high in protein and contains all the", white, 22)
+    tofuDescription4_text = classes.Text(180, 527, "essential amino acids your body needs.", white, 22)
     
     #full recipe text objects
     
-    burgerRecipe1_text = Text(315, 105, "1. Heat the olive oil in a frying pan, add", white, 22)
-    burgerRecipe2_text = Text(337, 125, "the onion and cook for 5 minutes until", white, 22)
-    burgerRecipe3_text = Text(337, 145, "softened and starting to turn golden.", white, 22)
-    burgerRecipe4_text = Text(337, 165, "Set aside", white, 22)
-    burgerRecipe5_text = Text(315, 205, "2. In a bowl, combine the beef mince with ", white, 22)
-    burgerRecipe6_text = Text(337, 225, "the herbs and the egg. Seaston, add the", white, 22)
-    burgerRecipe7_text = Text(337, 245, "onions and mix well. Shape into 4 patties", white, 22)
-    burgerRecipe8_text = Text(337, 265, "(or use store bought patties instead)", white, 22)
-    burgerRecipe9_text = Text(315, 305, "3. Cook the burgers on a preheated pan ", white, 22)
-    burgerRecipe10_text = Text(337, 325, "for 5-6 minutes on each side, while the", white, 22)
-    burgerRecipe11_text = Text(337, 345, "second side is cooking, lay a slice of", white, 22)
-    burgerRecipe12_text = Text(337, 365, "cheese on top to melt slightly (if using)", white, 22)
-    burgerRecipe13_text = Text(315, 405, "4. Meanwhile, lightly toast the cut sides", white, 22)
-    burgerRecipe14_text = Text(337, 425, "on the pan. Fill with the lettuce, burgers", white, 22)
-    burgerRecipe15_text = Text(337, 445, "and tomato slices (and other toppings)", white, 22)
-    burgerRecipe16_text = Text(337, 485, "This can easily fit dietary requirements", white, 22)
-    burgerRecipe17_text = Text(337, 505, "by replacing certain ingredients. Enjoy!!", white, 22)
+    burgerRecipe1_text = classes.Text(315, 105, "1. Heat the olive oil in a frying pan, add", white, 22)
+    burgerRecipe2_text = classes.Text(337, 125, "the onion and cook for 5 minutes until", white, 22)
+    burgerRecipe3_text = classes.Text(337, 145, "softened and starting to turn golden.", white, 22)
+    burgerRecipe4_text = classes.Text(337, 165, "Set aside", white, 22)
+    burgerRecipe5_text = classes.Text(315, 205, "2. In a bowl, combine the beef mince with ", white, 22)
+    burgerRecipe6_text = classes.Text(337, 225, "the herbs and the egg. Seaston, add the", white, 22)
+    burgerRecipe7_text = classes.Text(337, 245, "onions and mix well. Shape into 4 patties", white, 22)
+    burgerRecipe8_text = classes.Text(337, 265, "(or use store bought patties instead)", white, 22)
+    burgerRecipe9_text = classes.Text(315, 305, "3. Cook the burgers on a preheated pan ", white, 22)
+    burgerRecipe10_text = classes.Text(337, 325, "for 5-6 minutes on each side, while the", white, 22)
+    burgerRecipe11_text = classes.Text(337, 345, "second side is cooking, lay a slice of", white, 22)
+    burgerRecipe12_text = classes.Text(337, 365, "cheese on top to melt slightly (if using)", white, 22)
+    burgerRecipe13_text = classes.Text(315, 405, "4. Meanwhile, lightly toast the cut sides", white, 22)
+    burgerRecipe14_text = classes.Text(337, 425, "on the pan. Fill with the lettuce, burgers", white, 22)
+    burgerRecipe15_text = classes.Text(337, 445, "and tomato slices (and other toppings)", white, 22)
+    burgerRecipe16_text = classes.Text(337, 485, "This can easily fit dietary requirements", white, 22)
+    burgerRecipe17_text = classes.Text(337, 505, "by replacing certain ingredients. Enjoy!!", white, 22)
 
-    cakeRecipe1_text = Text(315, 105, "1. Place the cake flour, all-purpose flour,", white, 22)
-    cakeRecipe2_text = Text(337, 125, "sugar, baking powder, baking soda, in the", white, 22)
-    cakeRecipe3_text = Text(337, 145, "bowl of an electric mixer, and stir on low", white, 22)
-    cakeRecipe4_text = Text(337, 165, "speed to combine.", white, 22)
-    cakeRecipe5_text = Text(315, 205, "2. Add the butter, mixing on medium-low", white, 22)
-    cakeRecipe6_text = Text(337, 225, "speed until the mixture resembles damp", white, 22)
-    cakeRecipe7_text = Text(337, 245, "sand, for about one minute.", white, 22)
-    cakeRecipe8_text = Text(315, 285, "3. Add the eggs, one at a time, scraping the", white, 22)
-    cakeRecipe9_text = Text(337, 305, "bottom and sides of the bowl to be sure", white, 22)
-    cakeRecipe10_text = Text(337, 325, "all the ingredients are fully incorporated", white, 22)
-    cakeRecipe11_text = Text(315, 365, "4. Add the milk and vanilla. Mix on medium", white, 22)
-    cakeRecipe12_text = Text(337, 385, "speed for 2 to 3 minutes, to aerate the", white, 22)
-    cakeRecipe13_text = Text(337, 405, "batter and build the cake’s structure.", white, 22)
-    cakeRecipe14_text = Text(315, 445, "5. Divide the batter equally between the", white, 22)
-    cakeRecipe15_text = Text(337, 465, "prepared pans, and bake for 30 to 40", white, 22)
-    cakeRecipe16_text = Text(337, 485, "minutes, or until a toothpick inserted in", white, 22)
-    cakeRecipe17_text = Text(337, 505, "the thickest part of the cake comes out", white, 22)
-    cakeRecipe18_text = Text(337, 525, "clean or with a few moist crumbs.", white, 22)
-    cakeRecipe19_text = Text(315, 105, "6. Cool completely before frosting", white, 22)
-    cakeRecipe20_text = Text(315, 145, "7. Beat butter with paddle attachment in", white, 22)
-    cakeRecipe21_text = Text(337, 165, "stand mixer for 3 minutes on high until it", white, 22)
-    cakeRecipe22_text = Text(337, 185, " changes from yellow to almost white,", white, 22)
-    cakeRecipe23_text = Text(337, 205, "and it becomes fluffy and creamy.", white, 22)
-    cakeRecipe24_text = Text(315, 245, "8. Add icing sugar / powdered sugar", white, 22)
-    cakeRecipe25_text = Text(337, 265, "gradually in 3 lots, beating slowly then", white, 22)
-    cakeRecipe26_text = Text(337, 285, "once mostly incorporated, beat on high", white, 22)
-    cakeRecipe27_text = Text(337, 305, "for a full 3 minutes until fluffy.", white, 22)
-    cakeRecipe28_text = Text(315, 345, "9. Add vanilla and milk, then beat for a", white, 22)
-    cakeRecipe29_text = Text(337, 365, " further 30 seconds. Use milk only if", white, 22)
-    cakeRecipe30_text = Text(337, 385, "needed to make it lovely and soft but", white, 22)
-    cakeRecipe31_text = Text(337, 405, "still holds its form (e.g. for piping).", white, 22)
-    cakeRecipe32_text = Text(337, 425, "Use immediately.", white, 22)
+    cakeRecipe1_text = classes.Text(315, 105, "1. Place the cake flour, all-purpose flour,", white, 22)
+    cakeRecipe2_text = classes.Text(337, 125, "sugar, baking powder, baking soda, in the", white, 22)
+    cakeRecipe3_text = classes.Text(337, 145, "bowl of an electric mixer, and stir on low", white, 22)
+    cakeRecipe4_text = classes.Text(337, 165, "speed to combine.", white, 22)
+    cakeRecipe5_text = classes.Text(315, 205, "2. Add the butter, mixing on medium-low", white, 22)
+    cakeRecipe6_text = classes.Text(337, 225, "speed until the mixture resembles damp", white, 22)
+    cakeRecipe7_text = classes.Text(337, 245, "sand, for about one minute.", white, 22)
+    cakeRecipe8_text = classes.Text(315, 285, "3. Add the eggs, one at a time, scraping the", white, 22)
+    cakeRecipe9_text = classes.Text(337, 305, "bottom and sides of the bowl to be sure", white, 22)
+    cakeRecipe10_text = classes.Text(337, 325, "all the ingredients are fully incorporated", white, 22)
+    cakeRecipe11_text = classes.Text(315, 365, "4. Add the milk and vanilla. Mix on medium", white, 22)
+    cakeRecipe12_text = classes.Text(337, 385, "speed for 2 to 3 minutes, to aerate the", white, 22)
+    cakeRecipe13_text = classes.Text(337, 405, "batter and build the cake’s structure.", white, 22)
+    cakeRecipe14_text = classes.Text(315, 445, "5. Divide the batter equally between the", white, 22)
+    cakeRecipe15_text = classes.Text(337, 465, "prepared pans, and bake for 30 to 40", white, 22)
+    cakeRecipe16_text = classes.Text(337, 485, "minutes, or until a toothpick inserted in", white, 22)
+    cakeRecipe17_text = classes.Text(337, 505, "the thickest part of the cake comes out", white, 22)
+    cakeRecipe18_text = classes.Text(337, 525, "clean or with a few moist crumbs.", white, 22)
+    cakeRecipe19_text = classes.Text(315, 105, "6. Cool completely before frosting", white, 22)
+    cakeRecipe20_text = classes.Text(315, 145, "7. Beat butter with paddle attachment in", white, 22)
+    cakeRecipe21_text = classes.Text(337, 165, "stand mixer for 3 minutes on high until it", white, 22)
+    cakeRecipe22_text = classes.Text(337, 185, " changes from yellow to almost white,", white, 22)
+    cakeRecipe23_text = classes.Text(337, 205, "and it becomes fluffy and creamy.", white, 22)
+    cakeRecipe24_text = classes.Text(315, 245, "8. Add icing sugar / powdered sugar", white, 22)
+    cakeRecipe25_text = classes.Text(337, 265, "gradually in 3 lots, beating slowly then", white, 22)
+    cakeRecipe26_text = classes.Text(337, 285, "once mostly incorporated, beat on high", white, 22)
+    cakeRecipe27_text = classes.Text(337, 305, "for a full 3 minutes until fluffy.", white, 22)
+    cakeRecipe28_text = classes.Text(315, 345, "9. Add vanilla and milk, then beat for a", white, 22)
+    cakeRecipe29_text = classes.Text(337, 365, " further 30 seconds. Use milk only if", white, 22)
+    cakeRecipe30_text = classes.Text(337, 385, "needed to make it lovely and soft but", white, 22)
+    cakeRecipe31_text = classes.Text(337, 405, "still holds its form (e.g. for piping).", white, 22)
+    cakeRecipe32_text = classes.Text(337, 425, "Use immediately.", white, 22)
 
-    sushiRecipe1_text = Text(315, 105, "1. Take your rice, rinse well in cold water.", white, 22)
-    sushiRecipe2_text = Text(315, 145, "2. Place the rice in a pot and add water, add", white, 22)
-    sushiRecipe3_text = Text(337, 165, "the lid and bring to the boil", white, 22)
-    sushiRecipe4_text = Text(315, 205, "3. Once its boiling reduce to simmer for", white, 22)
-    sushiRecipe5_text = Text(337, 225, "about 8-10 minutes (but keep an eye on it,", white, 22)
-    sushiRecipe6_text = Text(337, 245, "you want the rice to absorb all the water", white, 22)
-    sushiRecipe7_text = Text(337, 265, "but not burn or stick to the bottom on", white, 22)
-    sushiRecipe8_text = Text(337, 285, "the pot)", white, 22)
-    sushiRecipe9_text = Text(315, 325, "4. Cool it quickly by spreading it out on a", white, 22)
-    sushiRecipe10_text = Text(337, 345, "tray, add 2 to 3 tablespoons of the sushi", white, 22)
-    sushiRecipe11_text = Text(337, 365, "seasoning and mix well", white, 22)
-    sushiRecipe12_text = Text(315, 405, "5. Place your nori sheet longest edge at", white, 22)
-    sushiRecipe13_text = Text(337, 425, "the bottom, shiny side facing down, on", white, 22)
-    sushiRecipe14_text = Text(337, 445, "the sushi mat to help you roll it.", white, 22)
-    sushiRecipe15_text = Text(315, 485, "6. Leaving about an inch gap at the top.", white, 22)
-    sushiRecipe16_text = Text(337, 505, "place a thin layer of rice across the sheet.", white, 22)
-    sushiRecipe17_text = Text(337, 525, "(Wet hands to prevent rice from sticking)", white, 22)
-    sushiRecipe18_text = Text(337, 105, "Add salmon, cucumber, avocado, that", white, 22)
-    sushiRecipe19_text = Text(337, 125, "are thinly sliced and a similar length,", white, 22)
-    sushiRecipe20_text = Text(337, 145, "place your filling half way up the rice", white, 22)
-    sushiRecipe21_text = Text(337, 165, "and let it hang over the sides.", white, 22)
-    sushiRecipe22_text = Text(315, 205, "7. Take the bottom of the sheet and roll it", white, 22)
-    sushiRecipe23_text = Text(337, 225, "up so that the bottom meets the top line", white, 22)
-    sushiRecipe24_text = Text(337, 245, "of the rice.", white, 22)
-    sushiRecipe25_text = Text(315, 285, "8. Try to make one full roll of the rice", white, 22)
-    sushiRecipe26_text = Text(337, 305, "keeping it tight, hold the roll in place.", white, 22)
-    sushiRecipe27_text = Text(337, 325, "Then wet your fingers with the water and", white, 22)
-    sushiRecipe28_text = Text(337, 345, "slightly dampen the remaining edge of", white, 22)
-    sushiRecipe29_text = Text(337, 365, "the nori sheet then continue to roll,", white, 22)
-    sushiRecipe30_text = Text(337, 385, "sealing it.", white, 22)
-    sushiRecipe31_text = Text(315, 425, "9. Roll the mat around the sushi giving it a", white, 22)
-    sushiRecipe32_text = Text(337, 445, "gentle yet firm squeeze (you want to", white, 22)
-    sushiRecipe33_text = Text(337, 465, "compact the roll keeping it round but not", white, 22)
-    sushiRecipe34_text = Text(337, 485, "squash it)", white, 22)
-    sushiRecipe35_text = Text(315, 525, "10. Once you have made up all your rolls,", white, 22)
-    sushiRecipe36_text = Text(337, 105, "make sure your knife is sharp and run", white, 22)
-    sushiRecipe37_text = Text(337, 125, "the edge of the knife under a running tap", white, 22)
-    sushiRecipe38_text = Text(337, 145, "to prevent the rice from sticking to it.", white, 22)
-    sushiRecipe39_text = Text(337, 165, "Cut the roll in half then keep cutting", white, 22)
-    sushiRecipe40_text = Text(337, 185, "the pieces in half again until you have", white, 22)
-    sushiRecipe41_text = Text(337, 205, "8 pieces", white, 22)
+    sushiRecipe1_text = classes.Text(315, 105, "1. Take your rice, rinse well in cold water.", white, 22)
+    sushiRecipe2_text = classes.Text(315, 145, "2. Place the rice in a pot and add water, add", white, 22)
+    sushiRecipe3_text = classes.Text(337, 165, "the lid and bring to the boil", white, 22)
+    sushiRecipe4_text = classes.Text(315, 205, "3. Once its boiling reduce to simmer for", white, 22)
+    sushiRecipe5_text = classes.Text(337, 225, "about 8-10 minutes (but keep an eye on it,", white, 22)
+    sushiRecipe6_text = classes.Text(337, 245, "you want the rice to absorb all the water", white, 22)
+    sushiRecipe7_text = classes.Text(337, 265, "but not burn or stick to the bottom on", white, 22)
+    sushiRecipe8_text = classes.Text(337, 285, "the pot)", white, 22)
+    sushiRecipe9_text = classes.Text(315, 325, "4. Cool it quickly by spreading it out on a", white, 22)
+    sushiRecipe10_text = classes.Text(337, 345, "tray, add 2 to 3 tablespoons of the sushi", white, 22)
+    sushiRecipe11_text = classes.Text(337, 365, "seasoning and mix well", white, 22)
+    sushiRecipe12_text = classes.Text(315, 405, "5. Place your nori sheet longest edge at", white, 22)
+    sushiRecipe13_text = classes.Text(337, 425, "the bottom, shiny side facing down, on", white, 22)
+    sushiRecipe14_text = classes.Text(337, 445, "the sushi mat to help you roll it.", white, 22)
+    sushiRecipe15_text = classes.Text(315, 485, "6. Leaving about an inch gap at the top.", white, 22)
+    sushiRecipe16_text = classes.Text(337, 505, "place a thin layer of rice across the sheet.", white, 22)
+    sushiRecipe17_text = classes.Text(337, 525, "(Wet hands to prevent rice from sticking)", white, 22)
+    sushiRecipe18_text = classes.Text(337, 105, "Add salmon, cucumber, avocado, that", white, 22)
+    sushiRecipe19_text = classes.Text(337, 125, "are thinly sliced and a similar length,", white, 22)
+    sushiRecipe20_text = classes.Text(337, 145, "place your filling half way up the rice", white, 22)
+    sushiRecipe21_text = classes.Text(337, 165, "and let it hang over the sides.", white, 22)
+    sushiRecipe22_text = classes.Text(315, 205, "7. Take the bottom of the sheet and roll it", white, 22)
+    sushiRecipe23_text = classes.Text(337, 225, "up so that the bottom meets the top line", white, 22)
+    sushiRecipe24_text = classes.Text(337, 245, "of the rice.", white, 22)
+    sushiRecipe25_text = classes.Text(315, 285, "8. Try to make one full roll of the rice", white, 22)
+    sushiRecipe26_text = classes.Text(337, 305, "keeping it tight, hold the roll in place.", white, 22)
+    sushiRecipe27_text = classes.Text(337, 325, "Then wet your fingers with the water and", white, 22)
+    sushiRecipe28_text = classes.Text(337, 345, "slightly dampen the remaining edge of", white, 22)
+    sushiRecipe29_text = classes.Text(337, 365, "the nori sheet then continue to roll,", white, 22)
+    sushiRecipe30_text = classes.Text(337, 385, "sealing it.", white, 22)
+    sushiRecipe31_text = classes.Text(315, 425, "9. Roll the mat around the sushi giving it a", white, 22)
+    sushiRecipe32_text = classes.Text(337, 445, "gentle yet firm squeeze (you want to", white, 22)
+    sushiRecipe33_text = classes.Text(337, 465, "compact the roll keeping it round but not", white, 22)
+    sushiRecipe34_text = classes.Text(337, 485, "squash it)", white, 22)
+    sushiRecipe35_text = classes.Text(315, 525, "10. Once you have made up all your rolls,", white, 22)
+    sushiRecipe36_text = classes.Text(337, 105, "make sure your knife is sharp and run", white, 22)
+    sushiRecipe37_text = classes.Text(337, 125, "the edge of the knife under a running tap", white, 22)
+    sushiRecipe38_text = classes.Text(337, 145, "to prevent the rice from sticking to it.", white, 22)
+    sushiRecipe39_text = classes.Text(337, 165, "Cut the roll in half then keep cutting", white, 22)
+    sushiRecipe40_text = classes.Text(337, 185, "the pieces in half again until you have", white, 22)
+    sushiRecipe41_text = classes.Text(337, 205, "8 pieces", white, 22)
 
     #arrays with the text objects for each recipe
     burgerRecipe = [burgerRecipe1_text, burgerRecipe2_text, burgerRecipe3_text, burgerRecipe4_text, burgerRecipe5_text, 
@@ -1391,75 +1210,75 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
     sushiRecipe29_text, sushiRecipe30_text, sushiRecipe31_text, sushiRecipe32_text, sushiRecipe33_text, sushiRecipe34_text, sushiRecipe35_text, 
     sushiRecipe36_text, sushiRecipe37_text, sushiRecipe38_text, sushiRecipe39_text, sushiRecipe40_text, sushiRecipe41_text]
 
-    naRecipe_text = Text(450, 285, "N/A", white, 70)
+    naRecipe_text = classes.Text(450, 285, "N/A", white, 70)
 
     #ingredient text objects
 
-    ingredientsLabel_text = Text(315, 105, "Ingredients: ", white, 22)
-    burgerMetricIngredients1_text = Text(315, 145, "7ml olive oil", white, 22)
-    burgerMetricIngredients2_text = Text(315, 165, "170g onion, peeled and chopped", white, 22)
-    burgerMetricIngredients3_text = Text(315, 185, "500g beef steak mince (or alternatives)", white, 22)
-    burgerMetricIngredients4_text = Text(315, 205, "4g mixed dried herbs", white, 22)
-    burgerIngredients5_text = Text(315, 225, "1 egg, beaten", white, 22)
-    burgerMetricIngredients6_text = Text(315, 245, "75g of cheese (optional)", white, 22)
-    burgerIngredients7_text = Text(315, 265, "4 white rolls", white, 22)
-    burgerMetricIngredients8_text = Text(315, 285, "15g lettuce", white, 22)
-    burgerMetricIngredients9_text = Text(315, 305, "75g tomato, sliced", white, 22)
+    ingredientsLabel_text = classes.Text(315, 105, "Ingredients: ", white, 22)
+    burgerMetricIngredients1_text = classes.Text(315, 145, "7ml olive oil", white, 22)
+    burgerMetricIngredients2_text = classes.Text(315, 165, "170g onion, peeled and chopped", white, 22)
+    burgerMetricIngredients3_text = classes.Text(315, 185, "500g beef steak mince (or alternatives)", white, 22)
+    burgerMetricIngredients4_text = classes.Text(315, 205, "4g mixed dried herbs", white, 22)
+    burgerIngredients5_text = classes.Text(315, 225, "1 egg, beaten", white, 22)
+    burgerMetricIngredients6_text = classes.Text(315, 245, "75g of cheese (optional)", white, 22)
+    burgerIngredients7_text = classes.Text(315, 265, "4 white rolls", white, 22)
+    burgerMetricIngredients8_text = classes.Text(315, 285, "15g lettuce", white, 22)
+    burgerMetricIngredients9_text = classes.Text(315, 305, "75g tomato, sliced", white, 22)
 
-    burgerUSIngredients1_text = Text(315, 145, "1/2 tbsp olive oil", white, 22)
-    burgerUSIngredients2_text = Text(315, 165, "1 medium onion, peeled and chopped", white, 22)
-    burgerUSIngredients3_text = Text(315, 185, "500g beef steak mince (or alternatives)", white, 22)
-    burgerUSIngredients4_text = Text(315, 205, "1 tsp mixed dried herbs", white, 22)
-    burgerUSIngredients6_text = Text(315, 245, "4 slices of cheese (optional)", white, 22)
-    burgerUSIngredients8_text = Text(315, 285, "3 lettuce leaves", white, 22)
-    burgerUSIngredients9_text = Text(315, 305, "1 medium tomato, sliced", white, 22)
+    burgerUSIngredients1_text = classes.Text(315, 145, "1/2 tbsp olive oil", white, 22)
+    burgerUSIngredients2_text = classes.Text(315, 165, "1 medium onion, peeled and chopped", white, 22)
+    burgerUSIngredients3_text = classes.Text(315, 185, "500g beef steak mince (or alternatives)", white, 22)
+    burgerUSIngredients4_text = classes.Text(315, 205, "1 tsp mixed dried herbs", white, 22)
+    burgerUSIngredients6_text = classes.Text(315, 245, "4 slices of cheese (optional)", white, 22)
+    burgerUSIngredients8_text = classes.Text(315, 285, "3 lettuce leaves", white, 22)
+    burgerUSIngredients9_text = classes.Text(315, 305, "1 medium tomato, sliced", white, 22)
 
-    cakeIngredientsLabel_text = Text(315, 105, "Cake Ingredients: ", white, 22)
-    cakeMetricIngredients1_text = Text(315, 145, "187.5g cake flour", white, 22)
-    cakeMetricIngredients2_text = Text(315, 165, "93.75g all-purpose flour", white, 22)
-    cakeMetricIngredients3_text = Text(315, 185, "200g granulated sugar", white, 22)
-    cakeMetricIngredients4_text = Text(315, 205, "4g baking powder", white, 22)
-    cakeMetricIngredients5_text = Text(315, 225, "3g baking soda", white, 22)
-    cakeMetricIngredients6_text = Text(315, 245, "4.5g kosher salt", white, 22)
-    cakeMetricIngredients7_text = Text(315, 265, "170.25g unsalted butter, softened", white, 22)
-    cakeIngredients8_text = Text(315, 285, "2 large eggs", white, 22)
-    cakeMetricIngredients9_text = Text(315, 305, "153g sour cream, Greek yogurt", white, 22)
-    cakeIngredients10_text = Text(315, 325, "or buttermilk (can be substituted)", white, 22)
-    cakeMetricIngredients11_text = Text(315, 345, "122g milk", white, 22)
-    cakeMetricIngredients12_text = Text(315, 365, "8g vanilla extract", white, 22)
-    buttercreamIngredientsLabel_text = Text(315, 405, "Buttercream Ingredients: ", white, 22)
-    cakeMetricIngredients13_text = Text(315, 445, "225g unsalted butter , softened", white, 22)
-    cakeMetricIngredients14_text = Text(315, 465, "500g soft icing sugar", white, 22)
-    cakeIngredients15_text = Text(315, 485, "/ powdered sugar, SIFTED", white, 22)
-    cakeMetricIngredients16_text = Text(315, 505, "15ml vanilla extract", white, 22)
-    cakeMetricIngredients17_text = Text(315, 525, "19-58ml milk, to adjust thickeness", white, 22)
+    cakeIngredientsLabel_text = classes.Text(315, 105, "Cake Ingredients: ", white, 22)
+    cakeMetricIngredients1_text = classes.Text(315, 145, "187.5g cake flour", white, 22)
+    cakeMetricIngredients2_text = classes.Text(315, 165, "93.75g all-purpose flour", white, 22)
+    cakeMetricIngredients3_text = classes.Text(315, 185, "200g granulated sugar", white, 22)
+    cakeMetricIngredients4_text = classes.Text(315, 205, "4g baking powder", white, 22)
+    cakeMetricIngredients5_text = classes.Text(315, 225, "3g baking soda", white, 22)
+    cakeMetricIngredients6_text = classes.Text(315, 245, "4.5g kosher salt", white, 22)
+    cakeMetricIngredients7_text = classes.Text(315, 265, "170.25g unsalted butter, softened", white, 22)
+    cakeIngredients8_text = classes.Text(315, 285, "2 large eggs", white, 22)
+    cakeMetricIngredients9_text = classes.Text(315, 305, "153g sour cream, Greek yogurt", white, 22)
+    cakeIngredients10_text = classes.Text(315, 325, "or buttermilk (can be substituted)", white, 22)
+    cakeMetricIngredients11_text = classes.Text(315, 345, "122g milk", white, 22)
+    cakeMetricIngredients12_text = classes.Text(315, 365, "8g vanilla extract", white, 22)
+    buttercreamIngredientsLabel_text = classes.Text(315, 405, "Buttercream Ingredients: ", white, 22)
+    cakeMetricIngredients13_text = classes.Text(315, 445, "225g unsalted butter , softened", white, 22)
+    cakeMetricIngredients14_text = classes.Text(315, 465, "500g soft icing sugar", white, 22)
+    cakeIngredients15_text = classes.Text(315, 485, "/ powdered sugar, SIFTED", white, 22)
+    cakeMetricIngredients16_text = classes.Text(315, 505, "15ml vanilla extract", white, 22)
+    cakeMetricIngredients17_text = classes.Text(315, 525, "19-58ml milk, to adjust thickeness", white, 22)
 
-    cakeUSIngredients1_text = Text(315, 145, "1 1/2 cups cake flour", white, 22)
-    cakeUSIngredients2_text = Text(315, 165, "3/4 cup all-purpose flour", white, 22)
-    cakeUSIngredients3_text = Text(315, 185, "1 cup granulated sugar", white, 22)
-    cakeUSIngredients4_text = Text(315, 205, "1 teaspoon baking powder", white, 22)
-    cakeUSIngredients5_text = Text(315, 225, "1 teaspoon baking soda", white, 22)
-    cakeUSIngredients6_text = Text(315, 245, "3/4 teaspoon kosher salt", white, 22)
-    cakeUSIngredients7_text = Text(315, 265, "3/4 cup unsalted butter, softened", white, 22)
-    cakeUSIngredients9_text = Text(315, 305, "2/3 cup sour cream, Greek yogurt", white, 22)
-    cakeUSIngredients11_text = Text(315, 345, "1/2 cup milk", white, 22)
-    cakeUSIngredients12_text = Text(315, 365, "2 teaspoons vanilla extract", white, 22)
-    cakeUSIngredients13_text = Text(315, 445, "1 cup unsalted butter , softened", white, 22)
-    cakeUSIngredients14_text = Text(315, 465, "2 1/2 soft icing sugar", white, 22)
-    cakeUSIngredients16_text = Text(315, 505, "3 tsp vanilla extract", white, 22)
-    cakeUSIngredients17_text = Text(315, 525, "2–4 tbsp milk, to adjust thickeness", white, 22)
+    cakeUSIngredients1_text = classes.Text(315, 145, "1 1/2 cups cake flour", white, 22)
+    cakeUSIngredients2_text = classes.Text(315, 165, "3/4 cup all-purpose flour", white, 22)
+    cakeUSIngredients3_text = classes.Text(315, 185, "1 cup granulated sugar", white, 22)
+    cakeUSIngredients4_text = classes.Text(315, 205, "1 teaspoon baking powder", white, 22)
+    cakeUSIngredients5_text = classes.Text(315, 225, "1 teaspoon baking soda", white, 22)
+    cakeUSIngredients6_text = classes.Text(315, 245, "3/4 teaspoon kosher salt", white, 22)
+    cakeUSIngredients7_text = classes.Text(315, 265, "3/4 cup unsalted butter, softened", white, 22)
+    cakeUSIngredients9_text = classes.Text(315, 305, "2/3 cup sour cream, Greek yogurt", white, 22)
+    cakeUSIngredients11_text = classes.Text(315, 345, "1/2 cup milk", white, 22)
+    cakeUSIngredients12_text = classes.Text(315, 365, "2 teaspoons vanilla extract", white, 22)
+    cakeUSIngredients13_text = classes.Text(315, 445, "1 cup unsalted butter , softened", white, 22)
+    cakeUSIngredients14_text = classes.Text(315, 465, "2 1/2 soft icing sugar", white, 22)
+    cakeUSIngredients16_text = classes.Text(315, 505, "3 tsp vanilla extract", white, 22)
+    cakeUSIngredients17_text = classes.Text(315, 525, "2–4 tbsp milk, to adjust thickeness", white, 22)
 
-    sushiIngredients1_text = Text(315, 145, "5 nori / sushi sheets", white, 22)
-    sushiMetricIngredients2_text = Text(315, 165, "10g of sushi seasoning", white, 22)
-    sushiIngredients3_text = Text(315, 185, "/ sushi vinegar, adjust to taste", white, 22)
-    sushiMetricIngredients4_text = Text(315, 205, "200g sushi rice / short grain rice", white, 22)
-    sushiMetricIngredients5_text = Text(315, 225, "85g of salmon", white, 22)
-    sushiIngredients6_text = Text(315, 245, "Half of a cucumber", white, 22)
-    sushiIngredients7_text = Text(315, 265, "Half of an avocado", white, 22)
+    sushiIngredients1_text = classes.Text(315, 145, "5 nori / sushi sheets", white, 22)
+    sushiMetricIngredients2_text = classes.Text(315, 165, "10g of sushi seasoning", white, 22)
+    sushiIngredients3_text = classes.Text(315, 185, "/ sushi vinegar, adjust to taste", white, 22)
+    sushiMetricIngredients4_text = classes.Text(315, 205, "200g sushi rice / short grain rice", white, 22)
+    sushiMetricIngredients5_text = classes.Text(315, 225, "85g of salmon", white, 22)
+    sushiIngredients6_text = classes.Text(315, 245, "Half of a cucumber", white, 22)
+    sushiIngredients7_text = classes.Text(315, 265, "Half of an avocado", white, 22)
 
-    sushiUSIngredients2_text = Text(315, 165, "2/3 tbsp of sushi seasoning", white, 22)
-    sushiUSIngredients4_text = Text(315, 205, "1 cup sushi rice / short grain rice", white, 22)
-    sushiUSIngredients5_text = Text(315, 225, "1 packet of salmon", white, 22)
+    sushiUSIngredients2_text = classes.Text(315, 165, "2/3 tbsp of sushi seasoning", white, 22)
+    sushiUSIngredients4_text = classes.Text(315, 205, "1 cup sushi rice / short grain rice", white, 22)
+    sushiUSIngredients5_text = classes.Text(315, 225, "1 packet of salmon", white, 22)
 
     burgerMetricIngredients = [ingredientsLabel_text, burgerMetricIngredients1_text, burgerMetricIngredients2_text, burgerMetricIngredients3_text,
                                burgerMetricIngredients4_text, burgerIngredients5_text, burgerMetricIngredients6_text,
@@ -1489,12 +1308,12 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
                           sushiIngredients7_text]
 
     #button object creation
-    back_button = Button(65, 50, 70, 100, colours[3], False)
-    fullRecipe_button = Button(170, 375, 30, 180, colours[4], False)
-    start_button = Button(415, 420, 30, 180, colours[5], False)
-    exit_button = Button(705, 85, 40, 40, login_red1, False)
-    recipePageR_button = Button(685, 535, 30, 30, colours[4], False)
-    recipePageL_button = Button(310, 535, 30, 30, colours[4], False)
+    back_button = classes.Button(65, 50, 70, 100, colours[3], False)
+    fullRecipe_button = classes.Button(170, 375, 30, 180, colours[4], False)
+    start_button = classes.Button(415, 420, 30, 180, colours[5], False)
+    exit_button = classes.Button(705, 85, 40, 40, login_red1, False)
+    recipePageR_button = classes.Button(685, 535, 30, 30, colours[4], False)
+    recipePageL_button = classes.Button(310, 535, 30, 30, colours[4], False)
 
     #variables used
     count = 0
@@ -1529,8 +1348,8 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
                     minigameLoop = True
         
         #drawing onto screen
-        WIN.blit(mainBg_image, bgPosition)
-        WIN.blit(scaled_gameLogo, (450,10))
+        globalvariables.WIN.blit(mainBg_image, bgPosition)
+        globalvariables.WIN.blit(scaled_gameLogo, (450,10))
         recipeBg_box.drawBox()
         back_button.drawBox()
         back_text.drawText()
@@ -1564,9 +1383,9 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
             burgerDescription4_text.drawText()
         elif recipeChosen == "cake":
             cakeLabel_text.drawText()
-            WIN.blit(scaled_cake, (420, 210))
-            WIN.blit(scaled_halal, (190, 247))
-            WIN.blit(scaled_vegetarian, (265, 247))
+            globalvariables.WIN.blit(scaled_cake, (420, 210))
+            globalvariables.WIN.blit(scaled_halal, (190, 247))
+            globalvariables.WIN.blit(scaled_vegetarian, (265, 247))
             medium_text.drawText()
             cakeDescription1_text.drawText()
             cakeDescription2_text.drawText()
@@ -1574,8 +1393,8 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
             cakeDescription4_text.drawText()
         elif recipeChosen == "sushi":
             sushiLabel_text.drawText()
-            WIN.blit(scaled_sushi, (420, 210))
-            WIN.blit(scaled_halal, (230, 247))
+            globalvariables.WIN.blit(scaled_sushi, (420, 210))
+            globalvariables.WIN.blit(scaled_halal, (230, 247))
             hard_text.drawText()
             sushiDescription1_text.drawText()
             sushiDescription2_text.drawText()
@@ -1583,8 +1402,8 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
             sushiDescription4_text.drawText()
         elif recipeChosen == "cheese fondue":
             cheeseFondueLabel_text.drawText()
-            WIN.blit(scaled_cheeseFondue, (420, 220))
-            WIN.blit(scaled_vegetarian, (230, 247))
+            globalvariables.WIN.blit(scaled_cheeseFondue, (420, 220))
+            globalvariables.WIN.blit(scaled_vegetarian, (230, 247))
             medium_text.drawText()
             cheeseFondueDescription1_text.drawText()
             cheeseFondueDescription2_text.drawText()
@@ -1592,9 +1411,9 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
             cheeseFondueDescription4_text.drawText()
         elif recipeChosen == "croissant":
             croissantLabel_text.drawText()
-            WIN.blit(scaled_croissant, (420, 220))
-            WIN.blit(scaled_halal, (190, 247))
-            WIN.blit(scaled_vegetarian, (265, 247))
+            globalvariables.WIN.blit(scaled_croissant, (420, 220))
+            globalvariables.WIN.blit(scaled_halal, (190, 247))
+            globalvariables.WIN.blit(scaled_vegetarian, (265, 247))
             easy_text.drawText()
             croissantDescription1_text.drawText()
             croissantDescription2_text.drawText()
@@ -1602,10 +1421,10 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
             croissantDescription4_text.drawText()
         elif recipeChosen == "tofu":
             tofuLabel_text.drawText()
-            WIN.blit(scaled_tofu, (420, 220))
-            WIN.blit(scaled_halal, (150, 247))
-            WIN.blit(scaled_vegetarian, (230, 247))
-            WIN.blit(scaled_vegan, (310, 247))
+            globalvariables.WIN.blit(scaled_tofu, (420, 220))
+            globalvariables.WIN.blit(scaled_halal, (150, 247))
+            globalvariables.WIN.blit(scaled_vegetarian, (230, 247))
+            globalvariables.WIN.blit(scaled_vegan, (310, 247))
             medium_text.drawText()
             tofuDescription1_text.drawText()
             tofuDescription2_text.drawText()
@@ -1715,6 +1534,7 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, username, theme_selec
     stack = deque([]) #creates a stack to traverse through the nodes within the tree
     visitedNodes = [] #contains all the visited nodes
     flag = True #indicates whether to traverse the tree
+    value = "Frying"
 
     if theme_selected == "theme1": #changes the colours of the boxes and buttons depending on the theme that has been chosen
             colours = [main_lightPurple1, main_lightPurple2, main_darkPurple1, main_darkPurple2, main_darkPurple3, main_brightPurple]
@@ -1724,62 +1544,62 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, username, theme_selec
         gameBg_image = gameBg_image
 
     #text
-    back_text = Text(80, 55, "<--", white, 50)
-    burgerLabel_text = Text(480, 55, "Burger", white, 22)
-    cakeLabel_text = Text(480, 55, "Cake", white, 22)
-    sushiLabel_text = Text(480, 55, "Sushi", white, 22)
+    back_text = classes.Text(80, 55, "<--", white, 50)
+    burgerLabel_text = classes.Text(480, 55, "Burger", white, 22)
+    cakeLabel_text = classes.Text(480, 55, "Cake", white, 22)
+    sushiLabel_text = classes.Text(480, 55, "Sushi", white, 22)
 
-    gameLabel1_burger_text = Text(330, 153, "Frying", white, 24)
-    gameLabel2_burger_text = Text(330, 233, "Mixing", white, 24)
-    gameLabel3_burger_text = Text(320, 313, "Shaping", white, 24)
-    gameLabel4_burger_text = Text(320, 393, "Grilling", white, 24)
-    gameLabel5_burger_text = Text(320, 473, "Assembly", white, 24)
+    gameLabel1_burger_text = classes.Text(330, 153, "Frying", white, 24)
+    gameLabel2_burger_text = classes.Text(330, 233, "Mixing", white, 24)
+    gameLabel3_burger_text = classes.Text(320, 313, "Shaping", white, 24)
+    gameLabel4_burger_text = classes.Text(320, 393, "Grilling", white, 24)
+    gameLabel5_burger_text = classes.Text(320, 473, "Assembly", white, 24)
 
-    gameLabel1_cake_text = Text(330, 153, "Mixing", white, 24)
-    gameLabel2_cake_text = Text(330, 233, "Baking", white, 24)
-    gameLabel3_cake_text = Text(320, 313, "Frosting", white, 24)
-    gameLabel4_cake_text = Text(320, 393, "Decoration", white, 24)
+    gameLabel1_cake_text = classes.Text(330, 153, "Mixing", white, 24)
+    gameLabel2_cake_text = classes.Text(330, 233, "Baking", white, 24)
+    gameLabel3_cake_text = classes.Text(320, 313, "Frosting", white, 24)
+    gameLabel4_cake_text = classes.Text(320, 393, "Decoration", white, 24)
 
-    gameLabel1_sushi_text = Text(330, 153, "Cooking", white, 24)
-    gameLabel2_sushi_text = Text(330, 233, "Assembly", white, 24)
-    gameLabel3_sushi_text = Text(320, 313, "Cutting", white, 24)
+    gameLabel1_sushi_text = classes.Text(330, 153, "Cooking", white, 24)
+    gameLabel2_sushi_text = classes.Text(330, 233, "Assembly", white, 24)
+    gameLabel3_sushi_text = classes.Text(320, 313, "Cutting", white, 24)
 
-    start_text = Text(615, 153, "Start", white, 24)
+    start_text = classes.Text(615, 153, "Start", white, 24)
 
-    locked2_text = Text(610, 233, "Locked", white, 24)
-    locked3_text = Text(610, 313, "Locked", white, 24)
-    locked4_text = Text(610, 393, "Locked", white, 24)
-    locked5_text = Text(610, 473, "Locked", white, 24)
+    locked2_text = classes.Text(610, 233, "Locked", white, 24)
+    locked3_text = classes.Text(610, 313, "Locked", white, 24)
+    locked4_text = classes.Text(610, 393, "Locked", white, 24)
+    locked5_text = classes.Text(610, 473, "Locked", white, 24)
 
-    completed1_text = Text(610, 153, "Completed", white, 24)
-    completed2_text = Text(610, 233, "Completed", white, 24)
-    completed3_text = Text(610, 313, "Completed", white, 24)
-    completed4_text = Text(610, 393, "Completed", white, 24)
+    completed1_text = classes.Text(610, 153, "Completed", white, 24)
+    completed2_text = classes.Text(610, 233, "Completed", white, 24)
+    completed3_text = classes.Text(610, 313, "Completed", white, 24)
+    completed4_text = classes.Text(610, 393, "Completed", white, 24)
 
 
-    exitMessage1_text = Text(285, 172, "Are you sure you want to exit?", white, 35)
-    exitMessage2_text = Text(330, 212, "Your progress will not save.", white, 30)
-    exitYes_text = Text(347, 292, "Yes", (100, 0, 0), 24)
-    exitNo_text = Text(637, 292, "No", (100, 0, 0), 24)
+    exitMessage1_text = classes.Text(285, 172, "Are you sure you want to exit?", white, 35)
+    exitMessage2_text = classes.Text(330, 212, "Your progress will not save.", white, 30)
+    exitYes_text = classes.Text(347, 292, "Yes", (100, 0, 0), 24)
+    exitNo_text = classes.Text(637, 292, "No", (100, 0, 0), 24)
 
     #boxes
-    recipeLabel_box = Box(410, 50, 40, 200, colours[5], False)
-    gameLabel1_box = Box(260, 150, 40, 200, colours[1], False)
-    gameLabel2_box = Box(260, 230, 40, 200, colours[1], False)
-    gameLabel3_box = Box(260, 310, 40, 200, colours[1], False)
-    gameLabel4_box = Box(260, 390, 40, 200, colours[1], False)
-    gameLabel5_box = Box(260, 470, 40, 200, colours[1], False)
-    exitMessage_box = Box(260, 150, 200, 500, login_red1, False)
+    recipeLabel_box = classes.Box(410, 50, 40, 200, colours[5], False)
+    gameLabel1_box = classes.Box(260, 150, 40, 200, colours[1], False)
+    gameLabel2_box = classes.Box(260, 230, 40, 200, colours[1], False)
+    gameLabel3_box = classes.Box(260, 310, 40, 200, colours[1], False)
+    gameLabel4_box = classes.Box(260, 390, 40, 200, colours[1], False)
+    gameLabel5_box = classes.Box(260, 470, 40, 200, colours[1], False)
+    exitMessage_box = classes.Box(260, 150, 200, 500, login_red1, False)
 
     #buttons
-    back_button = Button(65, 50, 70, 100, colours[3], False)
-    start1_button = Button(550, 150, 40, 200, colours[2], False)
-    start2_button = Button(550, 230, 40, 200, colours[2], False)
-    start3_button = Button(550, 310, 40, 200, colours[2], False)
-    start4_button = Button(550, 390, 40, 200, colours[2], False)
-    start5_button = Button(550, 470, 40, 200, colours[2], False)
-    exitYes_button = Button(320, 290, 40, 100, white, False)
-    exitNo_button = Button(610, 290, 40, 100, white, False)
+    back_button = classes.Button(65, 50, 70, 100, colours[3], False)
+    start1_button = classes.Button(550, 150, 40, 200, colours[2], False)
+    start2_button = classes.Button(550, 230, 40, 200, colours[2], False)
+    start3_button = classes.Button(550, 310, 40, 200, colours[2], False)
+    start4_button = classes.Button(550, 390, 40, 200, colours[2], False)
+    start5_button = classes.Button(550, 470, 40, 200, colours[2], False)
+    exitYes_button = classes.Button(320, 290, 40, 100, white, False)
+    exitNo_button = classes.Button(610, 290, 40, 100, white, False)
 
 
     while minigameLoop:
@@ -1801,12 +1621,22 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, username, theme_selec
                     exitNoPressed = exitNo_button.checkPressed(pygame.mouse.get_pos())
                     if exitNoPressed: #if no has been pressed
                         exitMessage = False #remove the exit message
+                    start1Pressed = start1_button.checkPressed(pygame.mouse.get_pos())
+                    if start1Pressed:
+                        if recipeChosen == "burger":
+                            minigames.burgerGame(value)
+                        elif recipeChosen == "cake":
+                            minigames.cakeGame(value)
+                        elif recipeChosen == "sushi":
+                            minigames.sushiGame(value)
+
+                    
 
         #tree traversal
-        if flag:
+        '''if flag:
             value, stack, visitedNodes = minigames.treeTraversal(recipeChosen, stack, visitedNodes)
             print(value)
-            flag = False
+            flag = False'''
         
         #displaying onto the screen
         WIN.blit(gameBg_image, bgPosition)
@@ -1938,10 +1768,10 @@ def temp_minigameScreen(minigameLoop):
     mixing = False
     seasoning = True
 
-    arrow_text = Text(200, 112, "<--", login_red1, 500) #a temporary arrow object
-    fillBg_box = Box(300, 50, 500, 400, black, False)
-    fill_box = Box(302, 540, 10, 396, white, True)
-    fill_line = Box(300, 100, 10, 400, login_red1, False)
+    arrow_text = classes.Text(200, 112, "<--", login_red1, 500) #a temporary arrow object
+    fillBg_box = classes.Box(300, 50, 500, 400, black, False)
+    fill_box = classes.Box(302, 540, 10, 396, white, True)
+    fill_line = classes.Box(300, 100, 10, 400, login_red1, False)
     
     while minigameLoop: #while the minigame loop is true
         #WIN.blit(main1Bg_image, bgPosition) #displays the background image
@@ -1978,19 +1808,19 @@ def playDisc(disc_selected):
 
 def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop, minigameLoop):
     clock = pygame.time.Clock()
-    clock.tick(FPS)
+    clock.tick(globalvariables.FPS)
     run = True
     #loops
 
     #input boxes
-    usernameInput1_input = Input(480, 330, 37, 280, black, 20, False)
-    passwordInput1_input = Input(480, 400, 37, 280, black, 20, True)
-    usernameInput2_input = Input(480, 230, 37, 280, black, 20, False)
-    passwordInput2_input = Input(480, 290, 37, 280, black, 20, True)
-    search_input = Input(240, 100, 37, 570, black, 20, False)
+    usernameInput1_input = classes.Input(480, 330, 37, 280, black, 20, False)
+    passwordInput1_input = classes.Input(480, 400, 37, 280, black, 20, True)
+    usernameInput2_input = classes.Input(480, 230, 37, 280, black, 20, False)
+    passwordInput2_input = classes.Input(480, 290, 37, 280, black, 20, True)
+    search_input = classes.Input(240, 100, 37, 570, black, 20, False)
     recipeChosen = "None"
-    oldPassInput_input = Input(350, 250, 30, 280, black, 20, True)
-    newPassInput_input = Input(350, 310, 30, 280, black, 20, True)
+    oldPassInput_input = classes.Input(350, 250, 30, 280, black, 20, True)
+    newPassInput_input = classes.Input(350, 310, 30, 280, black, 20, True)
 
     while run:
 
