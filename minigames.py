@@ -5,13 +5,22 @@ import random
 import os
 from collections import deque
 import classes
-from Culinary_Quest import WIN
+import globalvariables
+
+#variables
+bgPosition = (0,0)
 
 #loading images
+gameBg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','game1_background.png'))
 mixingBowl_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','mixingbowl.png'))
 mixingBowlSpilled_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','mixingbowl_spilled.png'))
 pointingHand_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','pointinghand.png'))
 cuttingBoard_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cuttingboard.png'))
+cuttingBoard_image = pygame.transform.scale(cuttingBoard_image, (600, 350))
+arrow_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','arrow.png'))
+arrow_image = pygame.transform.scale(arrow_image, (200, 200))
+arrow2_image = pygame.transform.rotate(arrow_image, (270))
+arrow3_image = pygame.transform.rotate(arrow_image, (180))
 
 #burger images
 rawPatty_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burgerpatty.png'))
@@ -20,11 +29,41 @@ cookedPatty_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cook
 cooker_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cooker.png'))
 fryingPan_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','fryingpan.png'))
 oilBottle_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','oilBottle.png'))
-onioncut1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut1.png'))
-onioncut2_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut2.png'))
-onioncut3_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut3.png'))
-onioncut4_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.png'))
 
+onioncut1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut1.png'))
+onioncut1_image = pygame.transform.scale(onioncut1_image, (300, 300))
+onioncut2_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut2.png'))
+onioncut2_image = pygame.transform.scale(onioncut2_image, (300, 300))
+onioncut2_1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut2.1.png'))
+onioncut2_1_image = pygame.transform.scale(onioncut2_1_image, (300, 300))
+onioncut3_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut3.png'))
+onioncut3_image = pygame.transform.scale(onioncut3_image, (300, 300))
+onioncut4_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.png'))
+onioncut4_image = pygame.transform.scale(onioncut4_image, (300, 300))
+onioncut4_1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.1.png'))
+
+onioncut4_2_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.2.png'))
+
+onioncut4_3_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.3.png'))
+
+onioncut4_4_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.4.png'))
+
+onioncut4_5_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.5.png'))
+
+onioncut4_6_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.6.png'))
+
+onioncut4_7_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.7.png'))
+
+onioncut4_8_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.8.png'))
+
+onioncut4_9_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.9.png'))
+
+onions = [ onioncut1_image, onioncut2_image, onioncut2_1_image, onioncut3_image, onioncut4_image, 
+          onioncut4_1_image, onioncut4_2_image, onioncut4_3_image, onioncut4_4_image, onioncut4_5_image, 
+          onioncut4_6_image, onioncut4_7_image, onioncut4_8_image, onioncut4_9_image]
+
+for i in range(len(onions)):
+    onions[i] = pygame.transform.scale(onions[i], (300,300))
 
 
 class RecipeTree:
@@ -92,7 +131,7 @@ def treeTraversal(recipeChosen, stack, visitedNodes):
     
     return value, stack, visitedNodes
 
-def draw(WIN, draw, x1, y1, x2, y2, x3, y3, x4, y4):
+def draw(draw, x1, y1, x2, y2, x3, y3, x4, y4):
 
     flag1 = False #these flags represent whether the drawn circle has touched a coordinate
     flag2 = False #there are 4 points to the arrow, so four coordinates (x1, y2), (x2, y2) etc. = four flags
@@ -100,7 +139,7 @@ def draw(WIN, draw, x1, y1, x2, y2, x3, y3, x4, y4):
     flag4 = False
     # the colour and size of the brush
     drawColour = [0, 0, 255]
-    brushSize = 10
+    brushSize = 5
     canvasSize = [800, 800]
 
     # Canvas
@@ -115,8 +154,8 @@ def draw(WIN, draw, x1, y1, x2, y2, x3, y3, x4, y4):
                 sys.exit()
                 break
         # Draw the Canvas at the center of the screen
-        x, y = WIN.get_size() 
-        WIN.blit(canvas, [x/2 - canvasSize[0]/2, y/2 - canvasSize[1]/2])
+        x, y = globalvariables.WIN.get_size() 
+        globalvariables.WIN.blit(canvas, [x/2 - canvasSize[0]/2, y/2 - canvasSize[1]/2])
         if flag1 == True and flag2 == True and flag3 == True and flag4 == True: 
             #if all the flags have been set to true, they can no longer draw
             draw = False
@@ -131,6 +170,8 @@ def draw(WIN, draw, x1, y1, x2, y2, x3, y3, x4, y4):
             # Calculate the position of the mouse on the Canvas
             dx = mx - x/2 + canvasSize[0]/2
             dy = my - y/2 + canvasSize[1]/2
+
+            print(dx, dy)
 
             pygame.draw.circle(canvas, drawColour,[dx, dy], brushSize) #draws the circle
 
@@ -470,17 +511,25 @@ def burgerGame(value):
     grilling = False
     assembly = False
 
-    if value == "frying": 
+    if value == "Frying": 
         #they are set to true based on what is stored in value, this will run the correct step
         frying = True
-    elif value == "mixing":
+
+    elif value == "Mixing":
         mixing = True
-    elif value == "shaping":
+    elif value == "Shaping":
         shaping = True
-    elif value == "grilling":
+    elif value == "Grilling":
         grilling = True
-    elif value == "assembly":
+    elif value == "Assembly":
         assembly = True
+
+    #variables
+    cut = 0
+
+    #button objects
+    onioncut2_1_button = classes.ImageButton(340, 210, onions[2], 1)
+    onioncut3_button = classes.ImageButton(340, 210, onions[3], 1)
     
     while frying:
         for event in pygame.event.get(): #allows user to quit the window
@@ -488,8 +537,38 @@ def burgerGame(value):
                 pygame.quit()
                 sys.exit()
                 break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                onioncut2_1Pressed = onioncut2_1_button.checkPressed(pygame.mouse.get_pos())
+                if onioncut2_1Pressed:
+                    cut = cut + 1
+                onioncut3Pressed = onioncut3_button.checkPressed(pygame.mouse.get_pos())
+                if onioncut3Pressed:
+                    cut = cut + 1
         
-        WIN.blit(cuttingBoard_image, (450, 450))
+        globalvariables.WIN.blit(gameBg_image, bgPosition)
+        globalvariables.WIN.blit(cuttingBoard_image, (100, 170))
+        if cut == 0:
+            globalvariables.WIN.blit(onions[0], (340, 210))
+            globalvariables.WIN.blit(arrow2_image, (370, 215))
+            draw(True, 282.0, 412.0, 436.0, 377.0, 465.0, 412.0, 435.0, 459.0)
+            cut = cut + 1
+        elif cut == 1:
+            globalvariables.WIN.blit(onions[1], (340, 210))
+            globalvariables.WIN.blit(arrow3_image, (390, 295))
+            draw(True, 349.0, 562.0, 392.0, 587.0, 431.0, 561.0, 387.0, 407.0)
+            cut = cut + 1
+        elif cut == 2:
+            onioncut2_1_button.draw()
+        elif cut == 3:
+            onioncut3_button.draw()
+        elif cut == 4:
+            globalvariables.WIN.blit(onions[4], (340, 210))
+            pygame.transform.scale(arrow3_image, (200, 600))
+            globalvariables.WIN.blit(arrow3_image, (340, 295))
+            draw(True, 349.0, 562.0, 392.0, 587.0, 431.0, 561.0, 387.0, 407.0)
+
+
+        pygame.display.update()
     
     while mixing:
         for event in pygame.event.get(): #allows user to quit the window
@@ -497,6 +576,9 @@ def burgerGame(value):
                 pygame.quit()
                 sys.exit()
                 break
+        
+
+        pygame.display.update()
     
     while shaping:
         for event in pygame.event.get(): #allows user to quit the window
@@ -504,6 +586,9 @@ def burgerGame(value):
                 pygame.quit()
                 sys.exit()
                 break
+        
+
+        pygame.display.update()
     
     while grilling:
         for event in pygame.event.get(): #allows user to quit the window
@@ -511,6 +596,9 @@ def burgerGame(value):
                 pygame.quit()
                 sys.exit()
                 break
+        
+
+        pygame.display.update()
     
     while assembly:
 
@@ -521,19 +609,21 @@ def burgerGame(value):
                 break
     
 
+        pygame.display.update()
+
 def cakeGame(value):
     mixing = False
     baking = False
     frosting = False
     assembly = False
 
-    if value == "mixing":
+    if value == "Mixing":
         mixing = True
-    elif value == "baking":
+    elif value == "Baking":
         baking = True
-    elif value == "frosting":
+    elif value == "Frosting":
         frosting = True
-    elif value == "assembly":
+    elif value == "Assembly":
         assembly = True
 
 def sushiGame(value):
@@ -541,11 +631,11 @@ def sushiGame(value):
     assembly = False
     cutting = False
 
-    if value == "cooking":
+    if value == "Cooking":
         cooking = True
-    elif value == "assembly":
+    elif value == "Assembly":
         assembly = True
-    elif value == "cutting":
+    elif value == "Cutting":
         cutting = True
 
 

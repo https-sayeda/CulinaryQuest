@@ -1006,9 +1006,9 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
 
         measurement_type = database.getData_main(username, "measurement_type") #checks what value
         if measurement_type: #if its true
-            WIN.blit(scaled_checkmarkIcon, (370, 511)) #blit chekcmark where metric system is
+            globalvariables.WIN.blit(scaled_checkmarkIcon, (370, 511)) #blit chekcmark where metric system is
         else: #if false
-            WIN.blit(scaled_checkmarkIcon, (670, 511)) #blit where us customary is
+            globalvariables.WIN.blit(scaled_checkmarkIcon, (670, 511)) #blit where us customary is
 
         pygame.display.update()
     return mainLoop, settingsLoop
@@ -1372,10 +1372,10 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
         #displaying depending on the recipe that was chosen
         if recipeChosen == "burger":
             burgerLabel_text.drawText()
-            WIN.blit(scaled_burger, (380, 180))
-            WIN.blit(scaled_halal, (150, 247))
-            WIN.blit(scaled_vegetarian, (230, 247))
-            WIN.blit(scaled_vegan, (310, 247))
+            globalvariables.WIN.blit(scaled_burger, (380, 180))
+            globalvariables.WIN.blit(scaled_halal, (150, 247))
+            globalvariables.WIN.blit(scaled_vegetarian, (230, 247))
+            globalvariables.WIN.blit(scaled_vegan, (310, 247))
             easy_text.drawText()
             burgerDescription1_text.drawText()
             burgerDescription2_text.drawText()
@@ -1527,7 +1527,7 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
         pygame.display.update()
     return mainLoop, recipeLoop, minigameLoop, recipeChosen
 
-def minigameScreen(minigameLoop, recipeLoop, recipeChosen, username, theme_selected):
+def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
 
     startingScreen = True #the starting screen will show all the steps, this will reappear every time the user finishes a minigame
     exitMessage = False #this will be set to true when the user presses the back button
@@ -1639,7 +1639,7 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, username, theme_selec
             flag = False'''
         
         #displaying onto the screen
-        WIN.blit(gameBg_image, bgPosition)
+        globalvariables.WIN.blit(gameBg_image, bgPosition)
 
         if startingScreen:
             back_button.drawBox()
@@ -1758,7 +1758,7 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, username, theme_selec
     
     return minigameLoop, recipeLoop, recipeChosen
 
-def temp_minigameScreen(minigameLoop):
+'''def temp_minigameScreen(minigameLoop):
     
     #checks which minigame should be ran
     draw = False
@@ -1779,24 +1779,24 @@ def temp_minigameScreen(minigameLoop):
 
         while draw: #while draw is true
             arrow_text.drawText() #draws the arrow
-            draw = minigames.draw(WIN, draw, 334.0, 425.0, 340.0, 620.0, 684.0, 560.0, 129.0, 523.0)
+            draw = minigames.draw(globalvariables.WIN, draw, 334.0, 425.0, 340.0, 620.0, 684.0, 560.0, 129.0, 523.0)
             #calls the subroutine and returns the value of draw so that it can be updated to be False
         while assembly:
-            assembly = minigames.assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly)
+            assembly = minigames.assembly(globalvariables.window_x, globalvariables.window_y, globalvariables.WIN, main1Bg_image, bgPosition, assembly)
         while flip:
-            flip = minigames.flip(flip, WIN, 300, 50, main1Bg_image, bgPosition)
+            flip = minigames.flip(flip, globalvariables.WIN, 300, 50, main1Bg_image, bgPosition)
         while fill:
-            fill = minigames.fill(fill, WIN, water_blue, fillBg_box, fill_box, fill_line, main1Bg_image, bgPosition)
+            fill = minigames.fill(fill, globalvariables.WIN, water_blue, fillBg_box, fill_box, fill_line, main1Bg_image, bgPosition)
         while mixing:
-            mixing = minigames.mixing(mixing, WIN, main1Bg_image, bgPosition, mixingBowl_image, 300, 50)
+            mixing = minigames.mixing(mixing, globalvariables.WIN, main1Bg_image, bgPosition, mixingBowl_image, 300, 50)
         while seasoning:
-            seasoning = minigames.seasoning(seasoning, WIN, main1Bg_image, bgPosition, rawPatty_image, 350, 250, "herbs")
+            seasoning = minigames.seasoning(seasoning, globalvariables.WIN, main1Bg_image, bgPosition, rawPatty_image, 350, 250, "herbs")
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
                 break
-        
+        '''
 def playDisc(disc_selected):
     if disc_selected == "disc1":
             pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"gingko.mp3"))
@@ -1818,9 +1818,11 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop, mi
     usernameInput2_input = classes.Input(480, 230, 37, 280, black, 20, False)
     passwordInput2_input = classes.Input(480, 290, 37, 280, black, 20, True)
     search_input = classes.Input(240, 100, 37, 570, black, 20, False)
-    recipeChosen = "None"
+    recipeChosen = "burger"
+    theme_selected = "theme1"
     oldPassInput_input = classes.Input(350, 250, 30, 280, black, 20, True)
     newPassInput_input = classes.Input(350, 310, 30, 280, black, 20, True)
+
 
     while run:
 
@@ -1854,14 +1856,14 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop, mi
             mainLoop, recipeLoop, minigameLoop, recipeChosen = recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, theme_selected)
 
         if minigameLoop == True:
-            minigameLoop, recipeLoop, recipeChosen = minigameScreen(minigameLoop, recipeLoop, recipeChosen, username, theme_selected)
+            minigameLoop, recipeLoop, recipeChosen = minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected)
 
-loginLoop = True
+loginLoop = False
 createLoop = False
 mainLoop = False
 settingsLoop = False
 shopLoop = False
 recipeLoop = False
-minigameLoop = False
+minigameLoop = True
 
 main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop, minigameLoop)
