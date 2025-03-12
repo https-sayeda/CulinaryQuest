@@ -15,6 +15,7 @@ gameBg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','game1_bac
 clock_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','clock.png'))
 clock_image = pygame.transform.scale(clock_image, (100, 100))
 mixingBowl_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','mixingbowl.png'))
+mixingBowl_image = pygame.transform.scale(mixingBowl_image, (300, 300))
 mixingBowlSpilled_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','mixingbowl_spilled.png'))
 pointingHand_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','pointinghand.png'))
 cuttingBoard_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cuttingboard.png'))
@@ -30,11 +31,16 @@ offbutton_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','offbut
 #burger images
 rawPatty_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burgerpatty.png'))
 beefMince_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','beefmince.png'))
+beefMince_image = pygame.transform.scale(beefMince_image, (300, 200))
+burgerPatty_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burgerpatty.png'))
+burgerPatty_image = pygame.transform.scale(burgerPatty_image, (300, 200))
 cookedPatty_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cookedPatty.png'))
 cooker_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cooker.png'))
 cooker_image = pygame.transform.scale(cooker_image, (600, 500))
 oilBottle_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','oilBottle.png'))
 oilBottle_image = pygame.transform.scale(oilBottle_image, (100, 100))
+egg1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','egg.1.png'))
+egg1_image = pygame.transform.scale(egg1_image, (70, 100))
 
 onioncut1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut1.png'))
 onioncut1_image = pygame.transform.scale(onioncut1_image, (300, 300))
@@ -293,7 +299,7 @@ def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
 
     return assembly
 
-def flip(flip, WIN, bar_x, bar_y, main1Bg_image, bgPosition):
+def flip(flip, bar_x, bar_y, images, coordinates):
     
     #variables that are needed
     arrow_speed = 7.5
@@ -325,9 +331,11 @@ def flip(flip, WIN, bar_x, bar_y, main1Bg_image, bgPosition):
                 break
         
         #displaying the images on the screen
-        WIN.blit(main1Bg_image, bgPosition)
-        WIN.blit(temperatureBar_image, (bar_x, bar_y))
-        WIN.blit(arrow_image, (arrow_x, arrow_y))
+        globalvariables.WIN.blit(gameBg_image, bgPosition)
+        for i in range(len(images)):
+            globalvariables.WIN.blit(images[i], coordinates[i])
+        globalvariables.WIN.blit(temperatureBar_image, (bar_x, bar_y))
+        globalvariables.WIN.blit(arrow_image, (arrow_x, arrow_y))
 
         keys = pygame.key.get_pressed() 
         if keys[pygame.K_SPACE] != True: #while the space key has not been pressed
@@ -344,7 +352,7 @@ def flip(flip, WIN, bar_x, bar_y, main1Bg_image, bgPosition):
                     top_reached = False
 
         else: #if the space key is pressed then..
-            WIN.blit(arrow_image, (arrow_x, arrow_y)) #stop the arrow at that position
+            globalvariables.WIN.blit(arrow_image, (arrow_x, arrow_y)) #stop the arrow at that position
             flip = False #no longer running
 
 
@@ -388,7 +396,7 @@ def fill(fill, WIN, fill_colour, fillBg_box, fill_box, fill_line, main1Bg_image,
         
         pygame.display.update()
         
-def mixing(mixing, WIN, main1Bg_image, bgPosition, image, image_x, image_y):
+def mixingBowl(mixing, image, image_x, image_y, image_width, image_height):
 
     orientation = "right" #the orientation of the bowl is initially set to the right
     time_down = 0.0 #used to measure the amount of time between the bowl being flipped
@@ -398,6 +406,7 @@ def mixing(mixing, WIN, main1Bg_image, bgPosition, image, image_x, image_y):
 
     #loading image
     mixingBowlSpilled_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','mixingbowl_spilled.png'))
+    mixingBowlSpilled_image = pygame.transform.scale(mixingBowlSpilled_image, (image_width, image_height))
 
     while mixing: #while it is running
 
@@ -416,19 +425,19 @@ def mixing(mixing, WIN, main1Bg_image, bgPosition, image, image_x, image_y):
                     #timer ends and total time calculated
 
         if count >= 5: #if they went too fast 5 times
-            WIN.blit(main1Bg_image, bgPosition) 
-            WIN.blit(mixingBowlSpilled_image, (image_x, image_y)) #th mixture is spilled so display new image
+            globalvariables.WIN.blit(gameBg_image, bgPosition) 
+            globalvariables.WIN.blit(mixingBowlSpilled_image, (image_x, image_y)) #th mixture is spilled so display new image
             mixing = False #set to false
             pygame.display.update() #update screen
 
         if count < 5: #as long as the mixture hasn;t spilled
         
-            WIN.blit(main1Bg_image, bgPosition) #background image displayed
+            globalvariables.WIN.blit(gameBg_image, bgPosition) #background image displayed
             if orientation == "right" and count < 5: #if the bowl is flipped to the right
-                WIN.blit(image, (image_x, image_y)) #it is normal so display as normal
+                globalvariables.WIN.blit(image, (image_x, image_y)) #it is normal so display as normal
             elif orientation == "left" and count < 5: #if it's to the left
                 image2 = pygame.transform.flip(image, True, False) #it needs to be flipped horizontally
-                WIN.blit(image2, (image_x, image_y)) #it is drawn
+                globalvariables.WIN.blit(image2, (image_x, image_y)) #it is drawn
             if 0 < time_elapsed < 0.30: #if the tipe between pressing the keys is less than 0.3 seconds
                 print("Too fast!") #it is considered to be too fast
                 time_down = 0.0 #time reset
@@ -439,13 +448,13 @@ def mixing(mixing, WIN, main1Bg_image, bgPosition, image, image_x, image_y):
 
         pygame.display.update()
         
-def seasoning(seasoning, WIN, main1Bg_image, bgPosition, image, image_x, image_y, seasoning_type):
+def seasoning(seasoning, image, image_x, image_y, image_width, image_height, seasoning_type):
     
     #variables that are needed
     shaker_width = 100 
     shaker_height = 100
-    image_width = 200
-    image_height = 200
+    #image_width = 200
+    #image_height = 200
     seasoning_width = 25
     seasoning_height = 25
     mouse_y_position = []
@@ -476,8 +485,8 @@ def seasoning(seasoning, WIN, main1Bg_image, bgPosition, image, image_x, image_y
         
         mouse_x, mouse_y = pygame.mouse.get_pos() #get the x and y coordinate of the position of the mouse
         mouse_y_position.append(mouse_y) #put the y coordinate into the array
-        WIN.blit(main1Bg_image, bgPosition) #display image
-        WIN.blit(image, (image_x, image_y)) #display seasoning shaker
+        globalvariables.WIN.blit(gameBg_image, bgPosition) #display image
+        globalvariables.WIN.blit(image, (image_x, image_y)) #display seasoning shaker
         if len(mouse_y_position) == 2: #when there are two values stored in the array
             if mouse_y_position[0] >= mouse_y_position[1] + 10: 
                 #compare them to each other and if they are a distance of 10 apart
@@ -492,7 +501,7 @@ def seasoning(seasoning, WIN, main1Bg_image, bgPosition, image, image_x, image_y
                 y = random.randint(image_y + 20, image_y + image_height - 40)
                 seasoning_position_x.append(x) #add the coordinates to the list
                 seasoning_position_y.append(y)
-                WIN.blit(seasoning_image, (seasoning_position_x[i], seasoning_position_y[i])) 
+                globalvariables.WIN.blit(seasoning_image, (seasoning_position_x[i], seasoning_position_y[i])) 
                 #display the seasoning at those positions
         
         if shaking == True and image_x <= mouse_x <= image_x + image_width:
@@ -505,11 +514,33 @@ def seasoning(seasoning, WIN, main1Bg_image, bgPosition, image, image_x, image_y
         if len(seasoning_amount) == 35: #if they have seasoned 35 times
             seasoning = False #set to false so it stoped running
         
-        WIN.blit(shaker_image, (mouse_x - 50, mouse_y - 50)) 
+        globalvariables.WIN.blit(shaker_image, (mouse_x - 50, mouse_y - 50)) 
         #display the seasoning shaker next to the mouse so it moves as the mouse moves
 
         pygame.display.update()
  
+def drag(bowl_x, bowl_y, bowl_width, bowl_height, showIngredient, active_ingredient, ingredient_rect, draggedImage):
+
+    for event in pygame.event.get(): #allows user to quit the window
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+            break
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if ingredient_rect.collidepoint(event.pos):
+                    active_ingredient = True
+        if event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1:
+                active_ingredient = False
+        if event.type == pygame.MOUSEMOTION:
+            if active_ingredient:
+                ingredient_rect.move_ip(event.rel)
+    
+    if showIngredient:
+        globalvariables.WIN.blit(draggedImage, ingredient_rect)
+    
+
 def burgerGame(value, stack, visitedNodes, score, timer_box):
 
     #the steps are initially set to false
@@ -519,6 +550,8 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
     grilling = False
     assembly = False
 
+    value = "Shaping"
+
     if value == "Frying": 
         #they are set to true based on what is stored in value, this will run the correct step
         frying = True
@@ -526,8 +559,10 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
         #value = "Frying 2"
     elif value == "Mixing":
         mixing = True
+        value = "Mixing 1"
     elif value == "Shaping":
         shaping = True
+        value = "Shaping 1"
     elif value == "Grilling":
         grilling = True
     elif value == "Assembly":
@@ -535,9 +570,15 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
 
     #variables
     game_ticks = pygame.time.get_ticks()
+    clock = pygame.time.Clock()
     other_ticks = 0
     cut = 0
     fry = 0
+    mix = 0
+    
+    bowl_width = 100
+    bowl_height = 100
+
 
     #text object
     timer_text = classes.Text(52, 12, "00.00", (255, 255, 255), 24)
@@ -549,7 +590,14 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
     dicedonion_button = classes.ImageButton(340, 210, onions[14], 1)
     oilBottle_button = classes.ImageButton(720, 280, oilBottle_image, 2.5)
     offbutton_button = classes.ImageButton(720, 280, offbutton_image, 1)
-    
+    #showIngredient = True
+    active_ingredient = False
+    mince_rect = beefMince_image.get_rect()
+    mince_rect.center = (150, 450)
+    egg_rect = egg1_image.get_rect()
+    egg_rect.center = (100, 400)
+    rects = [mince_rect, egg_rect]
+
     while frying:
         for event in pygame.event.get(): #allows user to quit the window
             if event.type == pygame.QUIT:
@@ -595,7 +643,7 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
         timer_box.drawBox()
         #game_ticks = pygame.time.get_ticks()
         print((((pygame.time.get_ticks() - game_ticks) / 1000)))
-        timer_text.changeText(str(((pygame.time.get_ticks() - game_ticks) / 1000)))
+        timer_text.changeText(str(((pygame.time.get_ticks() - other_ticks) + game_ticks) / 1000))
 
         if value == "Frying 1":
             globalvariables.WIN.blit(cuttingBoard_image, (100, 170))
@@ -621,42 +669,42 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
             elif cut == 5:
                 globalvariables.WIN.blit(onions[5], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (345, 215))
-                other_ticks = draw(True, 344.0, 610.0, 305.0, 567.0, 384.0, 564.0, 344.0, 333.0, game_ticks, timer_text, timer_box)
+                other_ticks = draw(True, 344.0, 610.0, 305.0, 567.0, 384.0, 564.0, 344.0, 333.0, game_ticks + other_ticks, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 6:
                 globalvariables.WIN.blit(onions[6], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (390, 215))
-                other_ticks = draw(True, 352.0, 567.0, 387.0, 609.0, 433.0, 561.0, 387.0, 335.0, game_ticks, timer_text, timer_box)
+                other_ticks = draw(True, 352.0, 567.0, 387.0, 609.0, 433.0, 561.0, 387.0, 335.0, game_ticks + other_ticks, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 7:
                 globalvariables.WIN.blit(onions[7], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (420, 215))
-                other_ticks = draw(True, 418.0, 334.0, 375.0, 561.0, 423.0, 611.0, 469.0, 561.0, game_ticks, timer_text, timer_box)
+                other_ticks = draw(True, 418.0, 334.0, 375.0, 561.0, 423.0, 611.0, 469.0, 561.0, game_ticks + other_ticks, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 8:
                 globalvariables.WIN.blit(onions[8], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (460, 215))
-                other_ticks = draw(True, 419.0, 565.0, 460.0, 607.0, 507.0, 561.0, 455.0, 330.0, game_ticks, timer_text, timer_box)
+                other_ticks = draw(True, 419.0, 565.0, 460.0, 607.0, 507.0, 561.0, 455.0, 330.0, game_ticks  + other_ticks, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 9:
                 globalvariables.WIN.blit(onions[9], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (433, 215))
-                other_ticks = draw(True, 394.0, 565.0, 434.0, 605.0, 478.0, 561.0, 430.0, 334.0, game_ticks, timer_text, timer_box)
+                other_ticks = draw(True, 394.0, 565.0, 434.0, 605.0, 478.0, 561.0, 430.0, 334.0, game_ticks  + other_ticks, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 10:
                 globalvariables.WIN.blit(onions[10], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow2_image, (310, 200)), (330, 315))
-                other_ticks = draw(True, 487.0, 555.0, 492.0, 472.0, 533.0, 516.0, 240.0, 517.0, game_ticks, timer_text, timer_box)
+                other_ticks = draw(True, 487.0, 555.0, 492.0, 472.0, 533.0, 516.0, 240.0, 517.0, game_ticks  + other_ticks, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 11:
                 globalvariables.WIN.blit(onions[11], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow2_image, (310, 200)), (330, 270))
-                other_ticks = draw(True, 248.0, 473.0, 489.0, 511.0, 485.0, 429.0, 531.0, 470.0, game_ticks, timer_text, timer_box)
+                other_ticks = draw(True, 248.0, 473.0, 489.0, 511.0, 485.0, 429.0, 531.0, 470.0, game_ticks  + other_ticks, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 12:
                 globalvariables.WIN.blit(onions[12], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow2_image, (310, 200)), (330, 215))
-                other_ticks = draw(True, 489.0, 451.0, 245.0, 413.0, 480.0, 372.0, 529.0, 417.0, game_ticks, timer_text, timer_box)
+                other_ticks = draw(True, 489.0, 451.0, 245.0, 413.0, 480.0, 372.0, 529.0, 417.0, game_ticks  + other_ticks, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 13:
                 onioncut4_9_button.draw()
@@ -691,6 +739,8 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
                 if seconds > 10.0:
                     offbutton_button.draw()
                     timer = ((pygame.time.get_ticks() - game_ticks) / 1000)
+        
+        clock.tick(globalvariables.FPS)
 
         pygame.display.update()
     
@@ -700,16 +750,57 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
                 pygame.quit()
                 sys.exit()
                 break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if rects[mix].collidepoint(event.pos):
+                        active_ingredient = True
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    active_ingredient = False
+            if event.type == pygame.MOUSEMOTION:
+                if active_ingredient:
+                    rects[mix].move_ip(event.rel)
         
+        globalvariables.WIN.blit(gameBg_image, bgPosition)
+        if value == "Mixing 1":
+            seasoning(True, beefMince_image, 300, 365, 300, 200, "herbs")
+            value = "Mixing 2"
+        if value == "Mixing 2" or value == "Mixing 3" or value == "Mixing 4":
+            globalvariables.WIN.blit(mixingBowl_image, (575, 265))
+        if value == "Mixing 2" or value == "Mixing 3":
+            if active_ingredient:
+                mx, my = pygame.mouse.get_pos()
+                if 575 + 25 <= mx <= (575 + bowl_width) and (265 + bowl_height //2) <= my <= ((265 + bowl_height //2) + (bowl_height/2)):
+                    if value == "Mixing 2":
+                        value = "Mixing 3"
+                    else:
+                        value = "Mixing 4"
+                    mix = mix + 1
+                    active_ingredient = False
+        if value == "Mixing 2":
+            globalvariables.WIN.blit(beefMince_image, mince_rect)
+        if value == "Mixing 3":
+            globalvariables.WIN.blit(egg1_image, egg_rect)
+        if value == "Mixing 4":
+            mixingBowl(True, mixingBowl_image, 300, 265, 300, 300)
+            mixing = False
 
         pygame.display.update()
     
     while shaping:
+
         for event in pygame.event.get(): #allows user to quit the window
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
                 break
+        
+        globalvariables.WIN.blit(gameBg_image, bgPosition)
+        if value == "Shaping 1":
+            for count in range(4):
+                flip(True, 400, 10, [beefMince_image], [(150, 450)])
+                globalvariables.WIN.blit(burgerPatty_image, (150, 450))
+            shaping = False
         
 
         pygame.display.update()
