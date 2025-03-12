@@ -1535,6 +1535,7 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
     visitedNodes = [] #contains all the visited nodes
     flag = True #indicates whether to traverse the tree
     value = "Frying"
+    score = 0
 
     if theme_selected == "theme1": #changes the colours of the boxes and buttons depending on the theme that has been chosen
             colours = [main_lightPurple1, main_lightPurple2, main_darkPurple1, main_darkPurple2, main_darkPurple3, main_brightPurple]
@@ -1591,6 +1592,8 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
     gameLabel5_box = classes.Box(260, 470, 40, 200, colours[1], False)
     exitMessage_box = classes.Box(260, 150, 200, 500, login_red1, False)
 
+    timer_box = classes.Box(50, 10, 50, 50, colours[5], False)
+
     #buttons
     back_button = classes.Button(65, 50, 70, 100, colours[3], False)
     start1_button = classes.Button(550, 150, 40, 200, colours[2], False)
@@ -1623,23 +1626,29 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
                         exitMessage = False #remove the exit message
                     start1Pressed = start1_button.checkPressed(pygame.mouse.get_pos())
                     if start1Pressed:
-                        if recipeChosen == "burger":
-                            minigames.burgerGame(value)
-                        elif recipeChosen == "cake":
-                            minigames.cakeGame(value)
-                        elif recipeChosen == "sushi":
-                            minigames.sushiGame(value)
+                        start1_button.setActive()
 
                     
 
         #tree traversal
-        '''if flag:
+        if flag:
             value, stack, visitedNodes = minigames.treeTraversal(recipeChosen, stack, visitedNodes)
-            print(value)
-            flag = False'''
+            flag = False
         
         #displaying onto the screen
         globalvariables.WIN.blit(gameBg_image, bgPosition)
+
+        start1Active = start1_button.getActive()
+        if start1Active:
+            if recipeChosen == "burger":
+                value, stack, visitedNodes = minigames.burgerGame(value, stack, visitedNodes, score, timer_box)
+                flag = True
+            elif recipeChosen == "cake":
+                value, stack, visitedNodes = minigames.cakeGame(value, stack, visitedNodes, score, timer_box)
+                flag = True
+            elif recipeChosen == "sushi":
+                value, stack, visitedNodes = minigames.sushiGame(value, stack, visitedNodes, score, timer_box)
+                flag = True
 
         if startingScreen:
             back_button.drawBox()

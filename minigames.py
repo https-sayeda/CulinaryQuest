@@ -12,23 +12,29 @@ bgPosition = (0,0)
 
 #loading images
 gameBg_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','game1_background.png'))
+clock_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','clock.png'))
+clock_image = pygame.transform.scale(clock_image, (100, 100))
 mixingBowl_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','mixingbowl.png'))
 mixingBowlSpilled_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','mixingbowl_spilled.png'))
 pointingHand_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','pointinghand.png'))
 cuttingBoard_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cuttingboard.png'))
 cuttingBoard_image = pygame.transform.scale(cuttingBoard_image, (600, 350))
+fryingPan_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','fryingpan.png'))
+fryingPanOil_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','fryingpan_oil.png'))
 arrow_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','arrow.png'))
 arrow_image = pygame.transform.scale(arrow_image, (200, 200))
 arrow2_image = pygame.transform.rotate(arrow_image, (270))
 arrow3_image = pygame.transform.rotate(arrow_image, (180))
+offbutton_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','offbutton.png'))
 
 #burger images
 rawPatty_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burgerpatty.png'))
 beefMince_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','beefmince.png'))
 cookedPatty_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cookedPatty.png'))
 cooker_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cooker.png'))
-fryingPan_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','fryingpan.png'))
+cooker_image = pygame.transform.scale(cooker_image, (600, 500))
 oilBottle_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','oilBottle.png'))
+oilBottle_image = pygame.transform.scale(oilBottle_image, (100, 100))
 
 onioncut1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut1.png'))
 onioncut1_image = pygame.transform.scale(onioncut1_image, (300, 300))
@@ -41,26 +47,20 @@ onioncut3_image = pygame.transform.scale(onioncut3_image, (300, 300))
 onioncut4_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.png'))
 onioncut4_image = pygame.transform.scale(onioncut4_image, (300, 300))
 onioncut4_1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.1.png'))
-
 onioncut4_2_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.2.png'))
-
 onioncut4_3_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.3.png'))
-
 onioncut4_4_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.4.png'))
-
 onioncut4_5_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.5.png'))
-
 onioncut4_6_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.6.png'))
-
 onioncut4_7_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.7.png'))
-
 onioncut4_8_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.8.png'))
-
 onioncut4_9_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','onioncut4.9.png'))
+dicedonion_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','dicedonion.png'))
+
 
 onions = [ onioncut1_image, onioncut2_image, onioncut2_1_image, onioncut3_image, onioncut4_image, 
           onioncut4_1_image, onioncut4_2_image, onioncut4_3_image, onioncut4_4_image, onioncut4_5_image, 
-          onioncut4_6_image, onioncut4_7_image, onioncut4_8_image, onioncut4_9_image]
+          onioncut4_6_image, onioncut4_7_image, onioncut4_8_image, onioncut4_9_image, dicedonion_image]
 
 for i in range(len(onions)):
     onions[i] = pygame.transform.scale(onions[i], (300,300))
@@ -131,7 +131,7 @@ def treeTraversal(recipeChosen, stack, visitedNodes):
     
     return value, stack, visitedNodes
 
-def draw(draw, x1, y1, x2, y2, x3, y3, x4, y4):
+def draw(draw, x1, y1, x2, y2, x3, y3, x4, y4, game_ticks, timer_text, timer_box):
 
     flag1 = False #these flags represent whether the drawn circle has touched a coordinate
     flag2 = False #there are 4 points to the arrow, so four coordinates (x1, y2), (x2, y2) etc. = four flags
@@ -147,12 +147,18 @@ def draw(draw, x1, y1, x2, y2, x3, y3, x4, y4):
     canvas.set_alpha(200) 
     #makes the canvas transparent so that it doesn't cover the background image
 
+    other_ticks = pygame.time.get_ticks() 
+
     while draw: #ensures that the user only draws when they havent drawn the arrow
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
                 break
+        
+        timer_box.drawBox()
+        timer_text.changeText(str(((pygame.time.get_ticks() - other_ticks) + game_ticks) / 1000))
+
         # Draw the Canvas at the center of the screen
         x, y = globalvariables.WIN.get_size() 
         globalvariables.WIN.blit(canvas, [x/2 - canvasSize[0]/2, y/2 - canvasSize[1]/2])
@@ -187,6 +193,8 @@ def draw(draw, x1, y1, x2, y2, x3, y3, x4, y4):
             flag4 = True
 
         pygame.display.update() #updates the screen
+    
+    return other_ticks
       
 def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
 
@@ -502,7 +510,7 @@ def seasoning(seasoning, WIN, main1Bg_image, bgPosition, image, image_x, image_y
 
         pygame.display.update()
  
-def burgerGame(value):
+def burgerGame(value, stack, visitedNodes, score, timer_box):
 
     #the steps are initially set to false
     frying = False
@@ -514,7 +522,8 @@ def burgerGame(value):
     if value == "Frying": 
         #they are set to true based on what is stored in value, this will run the correct step
         frying = True
-
+        value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
+        #value = "Frying 2"
     elif value == "Mixing":
         mixing = True
     elif value == "Shaping":
@@ -525,11 +534,21 @@ def burgerGame(value):
         assembly = True
 
     #variables
+    game_ticks = pygame.time.get_ticks()
+    other_ticks = 0
     cut = 0
+    fry = 0
+
+    #text object
+    timer_text = classes.Text(52, 12, "00.00", (255, 255, 255), 24)
 
     #button objects
     onioncut2_1_button = classes.ImageButton(340, 210, onions[2], 1)
     onioncut3_button = classes.ImageButton(340, 210, onions[3], 1)
+    onioncut4_9_button = classes.ImageButton(340, 210, onions[13], 1)
+    dicedonion_button = classes.ImageButton(340, 210, onions[14], 1)
+    oilBottle_button = classes.ImageButton(720, 280, oilBottle_image, 2.5)
+    offbutton_button = classes.ImageButton(720, 280, offbutton_image, 1)
     
     while frying:
         for event in pygame.event.get(): #allows user to quit the window
@@ -539,34 +558,139 @@ def burgerGame(value):
                 break
             if event.type == pygame.MOUSEBUTTONDOWN:
                 onioncut2_1Pressed = onioncut2_1_button.checkPressed(pygame.mouse.get_pos())
-                if onioncut2_1Pressed:
+                if onioncut2_1Pressed and cut == 2:
                     cut = cut + 1
                 onioncut3Pressed = onioncut3_button.checkPressed(pygame.mouse.get_pos())
-                if onioncut3Pressed:
+                if onioncut3Pressed and cut == 3:
                     cut = cut + 1
+                onioncut4_9Pressed = onioncut4_9_button.checkPressed(pygame.mouse.get_pos())
+                onioncut4_9Active = onioncut4_9_button.getActive()
+                if onioncut4_9Pressed and cut == 13 and onioncut4_9Active == False :
+                    cut = cut + 1
+                    onioncut4_9_button.setActive()
+                dicedonionPressed = dicedonion_button.checkPressed(pygame.mouse.get_pos())
+                dicedonionActive = dicedonion_button.getActive()
+                if dicedonionPressed == True and cut == 14 and onioncut4_9Active == True:
+                    fry = fry + 1
+                    value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
+                    cut = cut + 1
+                elif dicedonionPressed == True and value == "Frying 3" and dicedonionActive == False:
+                    fry = fry + 1
+                    start_ticks = pygame.time.get_ticks()
+                    value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
+                    dicedonion_button.setActive()
+                oilBottlePressed = oilBottle_button.checkPressed(pygame.mouse.get_pos())
+                oilBottleActive = oilBottle_button.getActive()
+                if oilBottlePressed and oilBottleActive == False:
+                    fry = fry + 1
+                    value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
+                    start_ticks = pygame.time.get_ticks()
+                    oilBottle_button.setActive() 
+                offbuttonPressed = offbutton_button.checkPressed(pygame.mouse.get_pos())
+                if offbuttonPressed == True and value == "Frying 4":
+                    fry = fry + 1
         
         globalvariables.WIN.blit(gameBg_image, bgPosition)
-        globalvariables.WIN.blit(cuttingBoard_image, (100, 170))
-        if cut == 0:
-            globalvariables.WIN.blit(onions[0], (340, 210))
-            globalvariables.WIN.blit(arrow2_image, (370, 215))
-            draw(True, 282.0, 412.0, 436.0, 377.0, 465.0, 412.0, 435.0, 459.0)
-            cut = cut + 1
-        elif cut == 1:
-            globalvariables.WIN.blit(onions[1], (340, 210))
-            globalvariables.WIN.blit(arrow3_image, (390, 295))
-            draw(True, 349.0, 562.0, 392.0, 587.0, 431.0, 561.0, 387.0, 407.0)
-            cut = cut + 1
-        elif cut == 2:
-            onioncut2_1_button.draw()
-        elif cut == 3:
-            onioncut3_button.draw()
-        elif cut == 4:
-            globalvariables.WIN.blit(onions[4], (340, 210))
-            pygame.transform.scale(arrow3_image, (200, 600))
-            globalvariables.WIN.blit(arrow3_image, (340, 295))
-            draw(True, 349.0, 562.0, 392.0, 587.0, 431.0, 561.0, 387.0, 407.0)
+        globalvariables.WIN.blit(clock_image, (20, 10))
+        timer_box.drawBox()
+        #game_ticks = pygame.time.get_ticks()
+        print((((pygame.time.get_ticks() - game_ticks) / 1000)))
+        timer_text.changeText(str(((pygame.time.get_ticks() - game_ticks) / 1000)))
 
+        if value == "Frying 1":
+            globalvariables.WIN.blit(cuttingBoard_image, (100, 170))
+            if cut == 0:
+                globalvariables.WIN.blit(onions[0], (340, 210))
+                globalvariables.WIN.blit(arrow2_image, (370, 215))
+                other_ticks = draw(True, 282.0, 412.0, 436.0, 377.0, 465.0, 412.0, 435.0, 459.0, 0, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 1:
+                globalvariables.WIN.blit(onions[1], (340, 210))
+                globalvariables.WIN.blit(arrow3_image, (390, 295))
+                other_ticks = draw(True, 349.0, 562.0, 392.0, 587.0, 431.0, 561.0, 387.0, 407.0, game_ticks, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 2:
+                onioncut2_1_button.draw()
+            elif cut == 3:
+                onioncut3_button.draw()
+            elif cut == 4:
+                globalvariables.WIN.blit(onions[4], (340, 210))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (305, 215))
+                other_ticks = draw(True, 263.0, 565.0, 307.0, 608.0, 350.0, 565.0, 303.0, 332.0, game_ticks + other_ticks, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 5:
+                globalvariables.WIN.blit(onions[5], (340, 210))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (345, 215))
+                other_ticks = draw(True, 344.0, 610.0, 305.0, 567.0, 384.0, 564.0, 344.0, 333.0, game_ticks, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 6:
+                globalvariables.WIN.blit(onions[6], (340, 210))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (390, 215))
+                other_ticks = draw(True, 352.0, 567.0, 387.0, 609.0, 433.0, 561.0, 387.0, 335.0, game_ticks, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 7:
+                globalvariables.WIN.blit(onions[7], (340, 210))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (420, 215))
+                other_ticks = draw(True, 418.0, 334.0, 375.0, 561.0, 423.0, 611.0, 469.0, 561.0, game_ticks, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 8:
+                globalvariables.WIN.blit(onions[8], (340, 210))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (460, 215))
+                other_ticks = draw(True, 419.0, 565.0, 460.0, 607.0, 507.0, 561.0, 455.0, 330.0, game_ticks, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 9:
+                globalvariables.WIN.blit(onions[9], (340, 210))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (433, 215))
+                other_ticks = draw(True, 394.0, 565.0, 434.0, 605.0, 478.0, 561.0, 430.0, 334.0, game_ticks, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 10:
+                globalvariables.WIN.blit(onions[10], (340, 210))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow2_image, (310, 200)), (330, 315))
+                other_ticks = draw(True, 487.0, 555.0, 492.0, 472.0, 533.0, 516.0, 240.0, 517.0, game_ticks, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 11:
+                globalvariables.WIN.blit(onions[11], (340, 210))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow2_image, (310, 200)), (330, 270))
+                other_ticks = draw(True, 248.0, 473.0, 489.0, 511.0, 485.0, 429.0, 531.0, 470.0, game_ticks, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 12:
+                globalvariables.WIN.blit(onions[12], (340, 210))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow2_image, (310, 200)), (330, 215))
+                other_ticks = draw(True, 489.0, 451.0, 245.0, 413.0, 480.0, 372.0, 529.0, 417.0, game_ticks, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 13:
+                onioncut4_9_button.draw()
+            elif cut == 14:
+                dicedonion_button.draw()
+        
+        if value == "Frying 2":
+            globalvariables.WIN.blit(cooker_image, (180, 190))
+            if fry == 1:
+                globalvariables.WIN.blit(fryingPan_image, (-50, 60))
+                oilBottle_button.draw()
+            elif fry == 2:
+                globalvariables.WIN.blit(fryingPanOil_image, (-50, 60))
+        
+        if value == "Frying 3":
+            globalvariables.WIN.blit(cooker_image, (180, 190))
+            globalvariables.WIN.blit(fryingPanOil_image, (-50, 60))
+            if fry == 2:
+                seconds = ((pygame.time.get_ticks() - start_ticks) / 1000)
+                if seconds > 7.0:
+                    dicedonion_button.changePosition(720, 280)
+                    print(value)
+            if fry == 3:
+                dicedonion_button.changePosition(150, 160)
+        
+        if value == "Frying 4":
+            globalvariables.WIN.blit(cooker_image, (180, 190))
+            globalvariables.WIN.blit(fryingPanOil_image, (-50, 60))
+            dicedonion_button.draw()
+            if fry == 3:
+                seconds = ((pygame.time.get_ticks() - start_ticks) / 1000)
+                if seconds > 10.0:
+                    offbutton_button.draw()
+                    timer = ((pygame.time.get_ticks() - game_ticks) / 1000)
 
         pygame.display.update()
     
@@ -610,6 +734,8 @@ def burgerGame(value):
     
 
         pygame.display.update()
+
+    return value, stack, visitedNodes
 
 def cakeGame(value):
     mixing = False
