@@ -33,8 +33,9 @@ rawPatty_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burgerp
 beefMince_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','beefmince.png'))
 beefMince_image = pygame.transform.scale(beefMince_image, (300, 200))
 burgerPatty_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burgerpatty.png'))
-burgerPatty_image = pygame.transform.scale(burgerPatty_image, (300, 200))
+burgerPatty_image = pygame.transform.scale(burgerPatty_image, (200, 200))
 cookedPatty_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cookedPatty.png'))
+cookedPatty_image = pygame.transform.scale(cookedPatty_image, (200, 200))
 cooker_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cooker.png'))
 cooker_image = pygame.transform.scale(cooker_image, (600, 500))
 oilBottle_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','oilBottle.png'))
@@ -202,12 +203,12 @@ def draw(draw, x1, y1, x2, y2, x3, y3, x4, y4, game_ticks, timer_text, timer_box
     
     return other_ticks
       
-def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
+def recipeAssembly(assembly):
 
     hand_width = 150
     hand_height = 150
-    hand_x = window_x // 2 - hand_width
-    hand_y = window_y - hand_height - 20
+    hand_x = globalvariables.window_x // 2 - hand_width
+    hand_y = globalvariables.window_y - hand_height - 20
     hand_speed = 10
     component_width = 200
     component_height = 100
@@ -239,7 +240,7 @@ def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
     burgerLayer_order = []
 
 
-    component_x = random.randint(0, window_x - component_width)
+    component_x = random.randint(0, globalvariables.window_x - component_width)
     component_y = 0
     
     clock = pygame.time.Clock()
@@ -247,10 +248,10 @@ def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
     while assembly == True and count != 7:
 
         clock.tick(60)
-        WIN.blit(main1Bg_image, bgPosition)
-        component_rect = WIN.blit(burgerLayer_images[count], (component_x, component_y))
+        globalvariables.WIN.blit(gameBg_image, bgPosition)
+        component_rect = globalvariables.WIN.blit(burgerLayer_images[count], (component_x, component_y))
         #a rect is created for the component and hand that will be used to detect a collision between them
-        hand_rect = WIN.blit(hand_image, (hand_x, hand_y))
+        hand_rect = globalvariables.WIN.blit(hand_image, (hand_x, hand_y))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -263,7 +264,7 @@ def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
         if len(burgerLayer_order) != 0: #checks that at least one component has been caught
             layer_x = hand_x
             for i in range(len(burgerLayer_order)): #goes through array
-                WIN.blit(burgerLayer_order[i], (layer_x, hand_y - (10*(i+1)))) 
+                globalvariables.WIN.blit(burgerLayer_order[i], (layer_x, hand_y - (10*(i+1)))) 
                 #displays them on top of each other
             if keys[pygame.K_LEFT] == True or keys[pygame.K_a] == True:
                 layer_x -= hand_speed
@@ -277,17 +278,17 @@ def assembly(window_x, window_y, WIN, main1Bg_image, bgPosition, assembly):
             
         if hand_x <= 0: #prevents hand from moving off screen
             hand_x = 0
-        elif hand_x >= (window_x - hand_width):
-            hand_x = (window_x - hand_width)
+        elif hand_x >= (globalvariables.window_x - hand_width):
+            hand_x = (globalvariables.window_x - hand_width)
         
         component_y += component_speed
 
-        if component_y > window_y: #if component falls off the screen
-            component_x = random.randint(0, window_x - component_width) #new x coordinate is generated
+        if component_y > globalvariables.window_y: #if component falls off the screen
+            component_x = random.randint(0, globalvariables.window_x - component_width) #new x coordinate is generated
             component_y = 0
         elif hand_rect.colliderect(component_rect): #if the component and hand collide..
             burgerLayer_order.append(burgerLayer_images[count]) #adds the correct layer to the array
-            component_x = random.randint(0, window_x - component_width) #generates new x coordinate
+            component_x = random.randint(0, globalvariables.window_x - component_width) #generates new x coordinate
             component_y = 0
             if count != 7:
                 count = count + 1 #increments count to show that the next layer should be displayed
@@ -316,11 +317,11 @@ def flip(flip, bar_x, bar_y, images, coordinates):
 
     #loading images
     temperatureBar_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','temperature_bar.png'))
-    arrow_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','arrow.png'))
+    fillArrow_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','fillArrow.png'))
 
     #transforming images
     temperatureBar_image = pygame.transform.scale(temperatureBar_image, (bar_width, bar_height))
-    arrow_image = pygame.transform.scale(arrow_image, (arrow_width, arrow_height))
+    fillArrow_image = pygame.transform.scale(fillArrow_image, (arrow_width, arrow_height))
 
     while flip: #while it is running
 
@@ -335,7 +336,7 @@ def flip(flip, bar_x, bar_y, images, coordinates):
         for i in range(len(images)):
             globalvariables.WIN.blit(images[i], coordinates[i])
         globalvariables.WIN.blit(temperatureBar_image, (bar_x, bar_y))
-        globalvariables.WIN.blit(arrow_image, (arrow_x, arrow_y))
+        globalvariables.WIN.blit(fillArrow_image, (arrow_x, arrow_y))
 
         keys = pygame.key.get_pressed() 
         if keys[pygame.K_SPACE] != True: #while the space key has not been pressed
@@ -352,7 +353,7 @@ def flip(flip, bar_x, bar_y, images, coordinates):
                     top_reached = False
 
         else: #if the space key is pressed then..
-            globalvariables.WIN.blit(arrow_image, (arrow_x, arrow_y)) #stop the arrow at that position
+            globalvariables.WIN.blit(fillArrow_image, (arrow_x, arrow_y)) #stop the arrow at that position
             flip = False #no longer running
 
 
@@ -539,7 +540,6 @@ def drag(bowl_x, bowl_y, bowl_width, bowl_height, showIngredient, active_ingredi
     
     if showIngredient:
         globalvariables.WIN.blit(draggedImage, ingredient_rect)
-    
 
 def burgerGame(value, stack, visitedNodes, score, timer_box):
 
@@ -549,24 +549,23 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
     shaping = False
     grilling = False
     assembly = False
-
-    value = "Shaping"
-
+    #print(value)
     if value == "Frying": 
         #they are set to true based on what is stored in value, this will run the correct step
         frying = True
         value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
-        #value = "Frying 2"
     elif value == "Mixing":
         mixing = True
-        value = "Mixing 1"
+        value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
     elif value == "Shaping":
         shaping = True
-        value = "Shaping 1"
+        value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
     elif value == "Grilling":
         grilling = True
+        value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
     elif value == "Assembly":
         assembly = True
+        value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
 
     #variables
     game_ticks = pygame.time.get_ticks()
@@ -579,7 +578,6 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
     bowl_width = 100
     bowl_height = 100
 
-
     #text object
     timer_text = classes.Text(52, 12, "00.00", (255, 255, 255), 24)
 
@@ -590,7 +588,9 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
     dicedonion_button = classes.ImageButton(340, 210, onions[14], 1)
     oilBottle_button = classes.ImageButton(720, 280, oilBottle_image, 2.5)
     offbutton_button = classes.ImageButton(720, 280, offbutton_image, 1)
-    #showIngredient = True
+    burgerPatty_button = classes.ImageButton(150, 350, burgerPatty_image, 1)
+    cookedPatty_button = classes.ImageButton(250, 300, cookedPatty_image, 1)
+
     active_ingredient = False
     mince_rect = beefMince_image.get_rect()
     mince_rect.center = (150, 450)
@@ -636,7 +636,7 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
                     oilBottle_button.setActive() 
                 offbuttonPressed = offbutton_button.checkPressed(pygame.mouse.get_pos())
                 if offbuttonPressed == True and value == "Frying 4":
-                    fry = fry + 1
+                    frying = False
         
         globalvariables.WIN.blit(gameBg_image, bgPosition)
         globalvariables.WIN.blit(clock_image, (20, 10))
@@ -733,12 +733,11 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
         if value == "Frying 4":
             globalvariables.WIN.blit(cooker_image, (180, 190))
             globalvariables.WIN.blit(fryingPanOil_image, (-50, 60))
-            dicedonion_button.draw()
+            dicedonion_button.changePosition(250, 300)
             if fry == 3:
                 seconds = ((pygame.time.get_ticks() - start_ticks) / 1000)
                 if seconds > 10.0:
                     offbutton_button.draw()
-                    timer = ((pygame.time.get_ticks() - game_ticks) / 1000)
         
         clock.tick(globalvariables.FPS)
 
@@ -787,6 +786,8 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
 
         pygame.display.update()
     
+    nextPatty = True 
+
     while shaping:
 
         for event in pygame.event.get(): #allows user to quit the window
@@ -794,13 +795,20 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
                 pygame.quit()
                 sys.exit()
                 break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                burgerPattyPressed = burgerPatty_button.checkPressed(pygame.mouse.get_pos())
+                if burgerPattyPressed:
+                    nextPatty = True
         
         globalvariables.WIN.blit(gameBg_image, bgPosition)
         if value == "Shaping 1":
             for count in range(4):
-                flip(True, 400, 10, [beefMince_image], [(150, 450)])
-                globalvariables.WIN.blit(burgerPatty_image, (150, 450))
-            shaping = False
+                if nextPatty:
+                    flip(True, 400, 10, [beefMince_image], [(150, 350)])
+                    nextPatty = False
+                if nextPatty == False:
+                    burgerPatty_button.draw()
+            value == "Shaping 2"
         
 
         pygame.display.update()
@@ -811,6 +819,25 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
                 pygame.quit()
                 sys.exit()
                 break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                burgerPattyPressed = burgerPatty_button.checkPressed(pygame.mouse.get_pos())
+                if burgerPattyPressed:
+                    nextPatty = True
+                cookedPattyPressed = cookedPatty_button.checkPressed(pygame.mouse.get_pos())
+                if cookedPattyPressed:
+                    nextPatty = True
+        
+        globalvariables.WIN.blit(gameBg_image, bgPosition)
+        if value == "Grilling 1":
+            for count in range(4):
+                if nextPatty:
+                    flip(True, 700, 10, [cooker_image, fryingPan_image, burgerPatty_image], [(180, 190), (-50, 60), (250, 300)])
+                    nextPatty = False
+                if nextPatty == False:
+                    globalvariables.WIN.blit(cooker_image, (180, 190))
+                    globalvariables.WIN.blit(fryingPan_image, (-50, 60))
+                    cookedPatty_button.draw()
+            grilling = False
         
 
         pygame.display.update()
@@ -822,7 +849,10 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
                 pygame.quit()
                 sys.exit()
                 break
-    
+                
+        if value == "Assembly 1":
+            recipeAssembly(True)
+            assembly = False
 
         pygame.display.update()
 

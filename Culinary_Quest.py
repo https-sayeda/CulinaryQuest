@@ -1534,8 +1534,8 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
     stack = deque([]) #creates a stack to traverse through the nodes within the tree
     visitedNodes = [] #contains all the visited nodes
     flag = True #indicates whether to traverse the tree
-    value = "Frying"
     score = 0
+    value = ""
 
     if theme_selected == "theme1": #changes the colours of the boxes and buttons depending on the theme that has been chosen
             colours = [main_lightPurple1, main_lightPurple2, main_darkPurple1, main_darkPurple2, main_darkPurple3, main_brightPurple]
@@ -1590,6 +1590,10 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
     gameLabel3_box = classes.Box(260, 310, 40, 200, colours[1], False)
     gameLabel4_box = classes.Box(260, 390, 40, 200, colours[1], False)
     gameLabel5_box = classes.Box(260, 470, 40, 200, colours[1], False)
+    start2_box = classes.Box(550, 230, 40, 200, colours[2], False)
+    start3_box = classes.Box(550, 310, 40, 200, colours[2], False)
+    start4_box = classes.Box(550, 390, 40, 200, colours[2], False)
+    start5_box = classes.Box(550, 470, 40, 200, colours[2], False)
     exitMessage_box = classes.Box(260, 150, 200, 500, login_red1, False)
 
     timer_box = classes.Box(50, 10, 50, 50, colours[5], False)
@@ -1597,10 +1601,6 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
     #buttons
     back_button = classes.Button(65, 50, 70, 100, colours[3], False)
     start1_button = classes.Button(550, 150, 40, 200, colours[2], False)
-    start2_button = classes.Button(550, 230, 40, 200, colours[2], False)
-    start3_button = classes.Button(550, 310, 40, 200, colours[2], False)
-    start4_button = classes.Button(550, 390, 40, 200, colours[2], False)
-    start5_button = classes.Button(550, 470, 40, 200, colours[2], False)
     exitYes_button = classes.Button(320, 290, 40, 100, white, False)
     exitNo_button = classes.Button(610, 290, 40, 100, white, False)
 
@@ -1628,27 +1628,13 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
                     if start1Pressed:
                         start1_button.setActive()
 
-                    
-
         #tree traversal
         if flag:
             value, stack, visitedNodes = minigames.treeTraversal(recipeChosen, stack, visitedNodes)
             flag = False
-        
+        print(value)
         #displaying onto the screen
         globalvariables.WIN.blit(gameBg_image, bgPosition)
-
-        start1Active = start1_button.getActive()
-        if start1Active:
-            if recipeChosen == "burger":
-                value, stack, visitedNodes = minigames.burgerGame(value, stack, visitedNodes, score, timer_box)
-                flag = True
-            elif recipeChosen == "cake":
-                value, stack, visitedNodes = minigames.cakeGame(value, stack, visitedNodes, score, timer_box)
-                flag = True
-            elif recipeChosen == "sushi":
-                value, stack, visitedNodes = minigames.sushiGame(value, stack, visitedNodes, score, timer_box)
-                flag = True
 
         if startingScreen:
             back_button.drawBox()
@@ -1657,16 +1643,15 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
             gameLabel1_box.drawBox()
             gameLabel2_box.drawBox()
             gameLabel3_box.drawBox()
-            start1_button.drawBox()
-            start2_button.drawBox()
-            start3_button.drawBox()
 
             if recipeChosen == "burger":
                 burgerLabel_text.drawText()
                 gameLabel4_box.drawBox()
                 gameLabel5_box.drawBox()
-                start4_button.drawBox()
-                start5_button.drawBox()
+                start2_box.drawBox()
+                start3_box.drawBox()
+                start4_box.drawBox()
+                start5_box.drawBox()
                 gameLabel1_burger_text.drawText()
                 gameLabel2_burger_text.drawText()
                 gameLabel3_burger_text.drawText()
@@ -1674,68 +1659,107 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
                 gameLabel5_burger_text.drawText()
                 
                 if value == "Frying":
+                    start1_button.drawBox()
                     start_text.drawText()
                     locked2_text.drawText()
                     locked3_text.drawText()
                     locked4_text.drawText()
                     locked5_text.drawText()
                 elif value == "Mixing":
+                    start1_button.changeY(230)
+                    start1_button.drawBox()
+                    start2_box.changeY(150)
+                    start2_box.drawBox()
                     completed1_text.drawText()
                     start_text.changePosition(615,233)
                     locked3_text.drawText()
                     locked4_text.drawText()
                     locked5_text.drawText()
                 elif value == "Shaping":
+                    start1_button.changeY(310)
+                    start1_button.drawBox()
+                    start3_box.changeY(230)
+                    start3_box.drawBox()
                     completed1_text.drawText()
                     completed2_text.drawText()
                     start_text.changePosition(615,313)
                     locked4_text.drawText()
                     locked5_text.drawText()
                 elif value == "Grilling":
+                    start1_button.changeY(390)
+                    start1_button.drawBox()
+                    start4_box.changeY(310)
+                    start4_box.drawBox()
                     completed1_text.drawText()
                     completed2_text.drawText()
                     completed3_text.drawText()
                     start_text.changePosition(615,393)
                     locked5_text.drawText()
-                elif value == "Grilling":
+                elif value == "Assembly":
+                    start1_button.changeY(470)
+                    start1_button.drawBox()
+                    start5_box.changeY(390)
+                    start5_box.drawBox()
                     completed1_text.drawText()
                     completed2_text.drawText()
                     completed3_text.drawText()
                     completed4_text.drawText()
                     start_text.changePosition(615,473)
-                
 
             elif recipeChosen == "cake":
                 cakeLabel_text.drawText()
                 gameLabel4_box.drawBox()
-                start4_button.drawBox()
+                start1_button.drawBox()
+                start2_box.drawBox()
+                start3_box.drawBox()
+                start4_box.drawBox()
+                start5_box.drawBox()
                 gameLabel1_cake_text.drawText()
                 gameLabel2_cake_text.drawText()
                 gameLabel3_cake_text.drawText()
                 gameLabel4_cake_text.drawText()
 
                 if value == "Mixing":
+                    start1_button.changeY(230)
+                    start1_button.drawBox()
+                    start2_box.changeY(150)
+                    start2_box.drawBox()
                     start_text.drawText()
                     locked2_text.drawText()
                     locked3_text.drawText()
                     locked4_text.drawText()
                 elif value == "Baking":
+                    start1_button.changeY(310)
+                    start1_button.drawBox()
+                    start3_box.changeY(230)
+                    start3_box.drawBox()
                     completed1_text.drawText()
                     start_text.changePosition(615,233)
                     locked3_text.drawText()
                     locked4_text.drawText()
                 elif value == "Frosting":
+                    start1_button.changeY(390)
+                    start4_box.changeY(310)
+                    start4_box.drawBox()
                     completed1_text.drawText()
                     completed2_text.drawText()
                     start_text.changePosition(615,313)
                     locked4_text.drawText()
                 elif value == "Assembly":
+                    start1_button.changeY(470)
+                    start5_box.changeY(390)
+                    start5_box.drawBox()
                     completed1_text.drawText()
                     completed2_text.drawText()
                     completed3_text.drawText()
                     start_text.changePosition(615,393)
 
             elif recipeChosen == "sushi":
+                start1_button.drawBox()
+                start2_box.drawBox()
+                start3_box.drawBox()
+                start4_box.drawBox()
+                start5_box.drawBox()
                 sushiLabel_text.drawText()
                 gameLabel1_sushi_text.drawText()
                 gameLabel2_sushi_text.drawText()
@@ -1746,10 +1770,18 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
                     locked2_text.drawText()
                     locked3_text.drawText()
                 elif value == "Assembly":
+                    start1_button.changeY(230)
+                    start1_button.drawBox()
+                    start2_box.changeY(150)
+                    start2_box.drawBox()
                     completed1_text.drawText()
                     start_text.changePosition(615,233)
                     locked3_text.drawText()
                 elif value == "Cutting":
+                    start1_button.changeY(310)
+                    start1_button.drawBox()
+                    start3_box.changeY(230)
+                    start3_box.drawBox()
                     completed1_text.drawText()
                     completed2_text.drawText()
                     start_text.changePosition(615,313)
@@ -1762,6 +1794,21 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
                 exitYes_text.drawText()
                 exitNo_button.drawBox()
                 exitNo_text.drawText()
+
+        start1Active = start1_button.getActive()
+        if start1Active:
+            if recipeChosen == "burger":
+                value, stack, visitedNodes = minigames.burgerGame(value, stack, visitedNodes, score, timer_box)
+                flag = True
+                start1_button.setUnactive()
+            elif recipeChosen == "cake":
+                value, stack, visitedNodes = minigames.cakeGame(value, stack, visitedNodes, score, timer_box)
+                flag = True
+                start1_button.setUnactive()
+            elif recipeChosen == "sushi":
+                value, stack, visitedNodes = minigames.sushiGame(value, stack, visitedNodes, score, timer_box)
+                flag = True
+                start1_button.setUnactive()
 
         pygame.display.update()
     
