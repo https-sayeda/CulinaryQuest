@@ -56,7 +56,13 @@ class Box:
         return self.height #returns the length of the box
 
     def changeY(self, y_coordinate):
-        self.y = y_coordinate
+        if self.transparent != True:
+            pygame.draw.rect(globalvariables.WIN, self.colour, pygame.Rect(self.x, y_coordinate, self.length, self.height) ,0, 3)
+        else:
+            boxSurface = pygame.Surface((self.length, self.height),pygame.SRCALPHA)
+            boxSurface.set_alpha(200)
+            pygame.draw.rect(boxSurface, self.colour, boxSurface.get_rect(), 0, 3)
+            globalvariables.WIN.blit(boxSurface, (self.x, y_coordinate))
         return self.y
     
     

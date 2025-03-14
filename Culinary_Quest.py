@@ -1625,14 +1625,15 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
                     if exitNoPressed: #if no has been pressed
                         exitMessage = False #remove the exit message
                     start1Pressed = start1_button.checkPressed(pygame.mouse.get_pos())
-                    if start1Pressed:
+                    start1Active = start1_button.getActive()
+                    if start1Pressed == True:
                         start1_button.setActive()
 
         #tree traversal
         if flag:
             value, stack, visitedNodes = minigames.treeTraversal(recipeChosen, stack, visitedNodes)
             flag = False
-        print(value)
+        #print(value)
         #displaying onto the screen
         globalvariables.WIN.blit(gameBg_image, bgPosition)
 
@@ -1658,6 +1659,7 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
                 gameLabel4_burger_text.drawText()
                 gameLabel5_burger_text.drawText()
                 
+                print(value)
                 if value == "Frying":
                     start1_button.drawBox()
                     start_text.drawText()
@@ -1667,9 +1669,8 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
                     locked5_text.drawText()
                 elif value == "Mixing":
                     start1_button.changeY(230)
-                    start1_button.drawBox()
+                    start1_button.setUnactive()
                     start2_box.changeY(150)
-                    start2_box.drawBox()
                     completed1_text.drawText()
                     start_text.changePosition(615,233)
                     locked3_text.drawText()
@@ -1677,9 +1678,7 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
                     locked5_text.drawText()
                 elif value == "Shaping":
                     start1_button.changeY(310)
-                    start1_button.drawBox()
                     start3_box.changeY(230)
-                    start3_box.drawBox()
                     completed1_text.drawText()
                     completed2_text.drawText()
                     start_text.changePosition(615,313)
@@ -1687,7 +1686,6 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
                     locked5_text.drawText()
                 elif value == "Grilling":
                     start1_button.changeY(390)
-                    start1_button.drawBox()
                     start4_box.changeY(310)
                     start4_box.drawBox()
                     completed1_text.drawText()
@@ -1709,7 +1707,7 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
             elif recipeChosen == "cake":
                 cakeLabel_text.drawText()
                 gameLabel4_box.drawBox()
-                start1_button.drawBox()
+                #start1_button.drawBox()
                 start2_box.drawBox()
                 start3_box.drawBox()
                 start4_box.drawBox()
@@ -1720,10 +1718,7 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
                 gameLabel4_cake_text.drawText()
 
                 if value == "Mixing":
-                    start1_button.changeY(230)
                     start1_button.drawBox()
-                    start2_box.changeY(150)
-                    start2_box.drawBox()
                     start_text.drawText()
                     locked2_text.drawText()
                     locked3_text.drawText()
@@ -1800,15 +1795,12 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
             if recipeChosen == "burger":
                 value, stack, visitedNodes = minigames.burgerGame(value, stack, visitedNodes, score, timer_box)
                 flag = True
-                start1_button.setUnactive()
             elif recipeChosen == "cake":
                 value, stack, visitedNodes = minigames.cakeGame(value, stack, visitedNodes, score, timer_box)
                 flag = True
-                start1_button.setUnactive()
             elif recipeChosen == "sushi":
                 value, stack, visitedNodes = minigames.sushiGame(value, stack, visitedNodes, score, timer_box)
                 flag = True
-                start1_button.setUnactive()
 
         pygame.display.update()
     
@@ -1874,7 +1866,7 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop, mi
     usernameInput2_input = classes.Input(480, 230, 37, 280, black, 20, False)
     passwordInput2_input = classes.Input(480, 290, 37, 280, black, 20, True)
     search_input = classes.Input(240, 100, 37, 570, black, 20, False)
-    recipeChosen = "burger"
+    recipeChosen = "cake"
     theme_selected = "theme1"
     oldPassInput_input = classes.Input(350, 250, 30, 280, black, 20, True)
     newPassInput_input = classes.Input(350, 310, 30, 280, black, 20, True)

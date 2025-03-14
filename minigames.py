@@ -27,6 +27,8 @@ arrow_image = pygame.transform.scale(arrow_image, (200, 200))
 arrow2_image = pygame.transform.rotate(arrow_image, (270))
 arrow3_image = pygame.transform.rotate(arrow_image, (180))
 offbutton_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','offbutton.png'))
+shaker_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seasoning_shaker.png'))
+shaker_image = pygame.transform.scale(shaker_image, (100, 100))
 
 #burger images
 rawPatty_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burgerpatty.png'))
@@ -71,6 +73,29 @@ onions = [ onioncut1_image, onioncut2_image, onioncut2_1_image, onioncut3_image,
 
 for i in range(len(onions)):
     onions[i] = pygame.transform.scale(onions[i], (300,300))
+
+#cake images
+bakingpowder_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','bakingpowder.png'))
+bakingpowder_image = pygame.transform.scale(bakingpowder_image, (100, 100))
+bakingsoda_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','bakingsoda.png'))
+bakingsoda_image = pygame.transform.scale(bakingsoda_image, (100, 100))
+sugar_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','sugar.png'))
+sugar_image = pygame.transform.scale(sugar_image, (100, 100))
+yogurt_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','yogurt.png'))
+yogurt_image = pygame.transform.scale(yogurt_image, (100, 100))
+milk_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','milk.png'))
+milk_image = pygame.transform.scale(milk_image, (100, 100))
+vanilla_extract_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','vanilla_extract.png'))
+vanilla_extract_image = pygame.transform.scale(vanilla_extract_image, (100, 100))
+flour_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','flour.png'))
+flour_image = pygame.transform.scale(flour_image, (100, 100))
+cake_flour_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cakeflour.png'))
+cake_flour_image = pygame.transform.scale(cake_flour_image, (100, 100))
+butter_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','butter.png'))
+butter_image = pygame.transform.scale(cake_flour_image, (100, 100))
+
+bowl_width = 100
+bowl_height = 100
 
 
 class RecipeTree:
@@ -452,8 +477,6 @@ def mixingBowl(mixing, image, image_x, image_y, image_width, image_height):
 def seasoning(seasoning, image, image_x, image_y, image_width, image_height, seasoning_type):
     
     #variables that are needed
-    shaker_width = 100 
-    shaker_height = 100
     #image_width = 200
     #image_height = 200
     seasoning_width = 25
@@ -465,8 +488,6 @@ def seasoning(seasoning, image, image_x, image_y, image_width, image_height, sea
     seasoning_position_y = []
 
     #loading and transforming images
-    shaker_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seasoning_shaker.png'))
-    shaker_image = pygame.transform.scale(shaker_image, (shaker_width, shaker_height))
     shaker_image = pygame.transform.flip(shaker_image, False, True)
     image = pygame.transform.scale(image, (image_width, image_height))
     if seasoning_type == "salt": #the seasoning will depend on the recipe
@@ -549,6 +570,7 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
     shaping = False
     grilling = False
     assembly = False
+
     #print(value)
     if value == "Frying": 
         #they are set to true based on what is stored in value, this will run the correct step
@@ -574,9 +596,6 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
     cut = 0
     fry = 0
     mix = 0
-    
-    bowl_width = 100
-    bowl_height = 100
 
     #text object
     timer_text = classes.Text(52, 12, "00.00", (255, 255, 255), 24)
@@ -858,20 +877,126 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
 
     return value, stack, visitedNodes
 
-def cakeGame(value):
+def cakeGame(value, stack, visitedNodes, score, timer_box):
     mixing = False
     baking = False
     frosting = False
     assembly = False
 
+    value = "Mixing"
+
     if value == "Mixing":
         mixing = True
+        value = "Mixing 1"
     elif value == "Baking":
         baking = True
     elif value == "Frosting":
         frosting = True
     elif value == "Assembly":
         assembly = True
+    
+    active_ingredient = False
+    bakingpowder_rect = bakingpowder_image.get_rect()
+    bakingpowder_rect.center = (150, 450)
+    bakingsoda_rect = bakingsoda_image.get_rect()
+    bakingsoda_rect.center = (150, 450)
+    flour_rect = flour_image.get_rect()
+    flour_rect.center = (150, 450)
+    sugar_rect = sugar_image.get_rect()
+    sugar_rect.center = (150, 450)
+    cake_flour_rect = cake_flour_image.get_rect()
+    cake_flour_rect.center = (150, 450)
+    vanilla_extract_rect = vanilla_extract_image.get_rect()
+    vanilla_extract_rect.center = (150, 450)
+    milk_rect = milk_image.get_rect()
+    milk_rect.center = (150, 450)
+    yogurt_rect = yogurt_image.get_rect()
+    yogurt_rect.center = (150, 450)
+    shaker_rect = shaker_image.get_rect()
+    shaker_rect.center = (150, 450)
+    butter_rect = butter_image.get_rect()
+    butter_rect.center = (150, 450)
+    egg_rect = egg1_image.get_rect()
+    egg_rect.center = (100, 400)
+    
+    rects = [flour_rect, cake_flour_rect, sugar_rect, shaker_rect, bakingpowder_rect, bakingsoda_rect, butter_rect, egg_rect, egg_rect, milk_rect, vanilla_extract_rect]
+    
+    mix = 0
+
+    while mixing:
+        for event in pygame.event.get(): #allows user to quit the window
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if rects[mix].collidepoint(event.pos):
+                        active_ingredient = True
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    active_ingredient = False
+            if event.type == pygame.MOUSEMOTION:
+                if active_ingredient:
+                    rects[mix].move_ip(event.rel)
+
+        globalvariables.WIN.blit(gameBg_image, bgPosition)
+        if value == "Mixing 1":
+            if mix <= 11:
+                globalvariables.WIN.blit(mixingBowl_image, (575, 265))
+                if active_ingredient:
+                    mx, my = pygame.mouse.get_pos()
+                    if 575 + 25 <= mx <= (575 + bowl_width) and (265 + bowl_height //2) <= my <= ((265 + bowl_height //2) + (bowl_height/2)):
+                        mix = mix + 1
+                        active_ingredient = False
+            if mix == 0:
+                globalvariables.WIN.blit(flour_image, flour_rect)
+            if mix == 1:
+                globalvariables.WIN.blit(cake_flour_image, cake_flour_rect)
+            if mix == 2:
+                globalvariables.WIN.blit(sugar_image, sugar_rect)
+            if mix == 3:
+                globalvariables.WIN.blit(shaker_image, shaker_rect)
+            if mix == 4:
+                globalvariables.WIN.blit(bakingpowder_image, bakingpowder_rect)
+            if mix == 5:
+                globalvariables.WIN.blit(bakingsoda_image, bakingsoda_rect)
+            if mix == 6:
+                globalvariables.WIN.blit(butter_image, butter_rect)
+            if mix == 7:
+                globalvariables.WIN.blit(egg1_image, egg_rect)
+            if mix == 8:
+                globalvariables.WIN.blit(egg1_image, egg_rect)
+            if mix == 9:
+                globalvariables.WIN.blit(milk_image, milk_rect)
+            if mix == 10:
+                globalvariables.WIN.blit(vanilla_extract_image, vanilla_extract_rect)
+            if mix == 11:
+                mixingBowl(True, mixingBowl_image, 300, 265, 300, 300)
+                mixing = False
+
+        pygame.display.update()
+    
+    while baking:
+        for event in pygame.event.get(): #allows user to quit the window
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+    
+    while frosting:
+        for event in pygame.event.get(): #allows user to quit the window
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+    
+    while assembly:
+        for event in pygame.event.get(): #allows user to quit the window
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
 
 def sushiGame(value):
     cooking = False
