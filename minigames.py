@@ -76,26 +76,111 @@ for i in range(len(onions)):
 
 #cake images
 bakingpowder_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','bakingpowder.png'))
-bakingpowder_image = pygame.transform.scale(bakingpowder_image, (100, 100))
+bakingpowder_image = pygame.transform.scale(bakingpowder_image, (150, 150))
 bakingsoda_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','bakingsoda.png'))
-bakingsoda_image = pygame.transform.scale(bakingsoda_image, (100, 100))
+bakingsoda_image = pygame.transform.scale(bakingsoda_image, (150, 150))
 sugar_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','sugar.png'))
-sugar_image = pygame.transform.scale(sugar_image, (100, 100))
+sugar_image = pygame.transform.scale(sugar_image, (150, 150))
 yogurt_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','yogurt.png'))
-yogurt_image = pygame.transform.scale(yogurt_image, (100, 100))
+yogurt_image = pygame.transform.scale(yogurt_image, (150, 150))
 milk_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','milk.png'))
-milk_image = pygame.transform.scale(milk_image, (100, 100))
+milk_image = pygame.transform.scale(milk_image, (150, 150))
 vanilla_extract_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','vanilla_extract.png'))
-vanilla_extract_image = pygame.transform.scale(vanilla_extract_image, (100, 100))
+vanilla_extract_image = pygame.transform.scale(vanilla_extract_image, (50, 150))
 flour_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','flour.png'))
-flour_image = pygame.transform.scale(flour_image, (100, 100))
+flour_image = pygame.transform.scale(flour_image, (150, 150))
 cake_flour_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cakeflour.png'))
-cake_flour_image = pygame.transform.scale(cake_flour_image, (100, 100))
+cake_flour_image = pygame.transform.scale(cake_flour_image, (150, 150))
 butter_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','butter.png'))
-butter_image = pygame.transform.scale(cake_flour_image, (100, 100))
+butter_image = pygame.transform.scale(butter_image, (150, 150))
+caketin_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','caketin.png'))
+caketin_image = pygame.transform.scale(caketin_image, (300, 150))
+caketin_filled_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','caketin_filled.png'))
+caketin_filled_image = pygame.transform.scale(caketin_filled_image, (300, 150))
+oven_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','oven.png'))
+oven_image = pygame.transform.scale(oven_image, (400, 400))
+assembledcake_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','assembledcake.png'))
+assembledcake_image = pygame.transform.scale(assembledcake_image, (400, 400))
+frostedcake_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','frostedcake.png'))
+frostedcake_image = pygame.transform.scale(frostedcake_image, (400, 400))
 
-bowl_width = 100
-bowl_height = 100
+#sushi images
+
+rice_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','rice.png'))
+rice_image = pygame.transform.scale(rice_image, (150, 150))
+sushiseasoning_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','sushiseasoning.png'))
+sushiseasoning_image = pygame.transform.scale(sushiseasoning_image, (150, 150))
+ricecooker_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','ricecooker.png'))
+ricecooker_image = pygame.transform.scale(ricecooker_image, (400, 400))
+
+cucumber1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cucumber1.png'))
+cucumber2_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cucumber2.png'))
+cucumber3_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cucumber3.png'))
+cucumber4_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cucumber4.png'))
+cucumber5_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cucumber5.png'))
+cucumbers = [cucumber1_image, cucumber2_image, cucumber3_image, cucumber4_image, cucumber5_image]
+
+for i in range(len(cucumbers)):
+    cucumbers[i] = pygame.transform.scale(cucumbers[i], (450,300))
+
+avocado1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','avocado1.png'))
+avocado2_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','avocado2.png'))
+avocado3_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','avocado3.png'))
+avocado4_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','avocado4.png'))
+avocado5_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','avocado5.png'))
+avocado6_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','avocado6.png'))
+avocado7_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','avocado7.png'))
+avocados = [avocado1_image, avocado2_image, avocado3_image, avocado4_image, avocado5_image, avocado6_image, 
+            avocado7_image, ]
+
+for i in range(len(avocados)):
+    avocados[i] = pygame.transform.scale(avocados[i], (300,300))
+
+salmon1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','salmon.png'))
+salmon2_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','salmon2.png'))
+salmon3_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','salmon3.png'))
+
+seaweed1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seaweed.png'))
+seaweed2_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seaweed2.png'))
+seaweed3_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seaweed3.png'))
+seaweed4_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seaweed4.png'))
+seaweed5_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seaweed5.png'))
+seaweed6_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seaweed6.png'))
+seaweed7_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seaweed7.png'))
+seaweed8_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seaweed8.png'))
+seaweed9_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seaweed9.png'))
+seaweed10_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seaweed10.png'))
+seaweed11_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seaweed11.png'))
+seaweeds = [seaweed1_image, seaweed2_image, seaweed3_image, seaweed4_image, seaweed5_image, 
+            seaweed6_image, seaweed7_image, seaweed8_image, seaweed9_image, seaweed10_image, seaweed11_image]
+
+for i in range(len(seaweeds)):
+    seaweeds[i] = pygame.transform.scale(seaweeds[i], (300,300))
+
+sushiroll1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','sushiroll.png'))
+sushiroll2_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','sushiroll2.png'))
+sushiroll3_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','sushiroll3.png'))
+sushiroll4_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','sushiroll4.png'))
+sushiroll5_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','sushiroll5.png'))
+sushiroll6_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','sushiroll6.png'))
+sushiroll7_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','sushiroll7.png'))
+sushirolls = [sushiroll1_image, sushiroll2_image, sushiroll3_image, sushiroll4_image, sushiroll5_image, 
+              sushiroll6_image, sushiroll7_image]
+
+for i in range(len(sushirolls)):
+    sushirolls[i] = pygame.transform.scale(sushirolls[i], (300,300))
+
+bowl_width = 300
+bowl_height = 300
+oven_width = 400
+oven_height = 400
+ricecooker_width = 400
+ricecooker_height = 400
+
+#colours
+cakebatter_colour = pygame.Color(248, 226, 159)
+water_colour = pygame.Color(115, 203, 251)
+fillBg_colour = pygame.Color(61, 61, 61)
 
 
 class RecipeTree:
@@ -129,22 +214,22 @@ class RecipeTree:
                 stack.pop() #remove the parent from the stack 
         #print(visitedNodes)
         
-def treeTraversal(recipeChosen, stack, visitedNodes):
+def treeTraversal(recipeChosen, stack, visitedNodes): 
 
     burgerRoot = RecipeTree("Burger") #the root of the tree will have "Burger"
     burgerRoot.children = [RecipeTree("Frying"), RecipeTree("Mixing"), RecipeTree("Shaping"), RecipeTree("Grilling"), RecipeTree("Assembly")]
     #these are the children directly under the root node
     burgerRoot.children[0].children = [RecipeTree("Frying 1"), RecipeTree("Frying 2"), RecipeTree("Frying 3"), RecipeTree("Frying 4")]
     #these are the children of the first node ("Frying")
-    burgerRoot.children[1].children = [RecipeTree("Mixing 1"), RecipeTree("Mixing 2"), RecipeTree("Mixing 3"), RecipeTree("Step 4")]
+    burgerRoot.children[1].children = [RecipeTree("Mixing 1"), RecipeTree("Mixing 2"), RecipeTree("Mixing 3"), RecipeTree("Mixing 4")]
     burgerRoot.children[2].children = [RecipeTree("Shaping 1")]
-    burgerRoot.children[3].children = [RecipeTree("Grilling 1"), RecipeTree("Grilling 2")]
+    burgerRoot.children[3].children = [RecipeTree("Grilling 1")]
     burgerRoot.children[4].children = [RecipeTree("Assembly 1")]
 
     cakeRoot = RecipeTree("Cake")
     cakeRoot.children = [RecipeTree("Mixing"), RecipeTree("Baking"), RecipeTree("Frosting"), RecipeTree("Decoration")]
     cakeRoot.children[0].children = [RecipeTree("Mixing 1")]
-    cakeRoot.children[1].children = [RecipeTree("Baking 1"), RecipeTree("Baking 2"), RecipeTree("Baking 3")]
+    cakeRoot.children[1].children = [RecipeTree("Baking 1"), RecipeTree("Baking 2")]
     cakeRoot.children[2].children = [RecipeTree("Frosting 1")]
     cakeRoot.children[3].children = [RecipeTree("Decoration 1"), RecipeTree("Decoration 2"), RecipeTree("Decoration 3")]
 
@@ -228,7 +313,7 @@ def draw(draw, x1, y1, x2, y2, x3, y3, x4, y4, game_ticks, timer_text, timer_box
     
     return other_ticks
       
-def recipeAssembly(assembly):
+def recipeAssembly(assembly, recipeChosen, colours):
 
     hand_width = 150
     hand_height = 150
@@ -243,6 +328,7 @@ def recipeAssembly(assembly):
 
     #images
     hand_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','hand.png'))
+
     topBun_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burger_bun.png'))
     bottomBun_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burger_bottombun.png'))
     cheeseLayer_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burger_cheese.png'))
@@ -250,9 +336,14 @@ def recipeAssembly(assembly):
     onionLayer_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burger_onion.png'))
     meatLayer_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burger_meat.png'))
     tomatoLayer_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','burger_tomato.png'))
+
+    cakeLayer1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cakelayer1.png'))
+    cakeLayer2_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cakelayer2.png'))
+    cakeLayer3_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cakelayer3.png'))
     
     #transforming images
     hand_image = pygame.transform.scale(hand_image, (hand_width, hand_height))
+
     topBun_image = pygame.transform.scale(topBun_image, (component_width, component_height))
     bottomBun_image = pygame.transform.scale(bottomBun_image, (component_width, component_height))
     cheeseLayer_image = pygame.transform.scale(cheeseLayer_image, (component_width, component_height))
@@ -261,67 +352,101 @@ def recipeAssembly(assembly):
     meatLayer_image = pygame.transform.scale(meatLayer_image, (component_width, component_height))
     tomatoLayer_image = pygame.transform.scale(tomatoLayer_image, (component_width, component_height))
 
+    cakeLayer1_image = pygame.transform.scale(cakeLayer1_image, (component_width, component_height))
+    cakeLayer2_image = pygame.transform.scale(cakeLayer2_image, (component_width, component_height - 20))
+    cakeLayer3_image = pygame.transform.scale(cakeLayer3_image, (component_width, component_height + 20))
+
     burgerLayer_images = [bottomBun_image, lettuceLayer_image, meatLayer_image, cheeseLayer_image, tomatoLayer_image, onionLayer_image, topBun_image]
     burgerLayer_order = []
 
+    cakeLayer_images = [cakeLayer1_image, cakeLayer2_image, cakeLayer3_image]
+    cakeLayer_order = []
+
+    if recipeChosen == "burger":
+        layer_images = burgerLayer_images
+        layer_order = burgerLayer_order
+    elif recipeChosen == "cake":
+        layer_images = cakeLayer_images
+        layer_order = cakeLayer_order
 
     component_x = random.randint(0, globalvariables.window_x - component_width)
     component_y = 0
     
     clock = pygame.time.Clock()
 
-    while assembly == True and count != 7:
+    back_button = classes.Button(770, 500, 70, 100, colours[3], False)
+    back_button.setUnactive()
+    back_text = classes.Text(785, 503, "-->", (255, 255, 255), 50)
 
-        clock.tick(60)
-        globalvariables.WIN.blit(gameBg_image, bgPosition)
-        component_rect = globalvariables.WIN.blit(burgerLayer_images[count], (component_x, component_y))
-        #a rect is created for the component and hand that will be used to detect a collision between them
-        hand_rect = globalvariables.WIN.blit(hand_image, (hand_x, hand_y))
+    while assembly == True:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
                 break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                backPressed = back_button.checkPressed(pygame.mouse.get_pos())
+                backActive = back_button.getActive()
+                if backPressed == True and backActive == False:
+                    assembly = False
+                    back_button.setActive()
 
-        keys = pygame.key.get_pressed()
+        if count != (len(layer_images) + 1):
 
-        if len(burgerLayer_order) != 0: #checks that at least one component has been caught
-            layer_x = hand_x
-            for i in range(len(burgerLayer_order)): #goes through array
-                globalvariables.WIN.blit(burgerLayer_order[i], (layer_x, hand_y - (10*(i+1)))) 
-                #displays them on top of each other
-            if keys[pygame.K_LEFT] == True or keys[pygame.K_a] == True:
-                layer_x -= hand_speed
-            if keys[pygame.K_RIGHT] == True or keys[pygame.K_d] == True:
-                layer_x += hand_speed #makes sure the components moves with the hand
-        
-        if keys[pygame.K_LEFT] == True or keys[pygame.K_a] == True:
-            hand_x -= hand_speed
-        if keys[pygame.K_RIGHT] == True or keys[pygame.K_d] == True:
-            hand_x += hand_speed
+            keys = pygame.key.get_pressed()
+            clock.tick(60)
+
+            globalvariables.WIN.blit(gameBg_image, bgPosition)
+
+            if count != (len(layer_images)):
+                component_rect = globalvariables.WIN.blit(layer_images[count], (component_x, component_y))
+                #a rect is created for the component and hand that will be used to detect a collision between them
             
-        if hand_x <= 0: #prevents hand from moving off screen
-            hand_x = 0
-        elif hand_x >= (globalvariables.window_x - hand_width):
-            hand_x = (globalvariables.window_x - hand_width)
-        
-        component_y += component_speed
+            hand_rect = globalvariables.WIN.blit(hand_image, (hand_x, hand_y))
+            
 
-        if component_y > globalvariables.window_y: #if component falls off the screen
-            component_x = random.randint(0, globalvariables.window_x - component_width) #new x coordinate is generated
-            component_y = 0
-        elif hand_rect.colliderect(component_rect): #if the component and hand collide..
-            burgerLayer_order.append(burgerLayer_images[count]) #adds the correct layer to the array
-            component_x = random.randint(0, globalvariables.window_x - component_width) #generates new x coordinate
-            component_y = 0
-            if count != 7:
-                count = count + 1 #increments count to show that the next layer should be displayed
+            if len(layer_order) != 0: #checks that at least one component has been caught
+                layer_x = hand_x
+                for i in range(len(layer_order)): #goes through array
+                    globalvariables.WIN.blit(layer_order[i], (layer_x, hand_y - (10*(i+1)))) 
+                    #displays them on top of each other
+                if keys[pygame.K_LEFT] == True or keys[pygame.K_a] == True:
+                    layer_x -= hand_speed
+                if keys[pygame.K_RIGHT] == True or keys[pygame.K_d] == True:
+                    layer_x += hand_speed #makes sure the components moves with the hand
+                    
+            
+            if keys[pygame.K_LEFT] == True or keys[pygame.K_a] == True:
+                hand_x -= hand_speed
+            if keys[pygame.K_RIGHT] == True or keys[pygame.K_d] == True:
+                hand_x += hand_speed
+                
+            if hand_x <= 0: #prevents hand from moving off screen
+                hand_x = 0
+            elif hand_x >= (globalvariables.window_x - hand_width):
+                hand_x = (globalvariables.window_x - hand_width)
+            
+            component_y += component_speed
+
+            if count == (len(layer_images)): #if all layers have been displayed
+                count = count + 1
+            else:
+                if component_y > globalvariables.window_y: #if component falls off the screen
+                    component_x = random.randint(0, globalvariables.window_x - component_width) #new x coordinate is generated
+                    component_y = 0
+                elif hand_rect.colliderect(component_rect): #if the component and hand collide..
+                    layer_order.append(layer_images[count]) #adds the correct layer to the array
+                    component_x = random.randint(0, globalvariables.window_x - component_width) #generates new x coordinate
+                    component_y = 0
+                    if count != (len(layer_images)):
+                        count = count + 1 #increments count to show that the next layer should be displayed
+        else:
+            back_button.drawBox()
+            back_text.drawText()
 
         pygame.display.update()
     
-        if count == 7: #if all layers have been displayed
-            assembly = False #minigame ends
 
     return assembly
 
@@ -384,13 +509,19 @@ def flip(flip, bar_x, bar_y, images, coordinates):
 
         pygame.display.update()
 
-def fill(fill, WIN, fill_colour, fillBg_box, fill_box, fill_line, main1Bg_image, bgPosition):
+def fill(fill, fill_colour, colours):
     
-    fill_box.changeColour(fill_colour) 
+    fillBg_box = classes.Box(300, 50, 500, 400, fillBg_colour, False)
+    fill_box = classes.Box(302, 540, 10, 396, fill_colour, True)
+    fill_line = classes.Box(300, 100, 10, 400, (214, 135, 140), False) 
     #the colour will change depending on the recipe as sushi uses water while cake will use cake batter
     fill_height = 0 #the initial height of the liquid is 0
     spacebar_down = False #the spacebar being pressed is initially set to false
     fill_y = 540 #the y coordinate of where the liquid is
+
+    back_button = classes.Button(770, 500, 70, 100, colours[3], False)
+    back_button.setUnactive()
+    back_text = classes.Text(785, 503, "-->", (255, 255, 255), 50)
 
     while fill: #while it's running
         
@@ -405,12 +536,20 @@ def fill(fill, WIN, fill_colour, fillBg_box, fill_box, fill_line, main1Bg_image,
             if event.type == pygame.KEYUP: #if a key has been released
                 if event.key == pygame.K_SPACE: #if it's the spacebar
                     spacebar_down = False  # spacebar is no longer being pressed
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                backPressed = back_button.checkPressed(pygame.mouse.get_pos())
+                backActive = back_button.getActive()
+                if backPressed == True and backActive == False:
+                    fill = False
+                    back_button.setActive()
 
         #displaying image and boxes 
-        WIN.blit(main1Bg_image, bgPosition) 
+        globalvariables.WIN.blit(gameBg_image, bgPosition) 
         fillBg_box.drawBox()
         fill_box.drawBox()
         fill_line.drawBox()
+        back_button.drawBox()
+        back_text.drawText()
 
         if spacebar_down == True and fill_height < 500: 
             #if the spacebar is being pressed and the liquid is below the max height
@@ -418,6 +557,7 @@ def fill(fill, WIN, fill_colour, fillBg_box, fill_box, fill_line, main1Bg_image,
             fill_height = fill_box.changeHeight(1)
         if fill_height > 450: #if it goes over the red line
             print("Too much!") #it's too much
+
 
         
         pygame.display.update()
@@ -428,6 +568,7 @@ def mixingBowl(mixing, image, image_x, image_y, image_width, image_height):
     time_down = 0.0 #used to measure the amount of time between the bowl being flipped
     time_elapsed = 0.0 #records the total time
     count = 0 #records how often they went too fast
+    mix = 0 #how many times they mixed successfully
     rate = pygame.time.Clock() #used to time
 
     #loading image
@@ -444,6 +585,7 @@ def mixingBowl(mixing, image, image_x, image_y, image_width, image_height):
             if event.type == pygame.KEYDOWN: #detects whether a key has been pressed down
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a: #if it is the left arrow or a
                     orientation = "left" #orientation switched to left
+                    mix = mix + 1
                     time_down = pygame.time.get_ticks() #the time is recorded
                 elif event.key == pygame.K_RIGHT or event.key == pygame.K_d: #if right arrow or d pressed
                     orientation = "right" #orientation switched to right
@@ -455,6 +597,8 @@ def mixingBowl(mixing, image, image_x, image_y, image_width, image_height):
             globalvariables.WIN.blit(mixingBowlSpilled_image, (image_x, image_y)) #th mixture is spilled so display new image
             mixing = False #set to false
             pygame.display.update() #update screen
+        elif mix == 7:
+            mixing = False #set to false
 
         if count < 5: #as long as the mixture hasn;t spilled
         
@@ -488,10 +632,12 @@ def seasoning(seasoning, image, image_x, image_y, image_width, image_height, sea
     seasoning_position_y = []
 
     #loading and transforming images
+    shaker_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seasoning_shaker.png'))
+    shaker_image = pygame.transform.scale(shaker_image, (100, 100))
     shaker_image = pygame.transform.flip(shaker_image, False, True)
     image = pygame.transform.scale(image, (image_width, image_height))
-    if seasoning_type == "salt": #the seasoning will depend on the recipe
-        seasoning_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','salt.png'))
+    if seasoning_type == "sprinkles": #the seasoning will depend on the recipe
+        seasoning_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','sprinkles.png'))
     else:
         seasoning_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','herbs.png'))
     seasoning_image = pygame.transform.scale(seasoning_image, (seasoning_width, seasoning_height))
@@ -562,7 +708,7 @@ def drag(bowl_x, bowl_y, bowl_width, bowl_height, showIngredient, active_ingredi
     if showIngredient:
         globalvariables.WIN.blit(draggedImage, ingredient_rect)
 
-def burgerGame(value, stack, visitedNodes, score, timer_box):
+def burgerGame(value, stack, visitedNodes, score, colours):
 
     #the steps are initially set to false
     frying = False
@@ -571,7 +717,6 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
     grilling = False
     assembly = False
 
-    #print(value)
     if value == "Frying": 
         #they are set to true based on what is stored in value, this will run the correct step
         frying = True
@@ -599,6 +744,7 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
 
     #text object
     timer_text = classes.Text(52, 12, "00.00", (255, 255, 255), 24)
+    timer_box = classes.Box(50, 10, 50, 50, colours[5], False)
 
     #button objects
     onioncut2_1_button = classes.ImageButton(340, 210, onions[2], 1)
@@ -632,7 +778,7 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
                     cut = cut + 1
                 onioncut4_9Pressed = onioncut4_9_button.checkPressed(pygame.mouse.get_pos())
                 onioncut4_9Active = onioncut4_9_button.getActive()
-                if onioncut4_9Pressed and cut == 13 and onioncut4_9Active == False :
+                if onioncut4_9Pressed and cut == 13 and onioncut4_9Active == False:
                     cut = cut + 1
                     onioncut4_9_button.setActive()
                 dicedonionPressed = dicedonion_button.checkPressed(pygame.mouse.get_pos())
@@ -782,18 +928,20 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
         globalvariables.WIN.blit(gameBg_image, bgPosition)
         if value == "Mixing 1":
             seasoning(True, beefMince_image, 300, 365, 300, 200, "herbs")
-            value = "Mixing 2"
+            value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
         if value == "Mixing 2" or value == "Mixing 3" or value == "Mixing 4":
             globalvariables.WIN.blit(mixingBowl_image, (575, 265))
         if value == "Mixing 2" or value == "Mixing 3":
             if active_ingredient:
                 mx, my = pygame.mouse.get_pos()
-                if 575 + 25 <= mx <= (575 + bowl_width) and (265 + bowl_height //2) <= my <= ((265 + bowl_height //2) + (bowl_height/2)):
+                if 575 <= mx - 120 <= (575 + bowl_width) and 265 + 20 <= my - 120 <= (265 + bowl_height):
                     if value == "Mixing 2":
-                        value = "Mixing 3"
+                        value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
+                        mix = mix + 1
                     else:
-                        value = "Mixing 4"
-                    mix = mix + 1
+                        value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
+                    print(value)
+
                     active_ingredient = False
         if value == "Mixing 2":
             globalvariables.WIN.blit(beefMince_image, mince_rect)
@@ -806,6 +954,7 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
         pygame.display.update()
     
     nextPatty = True 
+    shaped = 0
 
     while shaping:
 
@@ -818,19 +967,22 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
                 burgerPattyPressed = burgerPatty_button.checkPressed(pygame.mouse.get_pos())
                 if burgerPattyPressed:
                     nextPatty = True
+                    shaped = shaped + 1
         
         globalvariables.WIN.blit(gameBg_image, bgPosition)
         if value == "Shaping 1":
-            for count in range(4):
-                if nextPatty:
-                    flip(True, 400, 10, [beefMince_image], [(150, 350)])
-                    nextPatty = False
-                if nextPatty == False:
-                    burgerPatty_button.draw()
-            value == "Shaping 2"
+            if nextPatty:
+                flip(True, 400, 10, [beefMince_image], [(150, 350)])
+                nextPatty = False
+            if nextPatty == False:
+                burgerPatty_button.draw()
+            if shaped == 4:
+                shaping = False
         
 
         pygame.display.update()
+
+    grilled = 0
     
     while grilling:
         for event in pygame.event.get(): #allows user to quit the window
@@ -845,18 +997,19 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
                 cookedPattyPressed = cookedPatty_button.checkPressed(pygame.mouse.get_pos())
                 if cookedPattyPressed:
                     nextPatty = True
+                    grilled = grilled + 1
         
         globalvariables.WIN.blit(gameBg_image, bgPosition)
         if value == "Grilling 1":
-            for count in range(4):
-                if nextPatty:
-                    flip(True, 700, 10, [cooker_image, fryingPan_image, burgerPatty_image], [(180, 190), (-50, 60), (250, 300)])
-                    nextPatty = False
-                if nextPatty == False:
-                    globalvariables.WIN.blit(cooker_image, (180, 190))
-                    globalvariables.WIN.blit(fryingPan_image, (-50, 60))
-                    cookedPatty_button.draw()
-            grilling = False
+            if nextPatty:
+                flip(True, 700, 10, [cooker_image, fryingPan_image, burgerPatty_image], [(180, 190), (-50, 60), (250, 300)])
+                nextPatty = False
+            if nextPatty == False:
+                globalvariables.WIN.blit(cooker_image, (180, 190))
+                globalvariables.WIN.blit(fryingPan_image, (-50, 60))
+                cookedPatty_button.draw()
+            if grilled == 4:
+                grilling = False
         
 
         pygame.display.update()
@@ -870,58 +1023,77 @@ def burgerGame(value, stack, visitedNodes, score, timer_box):
                 break
                 
         if value == "Assembly 1":
-            recipeAssembly(True)
+            recipeAssembly(True, "burger", colours)
             assembly = False
 
         pygame.display.update()
 
     return value, stack, visitedNodes
 
-def cakeGame(value, stack, visitedNodes, score, timer_box):
+def cakeGame(value, stack, visitedNodes, score, colours):
     mixing = False
     baking = False
     frosting = False
-    assembly = False
-
-    value = "Mixing"
+    decorating = False
 
     if value == "Mixing":
         mixing = True
-        value = "Mixing 1"
+        value, stack, visitedNodes = treeTraversal("cake", stack, visitedNodes)
     elif value == "Baking":
         baking = True
+        value, stack, visitedNodes = treeTraversal("cake", stack, visitedNodes)
     elif value == "Frosting":
         frosting = True
-    elif value == "Assembly":
-        assembly = True
+        value, stack, visitedNodes = treeTraversal("cake", stack, visitedNodes)
+    elif value == "Decoration":
+        decorating = True
+        value, stack, visitedNodes = treeTraversal("cake", stack, visitedNodes)
     
     active_ingredient = False
     bakingpowder_rect = bakingpowder_image.get_rect()
-    bakingpowder_rect.center = (150, 450)
+    bakingpowder_rect.center = (250, 450)
     bakingsoda_rect = bakingsoda_image.get_rect()
-    bakingsoda_rect.center = (150, 450)
+    bakingsoda_rect.center = (250, 450)
     flour_rect = flour_image.get_rect()
-    flour_rect.center = (150, 450)
+    flour_rect.center = (250, 450)
     sugar_rect = sugar_image.get_rect()
-    sugar_rect.center = (150, 450)
+    sugar_rect.center = (250, 450)
     cake_flour_rect = cake_flour_image.get_rect()
-    cake_flour_rect.center = (150, 450)
+    cake_flour_rect.center = (250, 450)
     vanilla_extract_rect = vanilla_extract_image.get_rect()
-    vanilla_extract_rect.center = (150, 450)
+    vanilla_extract_rect.center = (250, 450)
     milk_rect = milk_image.get_rect()
-    milk_rect.center = (150, 450)
+    milk_rect.center = (250, 450)
     yogurt_rect = yogurt_image.get_rect()
-    yogurt_rect.center = (150, 450)
+    yogurt_rect.center = (250, 450)
     shaker_rect = shaker_image.get_rect()
-    shaker_rect.center = (150, 450)
+    shaker_rect.center = (250, 450)
     butter_rect = butter_image.get_rect()
-    butter_rect.center = (150, 450)
+    butter_rect.center = (250, 450)
     egg_rect = egg1_image.get_rect()
-    egg_rect.center = (100, 400)
+    egg_rect.center = (200, 500)
     
-    rects = [flour_rect, cake_flour_rect, sugar_rect, shaker_rect, bakingpowder_rect, bakingsoda_rect, butter_rect, egg_rect, egg_rect, milk_rect, vanilla_extract_rect]
+    mixing_rects = [flour_rect, cake_flour_rect, sugar_rect, shaker_rect, bakingpowder_rect, bakingsoda_rect, butter_rect, egg_rect, egg_rect, milk_rect, vanilla_extract_rect]
     
     mix = 0
+    filling = 0
+
+    caketin_button = classes.ImageButton(300, 265, caketin_image, 1)
+    oven_button = classes.ImageButton(530, 200, oven_image, 1)
+
+    timer_text = classes.Text(52, 12, "00.00", (255, 255, 255), 24)
+    timer_box = classes.Box(50, 10, 50, 50, colours[5], False)
+
+    active_ingredient = False
+    caketin_filled1_rect = caketin_filled_image.get_rect()
+    caketin_filled2_rect = caketin_filled_image.get_rect()
+    caketin_filled1_rect.center = (270, 500)
+    caketin_filled2_rect.center = (270, 500)
+
+    oven_rects = [caketin_filled1_rect, caketin_filled2_rect]
+
+    oven = 0
+    bake = 0
 
     while mixing:
         for event in pygame.event.get(): #allows user to quit the window
@@ -931,14 +1103,14 @@ def cakeGame(value, stack, visitedNodes, score, timer_box):
                 break
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if rects[mix].collidepoint(event.pos):
+                    if mixing_rects[mix].collidepoint(event.pos):
                         active_ingredient = True
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     active_ingredient = False
             if event.type == pygame.MOUSEMOTION:
                 if active_ingredient:
-                    rects[mix].move_ip(event.rel)
+                    mixing_rects[mix].move_ip(event.rel)
 
         globalvariables.WIN.blit(gameBg_image, bgPosition)
         if value == "Mixing 1":
@@ -946,7 +1118,7 @@ def cakeGame(value, stack, visitedNodes, score, timer_box):
                 globalvariables.WIN.blit(mixingBowl_image, (575, 265))
                 if active_ingredient:
                     mx, my = pygame.mouse.get_pos()
-                    if 575 + 25 <= mx <= (575 + bowl_width) and (265 + bowl_height //2) <= my <= ((265 + bowl_height //2) + (bowl_height/2)):
+                    if 575 <= mx - 120 <= (575 + bowl_width) and 265 + 20 <= my - 120 <= (265 + bowl_height):
                         mix = mix + 1
                         active_ingredient = False
             if mix == 0:
@@ -983,13 +1155,206 @@ def cakeGame(value, stack, visitedNodes, score, timer_box):
                 pygame.quit()
                 sys.exit()
                 break
-    
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                caketinPressed = caketin_button.checkPressed(pygame.mouse.get_pos())
+                if caketinPressed:
+                    filling = filling + 1
+                ovenPressed = oven_button.checkPressed(pygame.mouse.get_pos())
+                ovenActive = oven_button.getActive()
+                if ovenPressed == True and ovenActive == True:
+                    baking = False
+                    oven_button.setUnactive()
+                if event.button == 1:
+                    if oven_rects[oven].collidepoint(event.pos):
+                        active_ingredient = True
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    active_ingredient = False
+            if event.type == pygame.MOUSEMOTION:
+                if active_ingredient:
+                    oven_rects[oven].move_ip(event.rel)
+
+        globalvariables.WIN.blit(gameBg_image, bgPosition)
+        
+        if value == "Baking 1":
+            caketin_button.draw()
+            if filling == 1:
+                fill(True, cakebatter_colour, colours)
+                filling = filling + 1
+            if filling == 2:
+                caketin_button.draw()
+            if filling == 3:
+                fill(True, cakebatter_colour, colours)
+                value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
+                bake = bake + 1
+        if value == "Baking 2" :
+            if bake == 1 or bake == 2 or bake == 3:
+                globalvariables.WIN.blit(oven_image, (530, 200))
+            if bake == 1 or bake == 2:
+                if active_ingredient:
+                    mx, my = pygame.mouse.get_pos()
+                    if 530 <= mx - 190 <= (530 + oven_width) and 200 <= my - 190 <= (200 + oven_height):
+                        if bake == 1:
+                            bake = bake + 1
+                            oven = oven + 1
+                        else:
+                            bake = bake + 1
+                        active_ingredient = False
+
+            if bake == 1:
+                globalvariables.WIN.blit(caketin_filled_image, caketin_filled1_rect)
+            if bake == 2:
+                globalvariables.WIN.blit(caketin_filled_image, caketin_filled2_rect)
+            if bake == 3:
+                oven_button.setActive()
+                oven_button.draw()
+
+        
+        pygame.display.update()
+
+    frosting_rects = [butter_rect, sugar_rect, vanilla_extract_rect, milk_rect]
+
     while frosting:
         for event in pygame.event.get(): #allows user to quit the window
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
                 break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if frosting_rects[mix].collidepoint(event.pos):
+                        active_ingredient = True
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    active_ingredient = False
+            if event.type == pygame.MOUSEMOTION:
+                if active_ingredient:
+                    frosting_rects[mix].move_ip(event.rel)
+
+            globalvariables.WIN.blit(gameBg_image, bgPosition)
+            if value == "Frosting 1":
+                if mix <= 4:
+                    globalvariables.WIN.blit(mixingBowl_image, (575, 265))
+                    if active_ingredient:
+                        mx, my = pygame.mouse.get_pos()
+                        if 575 <= mx - 120 <= (575 + bowl_width) and 265 + 20 <= my - 120 <= (265 + bowl_height):
+                            mix = mix + 1
+                            active_ingredient = False
+                if mix == 0:
+                    globalvariables.WIN.blit(butter_image, butter_rect)
+                if mix == 1:
+                    globalvariables.WIN.blit(sugar_image, sugar_rect)
+                if mix == 2:
+                    globalvariables.WIN.blit(vanilla_extract_image, vanilla_extract_rect)
+                if mix == 3:
+                    globalvariables.WIN.blit(milk_image, milk_rect)
+                if mix == 4:
+                    mixingBowl(True, mixingBowl_image, 300, 265, 300, 300)
+                    frosting = False
+
+            pygame.display.update()
+    
+    while decorating:
+        for event in pygame.event.get(): #allows user to quit the window
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+        
+
+        if value == "Decoration 1":
+            recipeAssembly(True, "cake", colours)
+            value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
+        if value == "Decoration 2":
+            globalvariables.WIN.blit(gameBg_image, bgPosition)
+            globalvariables.WIN.blit(assembledcake_image, (300, 200))
+            draw(True, 401.0, 656.0, 233.0, 521.0, 565.0, 518.0, 399.0, 329.0, 0, timer_text, timer_box)
+            value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
+        if value == "Decoration 3":
+            globalvariables.WIN.blit(gameBg_image, bgPosition)
+            globalvariables.WIN.blit(frostedcake_image, (300, 200))
+            seasoning(True, frostedcake_image, 300, 200, 400, 400, "sprinkles")
+            decorating = False
+
+
+
+        pygame.display.update()
+
+    return value, stack, visitedNodes
+
+def sushiGame(value, stack, visitedNodes, score, colours):
+
+    cooking = False
+    assembly = False
+    cutting = False
+
+    value = "Assembly"
+
+    if value == "Cooking":
+        cooking = True
+        value = "Cooking 1"
+    elif value == "Assembly":
+        assembly = True
+        value = "Assembly 1"
+    elif value == "Cutting":
+        cutting = True
+    
+    timer_text = classes.Text(52, 12, "00.00", (255, 255, 255), 24)
+    timer_box = classes.Box(50, 10, 50, 50, colours[5], False)
+    game_ticks = 0
+    other_ticks = 0
+
+    cook = 0
+    cut = 0
+
+    active_ingredient = False
+    rice_rect = rice_image.get_rect()
+    rice_rect.center = (250, 450)
+    sushiseasoning_rect = sushiseasoning_image.get_rect()
+    sushiseasoning_rect.center = (250, 450)
+    rects = [rice_rect, sushiseasoning_rect]
+
+    #buttons
+    cucumber2_button = classes.ImageButton(340, 280, cucumber2_image, 1)
+
+    while cooking:
+        for event in pygame.event.get(): #allows user to quit the window
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
+        
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if rects[cook].collidepoint(event.pos):
+                        active_ingredient = True
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    active_ingredient = False
+            if event.type == pygame.MOUSEMOTION:
+                if active_ingredient:
+                    rects[cook].move_ip(event.rel)
+
+        globalvariables.WIN.blit(gameBg_image, bgPosition)
+        if value == "Cooking 1":
+            if cook <= 2:
+                globalvariables.WIN.blit(ricecooker_image, (525, 235))
+                if active_ingredient:
+                    mx, my = pygame.mouse.get_pos()
+                    if 525 <= mx - 190 <= (525 + ricecooker_width) and 235 + 20 <= my - 190 <= (235 + ricecooker_height):
+                        cook = cook + 1
+                        active_ingredient = False
+            if cook == 0:
+                globalvariables.WIN.blit(rice_image, rice_rect)
+            if cook == 1:
+                globalvariables.WIN.blit(sushiseasoning_image, sushiseasoning_rect)
+            if cook == 2:
+                value = "Cooking 2" #CHANGE THIS
+        if value == "Cooking 2":
+            fill(True, water_colour, colours)
+
+
+        pygame.display.update()
     
     while assembly:
         for event in pygame.event.get(): #allows user to quit the window
@@ -997,18 +1362,43 @@ def cakeGame(value, stack, visitedNodes, score, timer_box):
                 pygame.quit()
                 sys.exit()
                 break
+        
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                cucumber2Pressed = cucumber2_button.checkPressed(pygame.mouse.get_pos())
+                cucumber2Active = cucumber2_button.getActive()
+                if cucumber2Pressed == True and cucumber2Active == True:
+                    cut = cut + 1
+                    cucumber2_button.setUnactive()
+        
+        globalvariables.WIN.blit(gameBg_image, bgPosition)
+        globalvariables.WIN.blit(clock_image, (20, 10))
+        timer_box.drawBox()
+        #game_ticks = pygame.time.get_ticks()
+        print((((pygame.time.get_ticks() - game_ticks) / 1000)))
+        timer_text.changeText(str(((pygame.time.get_ticks() - other_ticks) + game_ticks) / 1000))
 
-def sushiGame(value):
-    cooking = False
-    assembly = False
-    cutting = False
-
-    if value == "Cooking":
-        cooking = True
-    elif value == "Assembly":
-        assembly = True
-    elif value == "Cutting":
-        cutting = True
+        if value == "Assembly 1":
+            globalvariables.WIN.blit(cuttingBoard_image, (100, 170))
+            if cut == 0:
+                globalvariables.WIN.blit(cucumbers[0], (340, 280))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow2_image, (300, 200)), (400, 250))
+                other_ticks = draw(True, 591.0, 452.0, 547.0, 493.0, 550.0, 407.0, 317.0, 453.0, 0, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 1:
+                cucumber2_button.draw()
+                cucumber2_button.setActive()
+            elif cut == 2:
+                globalvariables.WIN.blit(cucumbers[2], (340, 280))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow2_image, (300, 200)), (400, 270))
+                other_ticks = draw(True, 349.0, 562.0, 392.0, 587.0, 431.0, 561.0, 387.0, 407.0, game_ticks, timer_text, timer_box)
+                cut = cut + 1
+    
+    while cutting:
+        for event in pygame.event.get(): #allows user to quit the window
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                break
 
 
 
