@@ -1012,6 +1012,8 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
     
 def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, theme_selected):
 
+    measurementType = database.getData_main(username, "measurement_type")
+
     if theme_selected == "theme1":
         colours = [main_lightPurple1, main_lightPurple2, main_darkPurple1, main_darkPurple2, main_darkPurple3, main_brightPurple]
         mainBg_image = main1Bg_image
@@ -1239,9 +1241,9 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
     cakeMetricIngredients6_text = classes.Text(315, 245, "4.5g kosher salt", white, 22)
     cakeMetricIngredients7_text = classes.Text(315, 265, "170.25g unsalted butter, softened", white, 22)
     cakeIngredients8_text = classes.Text(315, 285, "2 large eggs", white, 22)
-    cakeMetricIngredients9_text = classes.Text(315, 305, "153g sour cream, Greek yogurt", white, 22)
-    cakeIngredients10_text = classes.Text(315, 325, "or buttermilk (can be substituted)", white, 22)
-    cakeMetricIngredients11_text = classes.Text(315, 345, "122g milk", white, 22)
+    cakeMetricIngredients9_text = classes.Text(315, 305, "153g sour cream/ Greek yogurt", white, 22)
+    cakeIngredients10_text = classes.Text(315, 325, "/ buttermilk (can be substituted)", white, 22)
+    cakeMetricIngredients11_text = classes.Text(315, 345, "122ml milk", white, 22)
     cakeMetricIngredients12_text = classes.Text(315, 365, "8g vanilla extract", white, 22)
     buttercreamIngredientsLabel_text = classes.Text(315, 405, "Buttercream Ingredients: ", white, 22)
     cakeMetricIngredients13_text = classes.Text(315, 445, "225g unsalted butter , softened", white, 22)
@@ -1265,7 +1267,7 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
     cakeUSIngredients16_text = classes.Text(315, 505, "3 tsp vanilla extract", white, 22)
     cakeUSIngredients17_text = classes.Text(315, 525, "2–4 tbsp milk, to adjust thickeness", white, 22)
 
-    sushiIngredients1_text = classes.Text(315, 145, "5 nori / sushi sheets", white, 22)
+    sushiIngredients1_text = classes.Text(315, 145, "1 nori / sushi sheets", white, 22)
     sushiMetricIngredients2_text = classes.Text(315, 165, "10g of sushi seasoning", white, 22)
     sushiIngredients3_text = classes.Text(315, 185, "/ sushi vinegar, adjust to taste", white, 22)
     sushiMetricIngredients4_text = classes.Text(315, 205, "200g sushi rice / short grain rice", white, 22)
@@ -1303,6 +1305,22 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
     sushiUSIngredients = [ingredientsLabel_text, sushiIngredients1_text, sushiUSIngredients2_text, sushiIngredients3_text,
                           sushiUSIngredients4_text, sushiUSIngredients5_text, sushiIngredients6_text,
                           sushiIngredients7_text]
+
+    if recipeChosen == "burger":
+        if measurementType:
+            ingredients = burgerMetricIngredients
+        else:
+            ingredients = burgerUSIngredients
+    elif recipeChosen == "cake":
+        if measurementType:
+            ingredients = cakeMetricIngredients
+        else:
+            ingredients = cakeUSIngredients
+    elif recipeChosen == "sushi":
+        if measurementType:
+            ingredients = sushiMetricIngredients
+        else:
+            ingredients = sushiUSIngredients
 
     #button object creation
     back_button = classes.Button(65, 50, 70, 100, colours[3], False)
@@ -1441,13 +1459,10 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
                 if count == 0: #it will begin on the first page so
                     recipePageR_button.drawBox() #it will only have the right arrow button
                     recipePageR_text.drawText()
-                    if measurementType == True:
-                        for i in range(len(burgerMetricIngredients)):
-                            burgerMetricIngredients[i].drawText() 
-                            #displays ingredients depending on measurement type
-                    else:
-                        for i in range(len(burgerUSIngredients)):
-                            burgerUSIngredients[i].drawText()
+                    for i in range(len(ingredients)):
+                        ingredients[i].drawText() 
+                        #displays ingredients depending on measurement type
+            
                 if count == 1: #if the user clicks the right arrow
                     recipePageL_button.drawBox() #display all the text and the buttons
                     recipePageL_text.drawText()
@@ -1458,13 +1473,9 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
                 if count == 0: #it will begin on the first page so
                     recipePageR_button.drawBox() #it will only have the right arrow button
                     recipePageR_text.drawText()
-                    if measurementType == True:
-                        for i in range(len(cakeMetricIngredients)):
-                            cakeMetricIngredients[i].drawText() 
-                            #displays ingredients depending on measurement type
-                    else:
-                        for i in range(len(cakeUSIngredients)):
-                            cakeUSIngredients[i].drawText()
+                    for i in range(len(ingredients)):
+                        ingredients[i].drawText() 
+                        #displays ingredients depending on measurement type
                 if count == 1: #if the user clicks the right arrow for the first time
                     recipePageL_button.drawBox() #display buttons and text
                     recipePageL_text.drawText()
@@ -1484,13 +1495,9 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
                 if count == 0: #it will begin on the first page so
                     recipePageR_button.drawBox() #it will only have the right arrow button
                     recipePageR_text.drawText()
-                    if measurementType == True:
-                        for i in range(len(sushiMetricIngredients)):
-                            sushiMetricIngredients[i].drawText() 
-                            #displays ingredients depending on measurement type
-                    else:
-                        for i in range(len(sushiUSIngredients)):
-                            sushiUSIngredients[i].drawText()
+                    for i in range(len(ingredients)):
+                        ingredients[i].drawText() 
+                        #displays ingredients depending on measurement type
                 if count == 1: #if they clicked right arrow for the first time
                     recipePageL_button.drawBox() #display
                     recipePageL_text.drawText()
@@ -1522,9 +1529,9 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
                 naRecipe_text.drawText()
 
         pygame.display.update()
-    return mainLoop, recipeLoop, minigameLoop, recipeChosen
+    return mainLoop, recipeLoop, minigameLoop, recipeChosen, ingredients
 
-def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
+def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingredients):
 
     startingScreen = True #the starting screen will show all the steps, this will reappear every time the user finishes a minigame
     exitMessage = False #this will be set to true when the user presses the back button
@@ -1791,61 +1798,22 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen,  theme_selected):
 
         if minigame:
             if recipeChosen == "burger":
-                value, stack, visitedNodes = minigames.burgerGame(value, stack, visitedNodes, score, colours)
+                value, stack, visitedNodes = minigames.burgerGame(value, stack, visitedNodes, score, colours, ingredients)
                 flag = True
                 minigame = False
             elif recipeChosen == "cake":
-                value, stack, visitedNodes = minigames.cakeGame(value, stack, visitedNodes, score,  colours)
+                value, stack, visitedNodes = minigames.cakeGame(value, stack, visitedNodes, score,  colours, ingredients)
                 flag = True
                 minigame = False
             elif recipeChosen == "sushi":
-                value, stack, visitedNodes = minigames.sushiGame(value, stack, visitedNodes, score, colours)
+                value, stack, visitedNodes = minigames.sushiGame(value, stack, visitedNodes, score, colours, ingredients)
                 flag = True
                 minigame = False
 
         pygame.display.update()
     
     return minigameLoop, recipeLoop, recipeChosen
-
-'''def temp_minigameScreen(minigameLoop):
-    
-    #checks which minigame should be ran
-    draw = False
-    assembly = False
-    flip = False
-    fill = False
-    mixing = False
-    seasoning = True
-
-    arrow_text = classes.Text(200, 112, "<--", login_red1, 500) #a temporary arrow object
-    fillBg_box = classes.Box(300, 50, 500, 400, black, False)
-    fill_box = classes.Box(302, 540, 10, 396, white, True)
-    fill_line = classes.Box(300, 100, 10, 400, login_red1, False)
-    
-    while minigameLoop: #while the minigame loop is true
-        #WIN.blit(main1Bg_image, bgPosition) #displays the background image
-        #pygame.display.update()
-
-        while draw: #while draw is true
-            arrow_text.drawText() #draws the arrow
-            draw = minigames.draw(globalvariables.WIN, draw, 334.0, 425.0, 340.0, 620.0, 684.0, 560.0, 129.0, 523.0)
-            #calls the subroutine and returns the value of draw so that it can be updated to be False
-        while assembly:
-            assembly = minigames.assembly(globalvariables.window_x, globalvariables.window_y, globalvariables.WIN, main1Bg_image, bgPosition, assembly)
-        while flip:
-            flip = minigames.flip(flip, globalvariables.WIN, 300, 50, main1Bg_image, bgPosition)
-        while fill:
-            fill = minigames.fill(fill, globalvariables.WIN, water_blue, fillBg_box, fill_box, fill_line, main1Bg_image, bgPosition)
-        while mixing:
-            mixing = minigames.mixing(mixing, globalvariables.WIN, main1Bg_image, bgPosition, mixingBowl_image, 300, 50)
-        while seasoning:
-            seasoning = minigames.seasoning(seasoning, globalvariables.WIN, main1Bg_image, bgPosition, rawPatty_image, 350, 250, "herbs")
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-                break
-        '''
+        
 def playDisc(disc_selected):
     if disc_selected == "disc1":
             pygame.mixer.music.load(os.path.join('Culinary Quest ASSETS',"gingko.mp3"))
@@ -1867,8 +1835,8 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop, mi
     usernameInput2_input = classes.Input(480, 230, 37, 280, black, 20, False)
     passwordInput2_input = classes.Input(480, 290, 37, 280, black, 20, True)
     search_input = classes.Input(240, 100, 37, 570, black, 20, False)
-    recipeChosen = "sushi"
-    theme_selected = "theme1"
+    recipeChosen = ""
+    theme_selected = ""
     oldPassInput_input = classes.Input(350, 250, 30, 280, black, 20, True)
     newPassInput_input = classes.Input(350, 310, 30, 280, black, 20, True)
 
@@ -1899,17 +1867,17 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop, mi
             mainLoop, settingsLoop = settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_input, username, theme_selected)
 
         if recipeLoop == True:
-            mainLoop, recipeLoop, minigameLoop, recipeChosen = recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, theme_selected)
+            mainLoop, recipeLoop, minigameLoop, recipeChosen, ingredients = recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, theme_selected)
 
         if minigameLoop == True:
-            minigameLoop, recipeLoop, recipeChosen = minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected)
+            minigameLoop, recipeLoop, recipeChosen = minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingredients)
 
-loginLoop = False
+loginLoop = True
 createLoop = False
 mainLoop = False
 settingsLoop = False
 shopLoop = False
 recipeLoop = False
-minigameLoop = True
+minigameLoop = False
 
 main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop, minigameLoop)

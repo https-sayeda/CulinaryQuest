@@ -26,7 +26,6 @@ class Text:
         drawnText = pygame.font.Font(os.path.join('Culinary Quest ASSETS', 'Aptos.ttf'), self.size).render(text, True, self.colour)
         globalvariables.WIN.blit(drawnText, (self.x,self.y))
 
-
 class Box:
     def __init__(self, x, y, height, length, colour, transparent):
         self.x = x

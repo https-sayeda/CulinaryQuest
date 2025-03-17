@@ -121,16 +121,17 @@ cucumber5_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','cucumb
 cucumbers = [cucumber1_image, cucumber2_image, cucumber3_image, cucumber4_image, cucumber5_image]
 
 for i in range(len(cucumbers)):
-    cucumbers[i] = pygame.transform.scale(cucumbers[i], (450,300))
+    cucumbers[i] = pygame.transform.scale(cucumbers[i], (300,150))
 
 avocado1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','avocado1.png'))
+avocado1_5_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','avocado1_5.png'))
 avocado2_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','avocado2.png'))
 avocado3_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','avocado3.png'))
 avocado4_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','avocado4.png'))
 avocado5_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','avocado5.png'))
 avocado6_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','avocado6.png'))
 avocado7_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','avocado7.png'))
-avocados = [avocado1_image, avocado2_image, avocado3_image, avocado4_image, avocado5_image, avocado6_image, 
+avocados = [avocado1_image, avocado1_5_image, avocado2_image, avocado3_image, avocado4_image, avocado5_image, avocado6_image, 
             avocado7_image, ]
 
 for i in range(len(avocados)):
@@ -139,6 +140,9 @@ for i in range(len(avocados)):
 salmon1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','salmon.png'))
 salmon2_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','salmon2.png'))
 salmon3_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','salmon3.png'))
+salmon1_image = pygame.transform.scale(salmon1_image, (300,300))
+salmon2_image = pygame.transform.scale(salmon2_image, (300,300))
+salmon3_image = pygame.transform.scale(salmon3_image, (300,300))
 
 seaweed1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seaweed.png'))
 seaweed2_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','seaweed2.png'))
@@ -155,7 +159,7 @@ seaweeds = [seaweed1_image, seaweed2_image, seaweed3_image, seaweed4_image, seaw
             seaweed6_image, seaweed7_image, seaweed8_image, seaweed9_image, seaweed10_image, seaweed11_image]
 
 for i in range(len(seaweeds)):
-    seaweeds[i] = pygame.transform.scale(seaweeds[i], (300,300))
+    seaweeds[i] = pygame.transform.scale(seaweeds[i], (500,500))
 
 sushiroll1_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','sushiroll.png'))
 sushiroll2_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','sushiroll2.png'))
@@ -168,7 +172,15 @@ sushirolls = [sushiroll1_image, sushiroll2_image, sushiroll3_image, sushiroll4_i
               sushiroll6_image, sushiroll7_image]
 
 for i in range(len(sushirolls)):
-    sushirolls[i] = pygame.transform.scale(sushirolls[i], (300,300))
+    sushirolls[i] = pygame.transform.scale(sushirolls[i], (800, 180))
+
+slicedcucumber_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','slicedcucumber.png'))
+slicedavocado_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','slicedavocado.png'))
+slicedsalmon_image = pygame.image.load(os.path.join('Culinary Quest ASSETS','slicedsalmon.png'))
+slicedcucumber_image = pygame.transform.scale(slicedcucumber_image, (250, 100))
+slicedavocado_image = pygame.transform.scale(slicedavocado_image, (250, 100))
+slicedsalmon_image = pygame.transform.scale(slicedsalmon_image, (250, 100))
+
 
 bowl_width = 300
 bowl_height = 300
@@ -176,12 +188,13 @@ oven_width = 400
 oven_height = 400
 ricecooker_width = 400
 ricecooker_height = 400
+seaweed_width = 500
+seaweed_height = 500
 
 #colours
 cakebatter_colour = pygame.Color(248, 226, 159)
 water_colour = pygame.Color(115, 203, 251)
 fillBg_colour = pygame.Color(61, 61, 61)
-
 
 class RecipeTree:
 
@@ -235,8 +248,8 @@ def treeTraversal(recipeChosen, stack, visitedNodes):
 
     sushiRoot = RecipeTree("Sushi")
     sushiRoot.children = [RecipeTree("Cooking"), RecipeTree("Assembly"), RecipeTree("Cutting")]
-    sushiRoot.children[0].children = [RecipeTree("Cooking 1"), RecipeTree("Cooking 2"), RecipeTree("Cooking 3")]
-    sushiRoot.children[1].children = [RecipeTree("Assembly 1"), RecipeTree("Assembly 2"), RecipeTree("Assembly 3"), RecipeTree("Assembly 4"), RecipeTree("Assembly 5"),]
+    sushiRoot.children[0].children = [RecipeTree("Cooking 1"), RecipeTree("Cooking 2")]
+    sushiRoot.children[1].children = [RecipeTree("Assembly 1"), RecipeTree("Assembly 2"), RecipeTree("Assembly 3"), RecipeTree("Assembly 4")]
     sushiRoot.children[2].children = [RecipeTree("Cutting 1")]
     
     if recipeChosen == "burger": #determines which tree is being traversed
@@ -248,7 +261,7 @@ def treeTraversal(recipeChosen, stack, visitedNodes):
     
     return value, stack, visitedNodes
 
-def draw(draw, x1, y1, x2, y2, x3, y3, x4, y4, game_ticks, timer_text, timer_box):
+def draw(draw, x1, y1, x2, y2, x3, y3, x4, y4, start_time, counting_time, timer_text, timer_box):
 
     flag1 = False #these flags represent whether the drawn circle has touched a coordinate
     flag2 = False #there are 4 points to the arrow, so four coordinates (x1, y2), (x2, y2) etc. = four flags
@@ -264,7 +277,7 @@ def draw(draw, x1, y1, x2, y2, x3, y3, x4, y4, game_ticks, timer_text, timer_box
     canvas.set_alpha(200) 
     #makes the canvas transparent so that it doesn't cover the background image
 
-    other_ticks = pygame.time.get_ticks() 
+    clock = pygame.time.Clock()
 
     while draw: #ensures that the user only draws when they havent drawn the arrow
         for event in pygame.event.get():
@@ -274,7 +287,8 @@ def draw(draw, x1, y1, x2, y2, x3, y3, x4, y4, game_ticks, timer_text, timer_box
                 break
         
         timer_box.drawBox()
-        timer_text.changeText(str(((pygame.time.get_ticks() - other_ticks) + game_ticks) / 1000))
+        counting_time = pygame.time.get_ticks() - start_time
+        timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
 
         # Draw the Canvas at the center of the screen
         x, y = globalvariables.WIN.get_size() 
@@ -309,12 +323,14 @@ def draw(draw, x1, y1, x2, y2, x3, y3, x4, y4, game_ticks, timer_text, timer_box
         if (x4-5.0) <= dx <= (x4+5.0) and (y4-5.0) <= dy <= (y4+5.0):
             flag4 = True
 
+        clock.tick(globalvariables.FPS)
         pygame.display.update() #updates the screen
     
-    return other_ticks
+    return start_time, counting_time
       
-def recipeAssembly(assembly, recipeChosen, colours):
+def recipeAssembly(assembly, recipeChosen, colours, start_time, counting_time, timer_text, timer_box):
 
+    clock = pygame.time.Clock()
     hand_width = 150
     hand_height = 150
     hand_x = globalvariables.window_x // 2 - hand_width
@@ -391,6 +407,7 @@ def recipeAssembly(assembly, recipeChosen, colours):
                 if backPressed == True and backActive == False:
                     assembly = False
                     back_button.setActive()
+        
 
         if count != (len(layer_images) + 1):
 
@@ -398,6 +415,10 @@ def recipeAssembly(assembly, recipeChosen, colours):
             clock.tick(60)
 
             globalvariables.WIN.blit(gameBg_image, bgPosition)
+            globalvariables.WIN.blit(clock_image, (20, 10))
+            timer_box.drawBox()
+            counting_time = pygame.time.get_ticks() - start_time
+            timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
 
             if count != (len(layer_images)):
                 component_rect = globalvariables.WIN.blit(layer_images[count], (component_x, component_y))
@@ -444,15 +465,16 @@ def recipeAssembly(assembly, recipeChosen, colours):
         else:
             back_button.drawBox()
             back_text.drawText()
-
+        clock.tick(globalvariables.FPS)
         pygame.display.update()
     
 
-    return assembly
+    return start_time, counting_time
 
-def flip(flip, bar_x, bar_y, images, coordinates):
+def flip(flip, bar_x, bar_y, images, coordinates, start_time, counting_time, timer_text, timer_box):
     
     #variables that are needed
+    clock = pygame.time.Clock()
     arrow_speed = 7.5
     bar_width = 200
     bar_height = 500
@@ -481,8 +503,14 @@ def flip(flip, bar_x, bar_y, images, coordinates):
                 sys.exit()
                 break
         
+        
         #displaying the images on the screen
         globalvariables.WIN.blit(gameBg_image, bgPosition)
+        globalvariables.WIN.blit(clock_image, (20, 10))
+        timer_box.drawBox()
+        counting_time = pygame.time.get_ticks() - start_time
+        timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
+
         for i in range(len(images)):
             globalvariables.WIN.blit(images[i], coordinates[i])
         globalvariables.WIN.blit(temperatureBar_image, (bar_x, bar_y))
@@ -508,9 +536,11 @@ def flip(flip, bar_x, bar_y, images, coordinates):
 
 
         pygame.display.update()
+    return start_time, counting_time
 
-def fill(fill, fill_colour, colours):
+def fill(fill, fill_colour, colours, start_time, counting_time, timer_text, timer_box):
     
+    clock = pygame.time.Clock()
     fillBg_box = classes.Box(300, 50, 500, 400, fillBg_colour, False)
     fill_box = classes.Box(302, 540, 10, 396, fill_colour, True)
     fill_line = classes.Box(300, 100, 10, 400, (214, 135, 140), False) 
@@ -545,6 +575,10 @@ def fill(fill, fill_colour, colours):
 
         #displaying image and boxes 
         globalvariables.WIN.blit(gameBg_image, bgPosition) 
+        globalvariables.WIN.blit(clock_image, (20, 10))
+        timer_box.drawBox()
+        counting_time = pygame.time.get_ticks() - start_time
+        timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
         fillBg_box.drawBox()
         fill_box.drawBox()
         fill_line.drawBox()
@@ -559,11 +593,13 @@ def fill(fill, fill_colour, colours):
             print("Too much!") #it's too much
 
 
-        
+        clock.tick(globalvariables.FPS)
         pygame.display.update()
+    return start_time, counting_time
         
-def mixingBowl(mixing, image, image_x, image_y, image_width, image_height):
+def mixingBowl(mixing, image, image_x, image_y, image_width, image_height, start_time, counting_time, timer_text, timer_box):
 
+    clock = pygame.time.Clock()
     orientation = "right" #the orientation of the bowl is initially set to the right
     time_down = 0.0 #used to measure the amount of time between the bowl being flipped
     time_elapsed = 0.0 #records the total time
@@ -594,14 +630,23 @@ def mixingBowl(mixing, image, image_x, image_y, image_width, image_height):
 
         if count >= 5: #if they went too fast 5 times
             globalvariables.WIN.blit(gameBg_image, bgPosition) 
+            globalvariables.WIN.blit(clock_image, (20, 10))
+            timer_box.drawBox()
+            counting_time = pygame.time.get_ticks() - start_time
+            timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
             globalvariables.WIN.blit(mixingBowlSpilled_image, (image_x, image_y)) #th mixture is spilled so display new image
             mixing = False #set to false
             pygame.display.update() #update screen
         elif mix == 7:
+            timer_box.drawBox()
+            counting_time = pygame.time.get_ticks() - start_time
+            timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
             mixing = False #set to false
 
         if count < 5: #as long as the mixture hasn;t spilled
-        
+            timer_box.drawBox()
+            counting_time = pygame.time.get_ticks() - start_time
+            timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
             globalvariables.WIN.blit(gameBg_image, bgPosition) #background image displayed
             if orientation == "right" and count < 5: #if the bowl is flipped to the right
                 globalvariables.WIN.blit(image, (image_x, image_y)) #it is normal so display as normal
@@ -616,13 +661,14 @@ def mixingBowl(mixing, image, image_x, image_y, image_width, image_height):
 
         rate.tick()
 
+        clock.tick(globalvariables.FPS)
         pygame.display.update()
+    return start_time, counting_time
         
-def seasoning(seasoning, image, image_x, image_y, image_width, image_height, seasoning_type):
+def seasoning(seasoning, image, image_x, image_y, image_width, image_height, seasoning_type, start_time, counting_time, timer_text, timer_box):
     
     #variables that are needed
-    #image_width = 200
-    #image_height = 200
+    clock = pygame.time.Clock()
     seasoning_width = 25
     seasoning_height = 25
     mouse_y_position = []
@@ -654,6 +700,10 @@ def seasoning(seasoning, image, image_x, image_y, image_width, image_height, sea
         mouse_x, mouse_y = pygame.mouse.get_pos() #get the x and y coordinate of the position of the mouse
         mouse_y_position.append(mouse_y) #put the y coordinate into the array
         globalvariables.WIN.blit(gameBg_image, bgPosition) #display image
+        globalvariables.WIN.blit(clock_image, (20, 10))
+        timer_box.drawBox()
+        counting_time = pygame.time.get_ticks() - start_time
+        timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
         globalvariables.WIN.blit(image, (image_x, image_y)) #display seasoning shaker
         if len(mouse_y_position) == 2: #when there are two values stored in the array
             if mouse_y_position[0] >= mouse_y_position[1] + 10: 
@@ -685,30 +735,11 @@ def seasoning(seasoning, image, image_x, image_y, image_width, image_height, sea
         globalvariables.WIN.blit(shaker_image, (mouse_x - 50, mouse_y - 50)) 
         #display the seasoning shaker next to the mouse so it moves as the mouse moves
 
+        clock.tick(globalvariables.FPS)
         pygame.display.update()
- 
-def drag(bowl_x, bowl_y, bowl_width, bowl_height, showIngredient, active_ingredient, ingredient_rect, draggedImage):
+    return start_time, counting_time
 
-    for event in pygame.event.get(): #allows user to quit the window
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-            break
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                if ingredient_rect.collidepoint(event.pos):
-                    active_ingredient = True
-        if event.type == pygame.MOUSEBUTTONUP:
-            if event.button == 1:
-                active_ingredient = False
-        if event.type == pygame.MOUSEMOTION:
-            if active_ingredient:
-                ingredient_rect.move_ip(event.rel)
-    
-    if showIngredient:
-        globalvariables.WIN.blit(draggedImage, ingredient_rect)
-
-def burgerGame(value, stack, visitedNodes, score, colours):
+def burgerGame(value, stack, visitedNodes, score, colours, ingredients):
 
     #the steps are initially set to false
     frying = False
@@ -735,7 +766,7 @@ def burgerGame(value, stack, visitedNodes, score, colours):
         value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
 
     #variables
-    game_ticks = pygame.time.get_ticks()
+    start_time = pygame.time.get_ticks()
     clock = pygame.time.Clock()
     other_ticks = 0
     cut = 0
@@ -743,8 +774,16 @@ def burgerGame(value, stack, visitedNodes, score, colours):
     mix = 0
 
     #text object
-    timer_text = classes.Text(52, 12, "00.00", (255, 255, 255), 24)
-    timer_box = classes.Box(50, 10, 50, 50, colours[5], False)
+    timer_text = classes.Text(152, 47, "00.00", (255, 255, 255), 24)
+    instruction_box = classes.Box(0, 500, 40, 270, colours[2], False)
+    drawinstruction_text = classes.Text(2, 503, "Trace the arrow to cut the ingredient", (255, 255, 255), 24)
+    flipinstruction_text = classes.Text(2, 503, "Press space when the arrow is on green", (255, 255, 255), 24)
+    mixinstruction_text = classes.Text(2, 503, "Press A/D or <-/-> to mix the ingredients", (255, 255, 255), 24)
+
+    #box objects
+    timer_box = classes.Box(150, 45, 30, 60, colours[5], False)
+    ingredient_box = classes.Box(300, 100, 40, 350, colours[2], False)
+    ingredien2_box = classes.Box(700, 100, 40, 350, colours[2], False)
 
     #button objects
     onioncut2_1_button = classes.ImageButton(340, 210, onions[2], 1)
@@ -806,21 +845,24 @@ def burgerGame(value, stack, visitedNodes, score, colours):
         globalvariables.WIN.blit(gameBg_image, bgPosition)
         globalvariables.WIN.blit(clock_image, (20, 10))
         timer_box.drawBox()
-        #game_ticks = pygame.time.get_ticks()
-        print((((pygame.time.get_ticks() - game_ticks) / 1000)))
-        timer_text.changeText(str(((pygame.time.get_ticks() - other_ticks) + game_ticks) / 1000))
+        counting_time = pygame.time.get_ticks() - start_time
+        timer_text.changeText(str( (counting_time/1000) ).zfill(2))
 
         if value == "Frying 1":
             globalvariables.WIN.blit(cuttingBoard_image, (100, 170))
             if cut == 0:
+                ingredient_box.drawBox()
+                ingredients[2].changePosition(305, 103)
                 globalvariables.WIN.blit(onions[0], (340, 210))
+                instruction_box.drawBox()
+                drawinstruction_text.drawText()
                 globalvariables.WIN.blit(arrow2_image, (370, 215))
-                other_ticks = draw(True, 282.0, 412.0, 436.0, 377.0, 465.0, 412.0, 435.0, 459.0, 0, timer_text, timer_box)
+                start_time, counting_time = draw(True, 282.0, 412.0, 436.0, 377.0, 465.0, 412.0, 435.0, 459.0, start_time, counting_time, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 1:
                 globalvariables.WIN.blit(onions[1], (340, 210))
                 globalvariables.WIN.blit(arrow3_image, (390, 295))
-                other_ticks = draw(True, 349.0, 562.0, 392.0, 587.0, 431.0, 561.0, 387.0, 407.0, game_ticks, timer_text, timer_box)
+                start_time, counting_time = draw(True, 349.0, 562.0, 392.0, 587.0, 431.0, 561.0, 387.0, 407.0, start_time, counting_time, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 2:
                 onioncut2_1_button.draw()
@@ -829,47 +871,47 @@ def burgerGame(value, stack, visitedNodes, score, colours):
             elif cut == 4:
                 globalvariables.WIN.blit(onions[4], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (305, 215))
-                other_ticks = draw(True, 263.0, 565.0, 307.0, 608.0, 350.0, 565.0, 303.0, 332.0, game_ticks + other_ticks, timer_text, timer_box)
+                start_time, counting_time = draw(True, 263.0, 565.0, 307.0, 608.0, 350.0, 565.0, 303.0, 332.0, start_time, counting_time, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 5:
                 globalvariables.WIN.blit(onions[5], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (345, 215))
-                other_ticks = draw(True, 344.0, 610.0, 305.0, 567.0, 384.0, 564.0, 344.0, 333.0, game_ticks + other_ticks, timer_text, timer_box)
+                start_time, counting_time = draw(True, 344.0, 610.0, 305.0, 567.0, 384.0, 564.0, 344.0, 333.0, start_time, counting_time, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 6:
                 globalvariables.WIN.blit(onions[6], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (390, 215))
-                other_ticks = draw(True, 352.0, 567.0, 387.0, 609.0, 433.0, 561.0, 387.0, 335.0, game_ticks + other_ticks, timer_text, timer_box)
+                start_time, counting_time = draw(True, 352.0, 567.0, 387.0, 609.0, 433.0, 561.0, 387.0, 335.0, start_time, counting_time, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 7:
                 globalvariables.WIN.blit(onions[7], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (420, 215))
-                other_ticks = draw(True, 418.0, 334.0, 375.0, 561.0, 423.0, 611.0, 469.0, 561.0, game_ticks + other_ticks, timer_text, timer_box)
+                start_time, counting_time = draw(True, 418.0, 334.0, 375.0, 561.0, 423.0, 611.0, 469.0, 561.0, start_time, counting_time, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 8:
                 globalvariables.WIN.blit(onions[8], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (460, 215))
-                other_ticks = draw(True, 419.0, 565.0, 460.0, 607.0, 507.0, 561.0, 455.0, 330.0, game_ticks  + other_ticks, timer_text, timer_box)
+                start_time, counting_time = draw(True, 419.0, 565.0, 460.0, 607.0, 507.0, 561.0, 455.0, 330.0, start_time, counting_time, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 9:
                 globalvariables.WIN.blit(onions[9], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (433, 215))
-                other_ticks = draw(True, 394.0, 565.0, 434.0, 605.0, 478.0, 561.0, 430.0, 334.0, game_ticks  + other_ticks, timer_text, timer_box)
+                start_time, counting_time = draw(True, 394.0, 565.0, 434.0, 605.0, 478.0, 561.0, 430.0, 334.0, start_time, counting_time, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 10:
                 globalvariables.WIN.blit(onions[10], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow2_image, (310, 200)), (330, 315))
-                other_ticks = draw(True, 487.0, 555.0, 492.0, 472.0, 533.0, 516.0, 240.0, 517.0, game_ticks  + other_ticks, timer_text, timer_box)
+                start_time, counting_time = draw(True, 487.0, 555.0, 492.0, 472.0, 533.0, 516.0, 240.0, 517.0, start_time, counting_time, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 11:
                 globalvariables.WIN.blit(onions[11], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow2_image, (310, 200)), (330, 270))
-                other_ticks = draw(True, 248.0, 473.0, 489.0, 511.0, 485.0, 429.0, 531.0, 470.0, game_ticks  + other_ticks, timer_text, timer_box)
+                start_time, counting_time = draw(True, 248.0, 473.0, 489.0, 511.0, 485.0, 429.0, 531.0, 470.0, start_time, counting_time, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 12:
                 globalvariables.WIN.blit(onions[12], (340, 210))
                 globalvariables.WIN.blit(pygame.transform.scale(arrow2_image, (310, 200)), (330, 215))
-                other_ticks = draw(True, 489.0, 451.0, 245.0, 413.0, 480.0, 372.0, 529.0, 417.0, game_ticks  + other_ticks, timer_text, timer_box)
+                start_time, counting_time = draw(True, 489.0, 451.0, 245.0, 413.0, 480.0, 372.0, 529.0, 417.0, start_time, counting_time, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 13:
                 onioncut4_9_button.draw()
@@ -880,6 +922,8 @@ def burgerGame(value, stack, visitedNodes, score, colours):
             globalvariables.WIN.blit(cooker_image, (180, 190))
             if fry == 1:
                 globalvariables.WIN.blit(fryingPan_image, (-50, 60))
+                ingredient_box.drawBox()
+                ingredients[1].changePosition(305, 103)
                 oilBottle_button.draw()
             elif fry == 2:
                 globalvariables.WIN.blit(fryingPanOil_image, (-50, 60))
@@ -926,8 +970,16 @@ def burgerGame(value, stack, visitedNodes, score, colours):
                     rects[mix].move_ip(event.rel)
         
         globalvariables.WIN.blit(gameBg_image, bgPosition)
+        globalvariables.WIN.blit(clock_image, (20, 10))
+        timer_box.drawBox()
+        counting_time = pygame.time.get_ticks() - start_time
+        timer_text.changeText(str( (counting_time/1000) ).zfill(2))
         if value == "Mixing 1":
-            seasoning(True, beefMince_image, 300, 365, 300, 200, "herbs")
+            ingredient_box.drawBox()
+            ingredients[3].changePosition(305, 103)
+            ingredien2_box.drawBox()
+            ingredients[4].changePosition(705, 103)
+            start_time, counting_time = seasoning(True, beefMince_image, 300, 365, 300, 200, "herbs", start_time, counting_time, timer_text, timer_box)
             value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
         if value == "Mixing 2" or value == "Mixing 3" or value == "Mixing 4":
             globalvariables.WIN.blit(mixingBowl_image, (575, 265))
@@ -946,11 +998,16 @@ def burgerGame(value, stack, visitedNodes, score, colours):
         if value == "Mixing 2":
             globalvariables.WIN.blit(beefMince_image, mince_rect)
         if value == "Mixing 3":
+            ingredient_box.drawBox()
+            ingredients[5].changePosition(305, 103)
             globalvariables.WIN.blit(egg1_image, egg_rect)
         if value == "Mixing 4":
-            mixingBowl(True, mixingBowl_image, 300, 265, 300, 300)
+            instruction_box.drawBox()
+            mixinstruction_text.drawText()
+            mixingBowl(True, mixingBowl_image, 300, 265, 300, 300, start_time, counting_time, timer_text, timer_box)
             mixing = False
 
+        clock.tick(globalvariables.FPS)
         pygame.display.update()
     
     nextPatty = True 
@@ -970,16 +1027,22 @@ def burgerGame(value, stack, visitedNodes, score, colours):
                     shaped = shaped + 1
         
         globalvariables.WIN.blit(gameBg_image, bgPosition)
+        globalvariables.WIN.blit(clock_image, (20, 10))
+        timer_box.drawBox()
+        counting_time = pygame.time.get_ticks() - start_time
+        timer_text.changeText(str( (counting_time/1000) ).zfill(2))
         if value == "Shaping 1":
             if nextPatty:
-                flip(True, 400, 10, [beefMince_image], [(150, 350)])
+                instruction_box.drawBox()
+                flipinstruction_text.drawText()
+                start_time, counting_time = flip(True, 400, 10, [beefMince_image], [(150, 350)], start_time, counting_time, timer_text, timer_box)
                 nextPatty = False
             if nextPatty == False:
                 burgerPatty_button.draw()
             if shaped == 4:
                 shaping = False
         
-
+        clock.tick(globalvariables.FPS)
         pygame.display.update()
 
     grilled = 0
@@ -1000,9 +1063,13 @@ def burgerGame(value, stack, visitedNodes, score, colours):
                     grilled = grilled + 1
         
         globalvariables.WIN.blit(gameBg_image, bgPosition)
+        globalvariables.WIN.blit(clock_image, (20, 10))
+        timer_box.drawBox()
+        counting_time = pygame.time.get_ticks() - start_time
+        timer_text.changeText(str( (counting_time/1000) ).zfill(2))
         if value == "Grilling 1":
             if nextPatty:
-                flip(True, 700, 10, [cooker_image, fryingPan_image, burgerPatty_image], [(180, 190), (-50, 60), (250, 300)])
+                flip(True, 700, 10, [cooker_image, fryingPan_image, burgerPatty_image], [(180, 190), (-50, 60), (250, 300)], start_time, counting_time, timer_text, timer_box)
                 nextPatty = False
             if nextPatty == False:
                 globalvariables.WIN.blit(cooker_image, (180, 190))
@@ -1011,7 +1078,7 @@ def burgerGame(value, stack, visitedNodes, score, colours):
             if grilled == 4:
                 grilling = False
         
-
+        clock.tick(globalvariables.FPS)
         pygame.display.update()
     
     while assembly:
@@ -1023,14 +1090,14 @@ def burgerGame(value, stack, visitedNodes, score, colours):
                 break
                 
         if value == "Assembly 1":
-            recipeAssembly(True, "burger", colours)
+            start_time, counting_time = recipeAssembly(True, "burger", colours)
             assembly = False
-
+        clock.tick(globalvariables.FPS)
         pygame.display.update()
 
     return value, stack, visitedNodes
 
-def cakeGame(value, stack, visitedNodes, score, colours):
+def cakeGame(value, stack, visitedNodes, score, colours, ingredients):
     mixing = False
     baking = False
     frosting = False
@@ -1048,6 +1115,11 @@ def cakeGame(value, stack, visitedNodes, score, colours):
     elif value == "Decoration":
         decorating = True
         value, stack, visitedNodes = treeTraversal("cake", stack, visitedNodes)
+    
+    ingredient_box = classes.Box(300, 100, 40, 350, colours[2], False)
+    instruction_box = classes.Box(0, 500, 40, 270, colours[2], False)
+    mixinstruction_text = classes.Text(2, 503, "Press A/D or <-/-> to mix the ingredients", (255, 255, 255), 24)
+    fillinstruction_text = classes.Text(2, 503, "Hold space to the line to fill the container", (255, 255, 255), 24)
     
     active_ingredient = False
     bakingpowder_rect = bakingpowder_image.get_rect()
@@ -1073,7 +1145,7 @@ def cakeGame(value, stack, visitedNodes, score, colours):
     egg_rect = egg1_image.get_rect()
     egg_rect.center = (200, 500)
     
-    mixing_rects = [flour_rect, cake_flour_rect, sugar_rect, shaker_rect, bakingpowder_rect, bakingsoda_rect, butter_rect, egg_rect, egg_rect, milk_rect, vanilla_extract_rect]
+    mixing_rects = [flour_rect, cake_flour_rect, sugar_rect, shaker_rect, bakingpowder_rect, bakingsoda_rect, butter_rect, egg_rect, egg_rect, yogurt_rect, milk_rect, vanilla_extract_rect]
     
     mix = 0
     filling = 0
@@ -1081,8 +1153,10 @@ def cakeGame(value, stack, visitedNodes, score, colours):
     caketin_button = classes.ImageButton(300, 265, caketin_image, 1)
     oven_button = classes.ImageButton(530, 200, oven_image, 1)
 
-    timer_text = classes.Text(52, 12, "00.00", (255, 255, 255), 24)
-    timer_box = classes.Box(50, 10, 50, 50, colours[5], False)
+    timer_text = classes.Text(152, 47, "00.00", (255, 255, 255), 24)
+    timer_box = classes.Box(150, 45, 30, 60, colours[5], False)
+    start_time = pygame.time.get_ticks()
+    clock = pygame.time.Clock()
 
     active_ingredient = False
     caketin_filled1_rect = caketin_filled_image.get_rect()
@@ -1113,8 +1187,12 @@ def cakeGame(value, stack, visitedNodes, score, colours):
                     mixing_rects[mix].move_ip(event.rel)
 
         globalvariables.WIN.blit(gameBg_image, bgPosition)
+        globalvariables.WIN.blit(clock_image, (20, 10))
+        timer_box.drawBox()
+        counting_time = pygame.time.get_ticks() - start_time
+        timer_text.changeText(str( (counting_time/1000) ).zfill(2))
         if value == "Mixing 1":
-            if mix <= 11:
+            if mix <= 13:
                 globalvariables.WIN.blit(mixingBowl_image, (575, 265))
                 if active_ingredient:
                     mx, my = pygame.mouse.get_pos()
@@ -1122,31 +1200,58 @@ def cakeGame(value, stack, visitedNodes, score, colours):
                         mix = mix + 1
                         active_ingredient = False
             if mix == 0:
+                ingredient_box.drawBox()
+                ingredients[2].changePosition(305, 103)
                 globalvariables.WIN.blit(flour_image, flour_rect)
             if mix == 1:
+                ingredient_box.drawBox()
+                ingredients[1].changePosition(305, 103)
                 globalvariables.WIN.blit(cake_flour_image, cake_flour_rect)
             if mix == 2:
+                ingredient_box.drawBox()
+                ingredients[3].changePosition(305, 103)
                 globalvariables.WIN.blit(sugar_image, sugar_rect)
             if mix == 3:
+                ingredient_box.drawBox()
+                ingredients[6].changePosition(305, 103)
                 globalvariables.WIN.blit(shaker_image, shaker_rect)
             if mix == 4:
+                ingredient_box.drawBox()
+                ingredients[4].changePosition(305, 103)
                 globalvariables.WIN.blit(bakingpowder_image, bakingpowder_rect)
             if mix == 5:
+                ingredient_box.drawBox()
+                ingredients[5].changePosition(305, 103)
                 globalvariables.WIN.blit(bakingsoda_image, bakingsoda_rect)
             if mix == 6:
+                ingredient_box.drawBox()
+                ingredients[7].changePosition(305, 103)
                 globalvariables.WIN.blit(butter_image, butter_rect)
             if mix == 7:
+                ingredient_box.drawBox()
+                ingredients[8].changePosition(305, 103)
                 globalvariables.WIN.blit(egg1_image, egg_rect)
             if mix == 8:
                 globalvariables.WIN.blit(egg1_image, egg_rect)
             if mix == 9:
-                globalvariables.WIN.blit(milk_image, milk_rect)
+                ingredient_box.drawBox()
+                ingredients[9].changePosition(305, 103)
+                globalvariables.WIN.blit(yogurt_image, yogurt_rect)
             if mix == 10:
-                globalvariables.WIN.blit(vanilla_extract_image, vanilla_extract_rect)
+                ingredient_box.drawBox()
+                ingredients[11].changePosition(305, 103)
+                globalvariables.WIN.blit(milk_image, milk_rect)
             if mix == 11:
-                mixingBowl(True, mixingBowl_image, 300, 265, 300, 300)
+                ingredient_box.drawBox()
+                ingredients[12].changePosition(305, 103)
+                globalvariables.WIN.blit(vanilla_extract_image, vanilla_extract_rect)
+            if mix == 12:
+                instruction_box.drawBox()
+                mixinstruction_text.drawText()
+                start_time, counting_time = mixingBowl(True, mixingBowl_image, 300, 265, 300, 300, start_time, counting_time, timer_text, timer_box)
                 mixing = False
 
+        clock.tick(globalvariables.FPS)
         pygame.display.update()
     
     while baking:
@@ -1175,16 +1280,22 @@ def cakeGame(value, stack, visitedNodes, score, colours):
                     oven_rects[oven].move_ip(event.rel)
 
         globalvariables.WIN.blit(gameBg_image, bgPosition)
+        globalvariables.WIN.blit(clock_image, (20, 10))
+        timer_box.drawBox()
+        counting_time = pygame.time.get_ticks() - start_time
+        timer_text.changeText(str( (counting_time/1000) ).zfill(2))
         
         if value == "Baking 1":
             caketin_button.draw()
             if filling == 1:
-                fill(True, cakebatter_colour, colours)
+                instruction_box.drawBox()
+                fillinstruction_text.drawText()
+                start_time, counting_time = fill(True, cakebatter_colour, colours, start_time, counting_time, timer_text, timer_box)
                 filling = filling + 1
             if filling == 2:
                 caketin_button.draw()
             if filling == 3:
-                fill(True, cakebatter_colour, colours)
+                start_time, counting_time = fill(True, cakebatter_colour, colours, start_time, counting_time, timer_text, timer_box)
                 value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
                 bake = bake + 1
         if value == "Baking 2" :
@@ -1209,7 +1320,7 @@ def cakeGame(value, stack, visitedNodes, score, colours):
                 oven_button.setActive()
                 oven_button.draw()
 
-        
+        clock.tick(globalvariables.FPS)
         pygame.display.update()
 
     frosting_rects = [butter_rect, sugar_rect, vanilla_extract_rect, milk_rect]
@@ -1232,6 +1343,10 @@ def cakeGame(value, stack, visitedNodes, score, colours):
                     frosting_rects[mix].move_ip(event.rel)
 
             globalvariables.WIN.blit(gameBg_image, bgPosition)
+            globalvariables.WIN.blit(clock_image, (20, 10))
+            timer_box.drawBox()
+            counting_time = pygame.time.get_ticks() - start_time
+            timer_text.changeText(str( (counting_time/1000) ).zfill(2))
             if value == "Frosting 1":
                 if mix <= 4:
                     globalvariables.WIN.blit(mixingBowl_image, (575, 265))
@@ -1241,17 +1356,26 @@ def cakeGame(value, stack, visitedNodes, score, colours):
                             mix = mix + 1
                             active_ingredient = False
                 if mix == 0:
+                    ingredient_box.drawBox()
+                    ingredients[14].changePosition(305, 103)
                     globalvariables.WIN.blit(butter_image, butter_rect)
                 if mix == 1:
+                    ingredient_box.drawBox()
+                    ingredients[15].changePosition(305, 103)
                     globalvariables.WIN.blit(sugar_image, sugar_rect)
                 if mix == 2:
+                    ingredient_box.drawBox()
+                    ingredients[17].changePosition(305, 103)
                     globalvariables.WIN.blit(vanilla_extract_image, vanilla_extract_rect)
                 if mix == 3:
+                    ingredient_box.drawBox()
+                    ingredients[18].changePosition(305, 103)
                     globalvariables.WIN.blit(milk_image, milk_rect)
                 if mix == 4:
-                    mixingBowl(True, mixingBowl_image, 300, 265, 300, 300)
+                    start_time, counting_time = mixingBowl(True, mixingBowl_image, 300, 265, 300, 300, start_time, counting_time, timer_text, timer_box)
                     frosting = False
 
+            clock.tick(globalvariables.FPS)
             pygame.display.update()
     
     while decorating:
@@ -1261,61 +1385,110 @@ def cakeGame(value, stack, visitedNodes, score, colours):
                 sys.exit()
                 break
         
-
         if value == "Decoration 1":
-            recipeAssembly(True, "cake", colours)
+            start_time, counting_time = recipeAssembly(True, "cake", colours, start_time, counting_time, timer_text, timer_box)
             value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
         if value == "Decoration 2":
             globalvariables.WIN.blit(gameBg_image, bgPosition)
+            globalvariables.WIN.blit(clock_image, (20, 10))
+            timer_box.drawBox()
+            counting_time = pygame.time.get_ticks() - start_time
+            timer_text.changeText(str( (counting_time/1000) ).zfill(2))
             globalvariables.WIN.blit(assembledcake_image, (300, 200))
-            draw(True, 401.0, 656.0, 233.0, 521.0, 565.0, 518.0, 399.0, 329.0, 0, timer_text, timer_box)
+            start_time, counting_time = draw(True, 401.0, 656.0, 233.0, 521.0, 565.0, 518.0, 399.0, 329.0, start_time, counting_time, timer_text, timer_box)
             value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
         if value == "Decoration 3":
             globalvariables.WIN.blit(gameBg_image, bgPosition)
+            globalvariables.WIN.blit(clock_image, (20, 10))
+            timer_box.drawBox()
+            counting_time = pygame.time.get_ticks() - start_time
+            timer_text.changeText(str( (counting_time/1000) ).zfill(2))
             globalvariables.WIN.blit(frostedcake_image, (300, 200))
-            seasoning(True, frostedcake_image, 300, 200, 400, 400, "sprinkles")
+            start_time, counting_time = seasoning(True, frostedcake_image, 300, 200, 400, 400, "sprinkles", start_time, counting_time, timer_text, timer_box)
             decorating = False
 
 
-
+        clock.tick(globalvariables.FPS)
         pygame.display.update()
 
     return value, stack, visitedNodes
 
-def sushiGame(value, stack, visitedNodes, score, colours):
+def sushiGame(value, stack, visitedNodes, score, colours, ingredients):
 
     cooking = False
     assembly = False
     cutting = False
 
-    value = "Assembly"
-
     if value == "Cooking":
         cooking = True
-        value = "Cooking 1"
+        value, stack, visitedNodes = treeTraversal("sushi", stack, visitedNodes)
     elif value == "Assembly":
         assembly = True
-        value = "Assembly 1"
+        value, stack, visitedNodes = treeTraversal("sushi", stack, visitedNodes)
     elif value == "Cutting":
         cutting = True
+        value, stack, visitedNodes = treeTraversal("sushi", stack, visitedNodes)
     
-    timer_text = classes.Text(52, 12, "00.00", (255, 255, 255), 24)
-    timer_box = classes.Box(50, 10, 50, 50, colours[5], False)
-    game_ticks = 0
-    other_ticks = 0
+    ingredient_box = classes.Box(300, 100, 40, 350, colours[2], False)
+    instruction_box = classes.Box(0, 500, 40, 270, colours[2], False)
+    drawinstruction_text = classes.Text(2, 503, "Trace the arrow to cut the ingredient", (255, 255, 255), 24)
+    fillinstruction_text = classes.Text(2, 503, "Hold space to the line to fill the container", (255, 255, 255), 24)
+    
+    timer_text = classes.Text(152, 47, "00.00", (255, 255, 255), 24)
+    timer_box = classes.Box(150, 45, 30, 60, colours[5], False)
+    start_time = pygame.time.get_ticks()
+    clock = pygame.time.Clock()
 
     cook = 0
     cut = 0
+    assemble = 0
+    addIngredient = 0
 
     active_ingredient = False
+
     rice_rect = rice_image.get_rect()
     rice_rect.center = (250, 450)
     sushiseasoning_rect = sushiseasoning_image.get_rect()
     sushiseasoning_rect.center = (250, 450)
     rects = [rice_rect, sushiseasoning_rect]
 
+    slicedcucumber1_rect = slicedcucumber_image.get_rect()
+    slicedcucumber1_rect.center = (870, 400)
+    slicedcucumber2_rect = slicedcucumber_image.get_rect()
+    slicedcucumber2_rect.center = (870, 400)
+    slicedcucumber3_rect = slicedcucumber_image.get_rect()
+    slicedcucumber3_rect.center = (870, 400)
+
+    slicedavocado1_rect = slicedavocado_image.get_rect()
+    slicedavocado1_rect.center = (870, 400)
+    slicedavocado2_rect = slicedavocado_image.get_rect()
+    slicedavocado2_rect.center = (870, 400)
+    slicedavocado3_rect = slicedavocado_image.get_rect()
+    slicedavocado3_rect.center = (870, 400)
+
+    slicedsalmon1_rect = slicedsalmon_image.get_rect()
+    slicedsalmon1_rect.center = (870, 400)
+    slicedsalmon2_rect = slicedsalmon_image.get_rect()
+    slicedsalmon2_rect.center = (870, 400)
+    slicedsalmon3_rect = slicedsalmon_image.get_rect()
+    slicedsalmon3_rect.center = (870, 400)
+
+    ingredient_rects = [slicedcucumber1_rect, slicedcucumber2_rect, slicedcucumber3_rect, 
+                        slicedavocado1_rect, slicedavocado2_rect, slicedavocado3_rect,
+                        slicedsalmon1_rect, slicedsalmon2_rect, slicedsalmon3_rect]
+
+
     #buttons
-    cucumber2_button = classes.ImageButton(340, 280, cucumber2_image, 1)
+    cucumber2_button = classes.ImageButton(350, 260, cucumbers[1], 0.7)
+    cucumber5_button = classes.ImageButton(350, 260, cucumbers[4], 0.7)
+    avocado1_button = classes.ImageButton(340, 215, avocados[0], 1)
+    avocado3_button = classes.ImageButton(340, 215, avocados[2], 1)
+    avocado7_button = classes.ImageButton(340, 215, avocados[6], 1)
+    salmon3_button = classes.ImageButton(330, 200, salmon3_image, 1)
+
+    back_button = classes.Button(770, 500, 70, 100, colours[3], False)
+    back_button.setUnactive()
+    back_text = classes.Text(785, 503, "-->", (255, 255, 255), 50)
 
     while cooking:
         for event in pygame.event.get(): #allows user to quit the window
@@ -1336,6 +1509,10 @@ def sushiGame(value, stack, visitedNodes, score, colours):
                     rects[cook].move_ip(event.rel)
 
         globalvariables.WIN.blit(gameBg_image, bgPosition)
+        globalvariables.WIN.blit(clock_image, (20, 10))
+        timer_box.drawBox()
+        counting_time = pygame.time.get_ticks() - start_time
+        timer_text.changeText(str( (counting_time/1000) ).zfill(2))
         if value == "Cooking 1":
             if cook <= 2:
                 globalvariables.WIN.blit(ricecooker_image, (525, 235))
@@ -1345,15 +1522,22 @@ def sushiGame(value, stack, visitedNodes, score, colours):
                         cook = cook + 1
                         active_ingredient = False
             if cook == 0:
+                ingredient_box.drawBox()
+                ingredients[4].changePosition(335, 103)
                 globalvariables.WIN.blit(rice_image, rice_rect)
             if cook == 1:
+                ingredient_box.drawBox()
+                ingredients[2].changePosition(365, 103)
                 globalvariables.WIN.blit(sushiseasoning_image, sushiseasoning_rect)
             if cook == 2:
-                value = "Cooking 2" #CHANGE THIS
+                value, stack, visitedNodes = treeTraversal("sushi", stack, visitedNodes)
         if value == "Cooking 2":
-            fill(True, water_colour, colours)
+            instruction_box.drawBox()
+            fillinstruction_text.drawText()
+            start_time, counting_time = fill(True, water_colour, colours, start_time, counting_time, timer_text, timer_box)
+            cooking = False
 
-
+        clock.tick(globalvariables.FPS)
         pygame.display.update()
     
     while assembly:
@@ -1369,29 +1553,187 @@ def sushiGame(value, stack, visitedNodes, score, colours):
                 if cucumber2Pressed == True and cucumber2Active == True:
                     cut = cut + 1
                     cucumber2_button.setUnactive()
+                cucumber5Pressed = cucumber5_button.checkPressed(pygame.mouse.get_pos())
+                cucumber5Active = cucumber5_button.getActive()
+                if cucumber5Pressed == True and cucumber5Active == True:
+                    cut = cut + 1
+                    cucumber5_button.setUnactive()
+                    value, stack, visitedNodes = treeTraversal("sushi", stack, visitedNodes)
+                avocado1Pressed = avocado1_button.checkPressed(pygame.mouse.get_pos())
+                avocado1Active = avocado1_button.getActive()
+                if avocado1Pressed == True and avocado1Active == True:
+                    cut = cut + 1
+                    avocado1_button.setUnactive()
+                avocado3Pressed = avocado3_button.checkPressed(pygame.mouse.get_pos())
+                avocado3Active = avocado3_button.getActive()
+                if avocado3Pressed == True and avocado3Active == True:
+                    cut = cut + 1
+                    avocado3_button.setUnactive()
+                avocado7Pressed = avocado7_button.checkPressed(pygame.mouse.get_pos())
+                avocado7Active = avocado7_button.getActive()
+                if avocado7Pressed == True and avocado7Active == True:
+                    cut = cut + 1
+                    avocado7_button.setUnactive()
+                    value, stack, visitedNodes = treeTraversal("sushi", stack, visitedNodes)
+                salmon3Pressed = salmon3_button.checkPressed(pygame.mouse.get_pos())
+                salmon3Active = salmon3_button.getActive()
+                if salmon3Pressed == True and salmon3Active == True:
+                    assemble = assemble + 1
+                    salmon3_button.setUnactive()
+                    value, stack, visitedNodes = treeTraversal("sushi", stack, visitedNodes)
+                backPressed = back_button.checkPressed(pygame.mouse.get_pos())
+                backActive = back_button.getActive()
+                if backPressed == True and backActive == False:
+                    assembly = False
+                    back_button.setActive()
+                
+                if event.button == 1 and backPressed == False:
+                    if ingredient_rects[addIngredient].collidepoint(event.pos):
+                        active_ingredient = True
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    active_ingredient = False
+            if event.type == pygame.MOUSEMOTION:
+                if active_ingredient:
+                    ingredient_rects[addIngredient].move_ip(event.rel)
+                
         
         globalvariables.WIN.blit(gameBg_image, bgPosition)
         globalvariables.WIN.blit(clock_image, (20, 10))
         timer_box.drawBox()
-        #game_ticks = pygame.time.get_ticks()
-        print((((pygame.time.get_ticks() - game_ticks) / 1000)))
-        timer_text.changeText(str(((pygame.time.get_ticks() - other_ticks) + game_ticks) / 1000))
+        counting_time = pygame.time.get_ticks() - start_time
+        timer_text.changeText(str( (counting_time/1000) ).zfill(2))
 
         if value == "Assembly 1":
             globalvariables.WIN.blit(cuttingBoard_image, (100, 170))
             if cut == 0:
-                globalvariables.WIN.blit(cucumbers[0], (340, 280))
-                globalvariables.WIN.blit(pygame.transform.scale(arrow2_image, (300, 200)), (400, 250))
-                other_ticks = draw(True, 591.0, 452.0, 547.0, 493.0, 550.0, 407.0, 317.0, 453.0, 0, timer_text, timer_box)
+                ingredient_box.drawBox()
+                ingredients[6].changePosition(385, 103)
+                globalvariables.WIN.blit(cucumbers[0], (350, 280))
+                instruction_box.drawBox()
+                drawinstruction_text.drawText()
+                globalvariables.WIN.blit(pygame.transform.scale(arrow2_image, (300, 200)), (340, 250))
+                start_time, counting_time = draw(True, 485.0, 407.0, 532.0, 454.0, 491.0, 493.0, 256.0, 449.0, start_time, counting_time, timer_text, timer_box)
                 cut = cut + 1
             elif cut == 1:
                 cucumber2_button.draw()
                 cucumber2_button.setActive()
             elif cut == 2:
-                globalvariables.WIN.blit(cucumbers[2], (340, 280))
-                globalvariables.WIN.blit(pygame.transform.scale(arrow2_image, (300, 200)), (400, 270))
-                other_ticks = draw(True, 349.0, 562.0, 392.0, 587.0, 431.0, 561.0, 387.0, 407.0, game_ticks, timer_text, timer_box)
+                globalvariables.WIN.blit(cucumbers[2], (350, 280))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow2_image, (300, 200)), (340, 270))
+                start_time, counting_time = draw(True, 529.0, 471.0, 487.0, 513.0, 491.0, 426.0, 259.0, 474.0, start_time, counting_time, timer_text, timer_box)
                 cut = cut + 1
+            elif cut == 3:
+                globalvariables.WIN.blit(cucumbers[3], (350, 280))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow2_image, (300, 200)), (340, 290))
+                start_time, counting_time = draw(True, 262.0, 489.0, 488.0, 535.0, 485.0, 447.0, 527.0, 493.0, start_time, counting_time, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 4:
+                cucumber5_button.draw()
+                cucumber5_button.setActive()
+        if value == "Assembly 2":
+            globalvariables.WIN.blit(cuttingBoard_image, (100, 170))
+            if cut == 5:
+                ingredient_box.drawBox()
+                ingredients[7].changePosition(385, 103)
+                avocado1_button.draw()
+                avocado1_button.setActive()
+            elif cut == 6:
+                globalvariables.WIN.blit(avocados[1], (360, 210))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (395, 220))
+                start_time, counting_time = draw(True, 352.0, 570.0, 393.0, 609.0, 441.0, 569.0, 390.0, 337.0, start_time, counting_time, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 7:
+                avocado3_button.draw()
+                avocado3_button.setActive()
+            elif cut == 8:
+                globalvariables.WIN.blit(avocados[3], (330, 220))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (325, 230))
+                start_time, counting_time = draw(True, 283.0, 583.0, 329.0, 621.0, 370.0, 579.0, 321.0, 348.0, start_time, counting_time, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 9:
+                globalvariables.WIN.blit(avocados[4], (330, 220))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (315, 230))
+                start_time, counting_time = draw(True, 314.0, 347.0, 277.0, 581.0, 316.0, 619.0, 363.0, 575.0, start_time, counting_time, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 10:
+                globalvariables.WIN.blit(avocados[5], (330, 220))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (285, 230))
+                start_time, counting_time = draw(True, 281.0, 347.0, 243.0, 580.0, 285.0, 619.0, 329.0, 578.0, start_time, counting_time, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 11:
+                avocado7_button.draw()
+                avocado7_button.setActive()
+        if value == "Assembly 3":
+            globalvariables.WIN.blit(cuttingBoard_image, (100, 170))
+            if cut == 12:
+                ingredient_box.drawBox()
+                ingredients[5].changePosition(385, 103)
+                globalvariables.WIN.blit(salmon1_image, (330, 200))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (345, 210))
+                start_time, counting_time = draw(True, 343.0, 329.0, 391.0, 556.0, 348.0, 605.0, 303.0, 558.0, start_time, counting_time, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 13:
+                globalvariables.WIN.blit(salmon2_image, (330, 200))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 300)), (405, 210))
+                start_time, counting_time = draw(True, 403.0, 329.0, 365.0, 559.0, 448.0, 559.0, 404.0, 601.0, start_time, counting_time, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 14:
+                salmon3_button.draw()
+                salmon3_button.setActive()
+        if value == "Assembly 4":
+            if assemble == 1:
+                ingredient_box.changeY(60)
+                ingredient_box.drawBox()
+                ingredients[1].changePosition(335, 63)
+                globalvariables.WIN.blit(seaweeds[0], (200, 100))
+                start_time, counting_time = draw(True, 537.0, 643.0, 167.0, 645.0, 539.0, 309.0, 166.0, 309.0, start_time, counting_time, timer_text, timer_box)
+                assemble = assemble + 1
+            elif assemble == 2:
+                if addIngredient <= 9:
+                    if active_ingredient:
+                        mx, my = pygame.mouse.get_pos()
+                        if 200 <= mx + 190 <= (200 + seaweed_width) and 100 + 50 <= my + 190 <= (100 + seaweed_height):
+                            addIngredient = addIngredient + 1
+                            active_ingredient = False
+
+                if addIngredient == 0:
+                    globalvariables.WIN.blit(seaweeds[1], (200, 100))
+                    globalvariables.WIN.blit(slicedcucumber_image, slicedcucumber1_rect)
+                elif addIngredient == 1:
+                    globalvariables.WIN.blit(seaweeds[2], (200, 100))
+                    globalvariables.WIN.blit(slicedcucumber_image, slicedcucumber2_rect)
+                elif addIngredient == 2:
+                    globalvariables.WIN.blit(seaweeds[3], (200, 100))
+                    globalvariables.WIN.blit(slicedcucumber_image, slicedcucumber3_rect)
+
+                elif addIngredient == 3:
+                    globalvariables.WIN.blit(seaweeds[4], (200, 100))
+                    globalvariables.WIN.blit(slicedavocado_image, slicedavocado1_rect)
+                elif addIngredient == 4:
+                    globalvariables.WIN.blit(seaweeds[5], (200, 100))
+                    globalvariables.WIN.blit(slicedavocado_image, slicedavocado2_rect)
+                elif addIngredient == 5:
+                    globalvariables.WIN.blit(seaweeds[6], (200, 100))
+                    globalvariables.WIN.blit(slicedavocado_image, slicedavocado3_rect)
+
+                elif addIngredient == 6:
+                    globalvariables.WIN.blit(seaweeds[7], (200, 100))
+                    globalvariables.WIN.blit(slicedsalmon_image, slicedsalmon1_rect)
+                elif addIngredient == 7:
+                    globalvariables.WIN.blit(seaweeds[8], (200, 100))
+                    globalvariables.WIN.blit(slicedsalmon_image, slicedsalmon2_rect)
+                elif addIngredient == 8:
+                    globalvariables.WIN.blit(seaweeds[9], (200, 100))
+                    globalvariables.WIN.blit(slicedsalmon_image, slicedsalmon3_rect)
+                
+                elif addIngredient == 9:
+                    globalvariables.WIN.blit(seaweeds[10], (200, 100))
+                    back_button.drawBox()
+                    back_text.drawText()
+                
+        clock.tick(globalvariables.FPS)
+        pygame.display.update()
     
     while cutting:
         for event in pygame.event.get(): #allows user to quit the window
@@ -1399,17 +1741,57 @@ def sushiGame(value, stack, visitedNodes, score, colours):
                 pygame.quit()
                 sys.exit()
                 break
-
-
-
-
-
-
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                backPressed = back_button.checkPressed(pygame.mouse.get_pos())
+                backActive = back_button.getActive()
+                if backPressed == True and backActive == False:
+                    cutting = False
+                    back_button.setActive()
+        
+        globalvariables.WIN.blit(gameBg_image, bgPosition)
+        globalvariables.WIN.blit(clock_image, (20, 10))
+        timer_box.drawBox()
+        counting_time = pygame.time.get_ticks() - start_time
+        timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
+        
+        if value == "Cutting 1":
+            globalvariables.WIN.blit(pygame.transform.scale(cuttingBoard_image, (1100, 400)), (-200, 150))
+            if cut == 0:
+                globalvariables.WIN.blit(sushirolls[0], (130, 280))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 250)), (510, 230))
+                start_time, counting_time = draw(True, 508.0, 344.0, 551.0, 536.0, 509.0, 573.0, 467.0, 537.0, start_time, counting_time, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 1:
+                globalvariables.WIN.blit(sushirolls[1], (130, 280))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 250)), (560, 230))
+                start_time, counting_time = draw(True, 559.0, 345.0, 605.0, 539.0, 558.0, 574.0, 517.0, 538.0, start_time, counting_time, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 2:
+                globalvariables.WIN.blit(sushirolls[2], (130, 280))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 250)), (610, 230))
+                start_time, counting_time = draw(True, 607.0, 349.0, 653.0, 535.0, 573.0, 543.0, 605.0, 567.0, start_time, counting_time, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 3:
+                globalvariables.WIN.blit(sushirolls[3], (130, 280))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 250)), (640, 230))
+                start_time, counting_time = draw(True, 638.0, 351.0, 686.0, 535.0, 638.0, 572.0, 599.0, 539.0, start_time, counting_time, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 4:
+                globalvariables.WIN.blit(sushirolls[4], (130, 280))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 250)), (670, 230))
+                start_time, counting_time = draw(True, 667.0, 339.0, 711.0, 540.0, 665.0, 575.0, 629.0, 537.0, start_time, counting_time, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 5:
+                globalvariables.WIN.blit(sushirolls[5], (130, 280))
+                globalvariables.WIN.blit(pygame.transform.scale(arrow3_image, (200, 250)), (700, 230))
+                start_time, counting_time = draw(True, 699.0, 344.0, 745.0, 537.0, 699.0, 573.0, 657.0, 537.0, start_time, counting_time, timer_text, timer_box)
+                cut = cut + 1
+            elif cut == 6:
+                globalvariables.WIN.blit(sushirolls[6], (130, 280))
+                back_button.drawBox()
+                back_text.drawText()
+        
+        clock.tick(globalvariables.FPS)
+        pygame.display.update()
     
-
-
-
-
-
-
-
+    return value, stack, visitedNodes
