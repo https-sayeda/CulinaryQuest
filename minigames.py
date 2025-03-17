@@ -739,7 +739,7 @@ def seasoning(seasoning, image, image_x, image_y, image_width, image_height, sea
         pygame.display.update()
     return start_time, counting_time
 
-def burgerGame(value, stack, visitedNodes, score, colours, ingredients):
+def burgerGame(value, stack, visitedNodes, score, burgerScore, colours, ingredients, startingScreen):
 
     #the steps are initially set to false
     frying = False
@@ -768,10 +768,10 @@ def burgerGame(value, stack, visitedNodes, score, colours, ingredients):
     #variables
     start_time = pygame.time.get_ticks()
     clock = pygame.time.Clock()
-    other_ticks = 0
     cut = 0
     fry = 0
     mix = 0
+    counting_time = 0
 
     #text object
     timer_text = classes.Text(152, 47, "00.00", (255, 255, 255), 24)
@@ -790,8 +790,9 @@ def burgerGame(value, stack, visitedNodes, score, colours, ingredients):
     onioncut3_button = classes.ImageButton(340, 210, onions[3], 1)
     onioncut4_9_button = classes.ImageButton(340, 210, onions[13], 1)
     dicedonion_button = classes.ImageButton(340, 210, onions[14], 1)
+    dicedonion2_button = classes.ImageButton(250, 230, onions[14], 1)
     oilBottle_button = classes.ImageButton(720, 280, oilBottle_image, 2.5)
-    offbutton_button = classes.ImageButton(720, 280, offbutton_image, 1)
+    offbutton_button = classes.ImageButton(720, 280, offbutton_image, 0.4)
     burgerPatty_button = classes.ImageButton(150, 350, burgerPatty_image, 1)
     cookedPatty_button = classes.ImageButton(250, 300, cookedPatty_image, 1)
 
@@ -826,7 +827,7 @@ def burgerGame(value, stack, visitedNodes, score, colours, ingredients):
                     fry = fry + 1
                     value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
                     cut = cut + 1
-                elif dicedonionPressed == True and value == "Frying 3" and dicedonionActive == False:
+                if dicedonionPressed == True and value == "Frying 3" and dicedonionActive == False:
                     fry = fry + 1
                     start_ticks = pygame.time.get_ticks()
                     value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
@@ -839,14 +840,14 @@ def burgerGame(value, stack, visitedNodes, score, colours, ingredients):
                     start_ticks = pygame.time.get_ticks()
                     oilBottle_button.setActive() 
                 offbuttonPressed = offbutton_button.checkPressed(pygame.mouse.get_pos())
-                if offbuttonPressed == True and value == "Frying 4":
+                if offbuttonPressed == True and value == "Frying 4" and dicedonionActive == True:
                     frying = False
         
         globalvariables.WIN.blit(gameBg_image, bgPosition)
         globalvariables.WIN.blit(clock_image, (20, 10))
         timer_box.drawBox()
         counting_time = pygame.time.get_ticks() - start_time
-        timer_text.changeText(str( (counting_time/1000) ).zfill(2))
+        timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
 
         if value == "Frying 1":
             globalvariables.WIN.blit(cuttingBoard_image, (100, 170))
@@ -935,14 +936,11 @@ def burgerGame(value, stack, visitedNodes, score, colours, ingredients):
                 seconds = ((pygame.time.get_ticks() - start_ticks) / 1000)
                 if seconds > 7.0:
                     dicedonion_button.changePosition(720, 280)
-                    print(value)
-            if fry == 3:
-                dicedonion_button.changePosition(150, 160)
         
         if value == "Frying 4":
             globalvariables.WIN.blit(cooker_image, (180, 190))
             globalvariables.WIN.blit(fryingPanOil_image, (-50, 60))
-            dicedonion_button.changePosition(250, 300)
+            dicedonion2_button.draw()
             if fry == 3:
                 seconds = ((pygame.time.get_ticks() - start_ticks) / 1000)
                 if seconds > 10.0:
@@ -952,6 +950,17 @@ def burgerGame(value, stack, visitedNodes, score, colours, ingredients):
 
         pygame.display.update()
     
+    if value == "Frying 4":
+        if int(counting_time / 1000) <= 90:
+            burgerScore.append(100)
+        elif int(counting_time / 1000) <= 120:
+            burgerScore.append(70)
+        elif int(counting_time / 1000) >= 150:
+            burgerScore.append(50)
+        score = score + burgerScore[0]
+        print(burgerScore)
+        print(int(counting_time / 1000))
+
     while mixing:
         for event in pygame.event.get(): #allows user to quit the window
             if event.type == pygame.QUIT:
@@ -973,7 +982,7 @@ def burgerGame(value, stack, visitedNodes, score, colours, ingredients):
         globalvariables.WIN.blit(clock_image, (20, 10))
         timer_box.drawBox()
         counting_time = pygame.time.get_ticks() - start_time
-        timer_text.changeText(str( (counting_time/1000) ).zfill(2))
+        timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
         if value == "Mixing 1":
             ingredient_box.drawBox()
             ingredients[3].changePosition(305, 103)
@@ -1013,6 +1022,16 @@ def burgerGame(value, stack, visitedNodes, score, colours, ingredients):
     nextPatty = True 
     shaped = 0
 
+    if value == "Mixing 4":
+        print(int(counting_time /1000))
+        if 0 <= int(counting_time / 1000) <= 60:
+            burgerScore.append(100)
+        elif 61 <= int(counting_time / 1000) <= 90:
+            burgerScore.append(70)
+        elif int(counting_time / 1000) >= 91:
+            burgerScore.append(50)
+        score = score + burgerScore[1]
+
     while shaping:
 
         for event in pygame.event.get(): #allows user to quit the window
@@ -1030,7 +1049,7 @@ def burgerGame(value, stack, visitedNodes, score, colours, ingredients):
         globalvariables.WIN.blit(clock_image, (20, 10))
         timer_box.drawBox()
         counting_time = pygame.time.get_ticks() - start_time
-        timer_text.changeText(str( (counting_time/1000) ).zfill(2))
+        timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
         if value == "Shaping 1":
             if nextPatty:
                 instruction_box.drawBox()
@@ -1046,6 +1065,15 @@ def burgerGame(value, stack, visitedNodes, score, colours, ingredients):
         pygame.display.update()
 
     grilled = 0
+
+    if value == "Shaping 1":
+        if 0 <= int(counting_time / 1000) <= 30:
+            burgerScore.append(100)
+        elif 31 <= int(counting_time / 1000) <= 60:
+            burgerScore.append(70)
+        elif int(counting_time / 1000) >= 60:
+            burgerScore.append(50)
+        score = score + burgerScore[2]
     
     while grilling:
         for event in pygame.event.get(): #allows user to quit the window
@@ -1066,7 +1094,7 @@ def burgerGame(value, stack, visitedNodes, score, colours, ingredients):
         globalvariables.WIN.blit(clock_image, (20, 10))
         timer_box.drawBox()
         counting_time = pygame.time.get_ticks() - start_time
-        timer_text.changeText(str( (counting_time/1000) ).zfill(2))
+        timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
         if value == "Grilling 1":
             if nextPatty:
                 flip(True, 700, 10, [cooker_image, fryingPan_image, burgerPatty_image], [(180, 190), (-50, 60), (250, 300)], start_time, counting_time, timer_text, timer_box)
@@ -1080,6 +1108,15 @@ def burgerGame(value, stack, visitedNodes, score, colours, ingredients):
         
         clock.tick(globalvariables.FPS)
         pygame.display.update()
+
+    if value == "Grilling 1":
+        if 0 <= int(counting_time / 1000) <= 60:
+            burgerScore.append(100)
+        elif 61 <= int(counting_time / 1000) <= 90:
+            burgerScore.append(70)
+        elif int(counting_time / 1000) >= 90:
+            burgerScore.append(50)
+        score = score + burgerScore[3]
     
     while assembly:
 
@@ -1090,14 +1127,24 @@ def burgerGame(value, stack, visitedNodes, score, colours, ingredients):
                 break
                 
         if value == "Assembly 1":
-            start_time, counting_time = recipeAssembly(True, "burger", colours)
+            start_time, counting_time = recipeAssembly(True, "burger", colours, start_time, counting_time, timer_text, timer_box)
             assembly = False
         clock.tick(globalvariables.FPS)
         pygame.display.update()
 
-    return value, stack, visitedNodes
+    if value == "Assembly 1":
+        if 0 <= int(counting_time / 1000) <= 90:
+            burgerScore.append(100)
+        elif 91 <= int(counting_time / 1000) <= 120:
+            burgerScore.append(70)
+        elif int(counting_time / 1000) >= 120:
+            burgerScore.append(50)
+        score = ((score + burgerScore[4]) // 5)
+        startingScreen = False
 
-def cakeGame(value, stack, visitedNodes, score, colours, ingredients):
+    return value, stack, visitedNodes, burgerScore, score, startingScreen
+
+def cakeGame(value, stack, visitedNodes, score, cakeScore, colours, ingredients, startingScreen):
     mixing = False
     baking = False
     frosting = False
@@ -1157,6 +1204,7 @@ def cakeGame(value, stack, visitedNodes, score, colours, ingredients):
     timer_box = classes.Box(150, 45, 30, 60, colours[5], False)
     start_time = pygame.time.get_ticks()
     clock = pygame.time.Clock()
+    counting_time = 0
 
     active_ingredient = False
     caketin_filled1_rect = caketin_filled_image.get_rect()
@@ -1190,7 +1238,7 @@ def cakeGame(value, stack, visitedNodes, score, colours, ingredients):
         globalvariables.WIN.blit(clock_image, (20, 10))
         timer_box.drawBox()
         counting_time = pygame.time.get_ticks() - start_time
-        timer_text.changeText(str( (counting_time/1000) ).zfill(2))
+        timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
         if value == "Mixing 1":
             if mix <= 13:
                 globalvariables.WIN.blit(mixingBowl_image, (575, 265))
@@ -1254,6 +1302,15 @@ def cakeGame(value, stack, visitedNodes, score, colours, ingredients):
         clock.tick(globalvariables.FPS)
         pygame.display.update()
     
+    if value == "Mixing 1":
+        if 0 <= int(counting_time / 1000) <= 60:
+            cakeScore.append(100)
+        elif 61 <= int(counting_time / 1000) <= 90:
+            cakeScore.append(70)
+        elif int(counting_time / 1000) >= 90:
+            cakeScore.append(50)
+        score = score + cakeScore[0]
+
     while baking:
         for event in pygame.event.get(): #allows user to quit the window
             if event.type == pygame.QUIT:
@@ -1283,7 +1340,7 @@ def cakeGame(value, stack, visitedNodes, score, colours, ingredients):
         globalvariables.WIN.blit(clock_image, (20, 10))
         timer_box.drawBox()
         counting_time = pygame.time.get_ticks() - start_time
-        timer_text.changeText(str( (counting_time/1000) ).zfill(2))
+        timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
         
         if value == "Baking 1":
             caketin_button.draw()
@@ -1296,7 +1353,7 @@ def cakeGame(value, stack, visitedNodes, score, colours, ingredients):
                 caketin_button.draw()
             if filling == 3:
                 start_time, counting_time = fill(True, cakebatter_colour, colours, start_time, counting_time, timer_text, timer_box)
-                value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
+                value, stack, visitedNodes = treeTraversal("cake", stack, visitedNodes)
                 bake = bake + 1
         if value == "Baking 2" :
             if bake == 1 or bake == 2 or bake == 3:
@@ -1325,6 +1382,15 @@ def cakeGame(value, stack, visitedNodes, score, colours, ingredients):
 
     frosting_rects = [butter_rect, sugar_rect, vanilla_extract_rect, milk_rect]
 
+    if value == "Baking 2":
+        if 0 <= int(counting_time / 1000) <= 30:
+            cakeScore.append(100)
+        elif 31 <= int(counting_time / 1000) <= 60:
+            cakeScore.append(70)
+        elif int(counting_time / 1000) >= 90:
+            cakeScore.append(50)
+        score = score + cakeScore[1]
+
     while frosting:
         for event in pygame.event.get(): #allows user to quit the window
             if event.type == pygame.QUIT:
@@ -1346,7 +1412,7 @@ def cakeGame(value, stack, visitedNodes, score, colours, ingredients):
             globalvariables.WIN.blit(clock_image, (20, 10))
             timer_box.drawBox()
             counting_time = pygame.time.get_ticks() - start_time
-            timer_text.changeText(str( (counting_time/1000) ).zfill(2))
+            timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
             if value == "Frosting 1":
                 if mix <= 4:
                     globalvariables.WIN.blit(mixingBowl_image, (575, 265))
@@ -1378,6 +1444,15 @@ def cakeGame(value, stack, visitedNodes, score, colours, ingredients):
             clock.tick(globalvariables.FPS)
             pygame.display.update()
     
+    if value == "Frosting 1":
+        if 0 <= int(counting_time / 1000) <= 30:
+            cakeScore.append(100)
+        elif 31 <= int(counting_time / 1000) <= 60:
+            cakeScore.append(70)
+        elif int(counting_time / 1000) >= 90:
+            cakeScore.append(50)
+        score = score + cakeScore[2]
+
     while decorating:
         for event in pygame.event.get(): #allows user to quit the window
             if event.type == pygame.QUIT:
@@ -1387,22 +1462,22 @@ def cakeGame(value, stack, visitedNodes, score, colours, ingredients):
         
         if value == "Decoration 1":
             start_time, counting_time = recipeAssembly(True, "cake", colours, start_time, counting_time, timer_text, timer_box)
-            value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
+            value, stack, visitedNodes = treeTraversal("cake", stack, visitedNodes)
         if value == "Decoration 2":
             globalvariables.WIN.blit(gameBg_image, bgPosition)
             globalvariables.WIN.blit(clock_image, (20, 10))
             timer_box.drawBox()
             counting_time = pygame.time.get_ticks() - start_time
-            timer_text.changeText(str( (counting_time/1000) ).zfill(2))
+            timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
             globalvariables.WIN.blit(assembledcake_image, (300, 200))
             start_time, counting_time = draw(True, 401.0, 656.0, 233.0, 521.0, 565.0, 518.0, 399.0, 329.0, start_time, counting_time, timer_text, timer_box)
-            value, stack, visitedNodes = treeTraversal("burger", stack, visitedNodes)
+            value, stack, visitedNodes = treeTraversal("cake", stack, visitedNodes)
         if value == "Decoration 3":
             globalvariables.WIN.blit(gameBg_image, bgPosition)
             globalvariables.WIN.blit(clock_image, (20, 10))
             timer_box.drawBox()
             counting_time = pygame.time.get_ticks() - start_time
-            timer_text.changeText(str( (counting_time/1000) ).zfill(2))
+            timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
             globalvariables.WIN.blit(frostedcake_image, (300, 200))
             start_time, counting_time = seasoning(True, frostedcake_image, 300, 200, 400, 400, "sprinkles", start_time, counting_time, timer_text, timer_box)
             decorating = False
@@ -1411,9 +1486,19 @@ def cakeGame(value, stack, visitedNodes, score, colours, ingredients):
         clock.tick(globalvariables.FPS)
         pygame.display.update()
 
-    return value, stack, visitedNodes
+    if value == "Decorating 3":
+        if 0 <= int(counting_time / 1000) <= 60:
+            cakeScore.append(100)
+        elif 61 <= int(counting_time / 1000) <= 90:
+            cakeScore.append(70)
+        elif int(counting_time / 1000) >= 90:
+            cakeScore.append(50)
+        score = (score + cakeScore[3]) // 5
+        startingScreen = False
 
-def sushiGame(value, stack, visitedNodes, score, colours, ingredients):
+    return value, stack, visitedNodes, cakeScore, score, startingScreen
+
+def sushiGame(value, stack, visitedNodes, score, sushiScore, colours, ingredients, startingScreen):
 
     cooking = False
     assembly = False
@@ -1438,6 +1523,7 @@ def sushiGame(value, stack, visitedNodes, score, colours, ingredients):
     timer_box = classes.Box(150, 45, 30, 60, colours[5], False)
     start_time = pygame.time.get_ticks()
     clock = pygame.time.Clock()
+    counting_time = 0
 
     cook = 0
     cut = 0
@@ -1512,7 +1598,7 @@ def sushiGame(value, stack, visitedNodes, score, colours, ingredients):
         globalvariables.WIN.blit(clock_image, (20, 10))
         timer_box.drawBox()
         counting_time = pygame.time.get_ticks() - start_time
-        timer_text.changeText(str( (counting_time/1000) ).zfill(2))
+        timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
         if value == "Cooking 1":
             if cook <= 2:
                 globalvariables.WIN.blit(ricecooker_image, (525, 235))
@@ -1540,6 +1626,15 @@ def sushiGame(value, stack, visitedNodes, score, colours, ingredients):
         clock.tick(globalvariables.FPS)
         pygame.display.update()
     
+    if value == "Cooking 2":
+        if 0 <= int(counting_time / 1000) <= 20:
+            sushiScore.append(100)
+        elif 21 <= int(counting_time / 1000) <= 30:
+            sushiScore.append(70)
+        elif int(counting_time / 1000) >= 40:
+            sushiScore.append(50)
+        score = score + sushiScore[0]
+
     while assembly:
         for event in pygame.event.get(): #allows user to quit the window
             if event.type == pygame.QUIT:
@@ -1602,7 +1697,7 @@ def sushiGame(value, stack, visitedNodes, score, colours, ingredients):
         globalvariables.WIN.blit(clock_image, (20, 10))
         timer_box.drawBox()
         counting_time = pygame.time.get_ticks() - start_time
-        timer_text.changeText(str( (counting_time/1000) ).zfill(2))
+        timer_text.changeText(str( int(counting_time/1000) ).zfill(2))
 
         if value == "Assembly 1":
             globalvariables.WIN.blit(cuttingBoard_image, (100, 170))
@@ -1735,6 +1830,16 @@ def sushiGame(value, stack, visitedNodes, score, colours, ingredients):
         clock.tick(globalvariables.FPS)
         pygame.display.update()
     
+    if value == "Assembly 4":
+        if 0 <= int(counting_time / 1000) <= 90:
+            sushiScore.append(100)
+        elif 21 <= int(counting_time / 1000) <= 120:
+            sushiScore.append(70)
+        elif int(counting_time / 1000) >= 150:
+            sushiScore.append(50)
+        score = score + sushiScore[1]
+
+
     while cutting:
         for event in pygame.event.get(): #allows user to quit the window
             if event.type == pygame.QUIT:
@@ -1794,4 +1899,15 @@ def sushiGame(value, stack, visitedNodes, score, colours, ingredients):
         clock.tick(globalvariables.FPS)
         pygame.display.update()
     
-    return value, stack, visitedNodes
+    if value == "Cutting 1":
+        if 0 <= int(counting_time / 1000) <= 30:
+            sushiScore.append(100)
+        elif 21 <= int(counting_time / 1000) <= 40:
+            sushiScore.append(70)
+        elif int(counting_time / 1000) >= 60:
+            sushiScore.append(50)
+        score = (score + sushiScore[2] //5)
+        startingScreen = False
+
+
+    return value, stack, visitedNodes, sushiScore, score, startingScreen

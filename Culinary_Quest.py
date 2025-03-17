@@ -1541,6 +1541,9 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
     score = 0
     value = ""
     minigame = False
+    burgerScore = []
+    cakeScore = []
+    sushiScore = []
 
     if theme_selected == "theme1": #changes the colours of the boxes and buttons depending on the theme that has been chosen
             colours = [main_lightPurple1, main_lightPurple2, main_darkPurple1, main_darkPurple2, main_darkPurple3, main_brightPurple]
@@ -1582,11 +1585,21 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
     completed3_text = classes.Text(610, 313, "Completed", white, 24)
     completed4_text = classes.Text(610, 393, "Completed", white, 24)
 
-
     exitMessage1_text = classes.Text(285, 172, "Are you sure you want to exit?", white, 35)
     exitMessage2_text = classes.Text(330, 212, "Your progress will not save.", white, 30)
     exitYes_text = classes.Text(347, 292, "Yes", (100, 0, 0), 24)
     exitNo_text = classes.Text(637, 292, "No", (100, 0, 0), 24)
+
+    score1_text = classes.Text(615, 153, "", white, 24)
+    score2_text = classes.Text(615, 233, "", white, 24)
+    score3_text = classes.Text(615, 313, "", white, 24)
+    score4_text = classes.Text(615, 393, "", white, 24)
+    score5_text = classes.Text(615, 473, "", white, 24)
+
+    scores_text = [score1_text, score2_text, score3_text, score4_text, score5_text]
+
+    totalScoreLabel_text = classes.Text(765, 233, "Total Score :", white, 24)
+    totalScore_text = classes.Text(765, 263, "", white, 24)
 
     #boxes
     recipeLabel_box = classes.Box(410, 50, 40, 200, colours[5], False)
@@ -1601,6 +1614,8 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
     start4_box = classes.Box(550, 390, 40, 200, colours[2], False)
     start5_box = classes.Box(550, 470, 40, 200, colours[2], False)
     exitMessage_box = classes.Box(260, 150, 200, 500, login_red1, False)
+    totalScoreLabel_box = classes.Box(760, 230, 40, 200, colours[1], False)
+    totalScore_box = classes.Box(760, 260, 40, 200, colours[1], False)
 
 
     #buttons
@@ -1690,7 +1705,6 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
                 gameLabel4_burger_text.drawText()
                 gameLabel5_burger_text.drawText()
                 
-                print(value)
                 if value == "Frying":
                     start1_button.drawBox()
                     start_text.drawText()
@@ -1795,18 +1809,67 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
                 exitYes_text.drawText()
                 exitNo_button.drawBox()
                 exitNo_text.drawText()
+        else:
+            recipeLabel_box.drawBox()
+            gameLabel1_box.drawBox()
+            gameLabel2_box.drawBox()
+            gameLabel3_box.drawBox()
+            start1_box.drawBox()
+            start2_box.drawBox()
+            start3_box.drawBox()
+            totalScoreLabel_box.drawBox()
+            totalScoreLabel_text.drawText()
+            totalScore_box.drawBox()
+            if recipeChosen == "burger":
+                burgerLabel_text.drawText()
+                gameLabel4_box.drawBox()
+                gameLabel5_box.drawBox()
+                start4_box.drawBox()
+                start5_box.drawBox()
+                gameLabel1_burger_text.drawText()
+                gameLabel2_burger_text.drawText()
+                gameLabel3_burger_text.drawText()
+                gameLabel4_burger_text.drawText()
+                gameLabel5_burger_text.drawText()
+                for i in range(len(recipeScore)):
+                    scores_text[i] = classes.Text(615, 153 + (80*i), str(recipeScore[i]) + "%", white, 24)
+                    scores_text[i].drawText()
+                totalScore_text.changeText(str(score) + "%")
+            elif recipeChosen == "cake":
+                cakeLabel_text.drawText()
+                gameLabel4_box.drawBox()
+                start4_box.drawBox()
+                gameLabel1_cake_text.drawText()
+                gameLabel2_cake_text.drawText()
+                gameLabel3_cake_text.drawText()
+                gameLabel4_cake_text.drawText()
+                for i in range(len(recipeScore)):
+                    scores_text[i] = classes.Text(615, 153, str(recipeScore[i]) + "%", white, 24)
+                    scores_text[i].drawText()
+                totalScore_text.changeText(str(score) + "%")
+            elif recipeChosen == "sushi":
+                sushiLabel_text.drawText()
+                gameLabel1_sushi_text.drawText()
+                gameLabel2_sushi_text.drawText()
+                gameLabel3_sushi_text.drawText()
+                for i in range(len(recipeScore)):
+                    scores_text[i] = classes.Text(615, 153, str(recipeScore[i]) + "%", white, 24)
+                    scores_text[i].drawText()
+                totalScore_text.changeText(str(score) + "%")
+                
+                
 
         if minigame:
             if recipeChosen == "burger":
-                value, stack, visitedNodes = minigames.burgerGame(value, stack, visitedNodes, score, colours, ingredients)
+                value, stack, visitedNodes, recipeScore, score, startingScreen = minigames.burgerGame(value, stack, visitedNodes, score, burgerScore, colours, ingredients, startingScreen)
                 flag = True
                 minigame = False
             elif recipeChosen == "cake":
-                value, stack, visitedNodes = minigames.cakeGame(value, stack, visitedNodes, score,  colours, ingredients)
+                value, stack, visitedNodes, recipeScore, score, startingScreen = minigames.cakeGame(value, stack, visitedNodes, score,  cakeScore, colours, ingredients, startingScreen)
                 flag = True
                 minigame = False
             elif recipeChosen == "sushi":
-                value, stack, visitedNodes = minigames.sushiGame(value, stack, visitedNodes, score, colours, ingredients)
+                value, stack, visitedNodes, recipeScore, score, startingScreen = minigames.sushiGame(value, stack, visitedNodes, score, sushiScore, colours, ingredients, startingScreen)
                 flag = True
                 minigame = False
 
