@@ -1020,6 +1020,8 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
     elif theme_selected == "theme2":
         colours = [main_lightOrange1, main_lightOrange2, main_darkOrange1, main_darkOrange2, main_darkOrange3, main_brightOrange]
         mainBg_image = main2Bg_image
+
+    ingredients = []
     
     #scaling images
     scaled_gameLogo = pygame.transform.scale(gameLogo_image, (125, 125))
@@ -1061,6 +1063,7 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
     fullRecipe_text = classes.Text(205, 377, "Full Recipe", white, 22)
     description_text = classes.Text(205, 422, "Description", white, 22)
     start_text = classes.Text(485, 422, "Start", white, 22)
+    NA_text = classes.Text(505, 422, "N/A", white, 22)
     exit_text = classes.Text(717, 86, "X", white, 30)
     recipePageR_text = classes.Text(695, 540, ">", white, 27)
     recipePageL_text = classes.Text(320, 540, "<", white, 27)
@@ -1386,6 +1389,7 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
 
         #displaying depending on the recipe that was chosen
         if recipeChosen == "burger":
+            start_text.drawText()
             burgerLabel_text.drawText()
             globalvariables.WIN.blit(scaled_burger, (380, 180))
             globalvariables.WIN.blit(scaled_halal, (150, 247))
@@ -1397,6 +1401,7 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
             burgerDescription3_text.drawText()
             burgerDescription4_text.drawText()
         elif recipeChosen == "cake":
+            start_text.drawText()
             cakeLabel_text.drawText()
             globalvariables.WIN.blit(scaled_cake, (420, 210))
             globalvariables.WIN.blit(scaled_halal, (190, 247))
@@ -1407,6 +1412,7 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
             cakeDescription3_text.drawText()
             cakeDescription4_text.drawText()
         elif recipeChosen == "sushi":
+            start_text.drawText()
             sushiLabel_text.drawText()
             globalvariables.WIN.blit(scaled_sushi, (420, 210))
             globalvariables.WIN.blit(scaled_halal, (230, 247))
@@ -1416,6 +1422,7 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
             sushiDescription3_text.drawText()
             sushiDescription4_text.drawText()
         elif recipeChosen == "cheese fondue":
+            NA_text.drawText()
             cheeseFondueLabel_text.drawText()
             globalvariables.WIN.blit(scaled_cheeseFondue, (420, 220))
             globalvariables.WIN.blit(scaled_vegetarian, (230, 247))
@@ -1425,6 +1432,7 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
             cheeseFondueDescription3_text.drawText()
             cheeseFondueDescription4_text.drawText()
         elif recipeChosen == "croissant":
+            NA_text.drawText()
             croissantLabel_text.drawText()
             globalvariables.WIN.blit(scaled_croissant, (420, 220))
             globalvariables.WIN.blit(scaled_halal, (190, 247))
@@ -1435,6 +1443,7 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
             croissantDescription3_text.drawText()
             croissantDescription4_text.drawText()
         elif recipeChosen == "tofu":
+            NA_text.drawText()
             tofuLabel_text.drawText()
             globalvariables.WIN.blit(scaled_tofu, (420, 220))
             globalvariables.WIN.blit(scaled_halal, (150, 247))
@@ -1551,6 +1560,11 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
     elif theme_selected == "theme2":
         colours = [main_lightOrange1, main_lightOrange2, main_darkOrange1, main_darkOrange2, main_darkOrange3, main_brightOrange]
         gameBg_image = gameBg_image
+    
+    #images
+    scaled_burger = pygame.transform.scale(burgerIcon_image, (250, 250))
+    scaled_cake = pygame.transform.scale(cakeIcon_image, (170, 170))
+    scaled_sushi = pygame.transform.scale(sushiIcon_image, (170, 170))
 
     #text
     back_text = classes.Text(80, 55, "<--", white, 50)
@@ -1598,8 +1612,10 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
 
     scores_text = [score1_text, score2_text, score3_text, score4_text, score5_text]
 
-    totalScoreLabel_text = classes.Text(765, 233, "Total Score :", white, 24)
-    totalScore_text = classes.Text(765, 263, "", white, 24)
+    totalScoreLabel_text = classes.Text(795, 153, "Total Score :", white, 24)
+    totalScore_text = classes.Text(855, 183, "", white, 24)
+
+    finished_text = classes.Text(785, 503, "-->", (255, 255, 255), 50)
 
     #boxes
     recipeLabel_box = classes.Box(410, 50, 40, 200, colours[5], False)
@@ -1614,8 +1630,8 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
     start4_box = classes.Box(550, 390, 40, 200, colours[2], False)
     start5_box = classes.Box(550, 470, 40, 200, colours[2], False)
     exitMessage_box = classes.Box(260, 150, 200, 500, login_red1, False)
-    totalScoreLabel_box = classes.Box(760, 230, 40, 200, colours[1], False)
-    totalScore_box = classes.Box(760, 260, 40, 200, colours[1], False)
+    totalScoreLabel_box = classes.Box(760, 150, 40, 200, colours[1], False)
+    totalScore_box = classes.Box(760, 180, 40, 200, colours[1], False)
 
 
     #buttons
@@ -1627,6 +1643,7 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
     start5_button = classes.Button(550, 470, 40, 200, colours[2], False)
     exitYes_button = classes.Button(320, 290, 40, 100, white, False)
     exitNo_button = classes.Button(610, 290, 40, 100, white, False)
+    finished_button = classes.Button(770, 500, 70, 100, colours[3], False)
 
 
     while minigameLoop:
@@ -1673,12 +1690,17 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
                     start5Active = start5_button.getActive()
                     if start5Pressed == True and start5Active == False:
                         minigame = True
+                else:
+                    finishedPressed = finished_button.checkPressed(pygame.mouse.get_pos())
+                    if finishedPressed == True:
+                        minigameLoop = False
+                        recipeLoop = True
 
         #tree traversal
         if flag:
             value, stack, visitedNodes = minigames.treeTraversal(recipeChosen, stack, visitedNodes)
             flag = False
-        #print(value)
+
         #displaying onto the screen
         globalvariables.WIN.blit(gameBg_image, bgPosition)
 
@@ -1831,8 +1853,11 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
                 gameLabel3_burger_text.drawText()
                 gameLabel4_burger_text.drawText()
                 gameLabel5_burger_text.drawText()
+                globalvariables.WIN.blit(scaled_burger, (60, 150))
+                finished_button.drawBox()
+                finished_text.drawText()
                 for i in range(len(recipeScore)):
-                    scores_text[i] = classes.Text(615, 153 + (80*i), str(recipeScore[i]) + "%", white, 24)
+                    scores_text[i] = classes.Text(630, 153 + (80*i), str(recipeScore[i]) + "%", white, 24)
                     scores_text[i].drawText()
                 totalScore_text.changeText(str(score) + "%")
             elif recipeChosen == "cake":
@@ -1843,8 +1868,11 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
                 gameLabel2_cake_text.drawText()
                 gameLabel3_cake_text.drawText()
                 gameLabel4_cake_text.drawText()
+                globalvariables.WIN.blit(scaled_cake, (60, 150))
+                finished_button.drawBox()
+                finished_text.drawText()
                 for i in range(len(recipeScore)):
-                    scores_text[i] = classes.Text(615, 153, str(recipeScore[i]) + "%", white, 24)
+                    scores_text[i] = classes.Text(630, 153 + (80*i), str(recipeScore[i]) + "%", white, 24)
                     scores_text[i].drawText()
                 totalScore_text.changeText(str(score) + "%")
             elif recipeChosen == "sushi":
@@ -1852,8 +1880,11 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
                 gameLabel1_sushi_text.drawText()
                 gameLabel2_sushi_text.drawText()
                 gameLabel3_sushi_text.drawText()
+                globalvariables.WIN.blit(scaled_sushi, (60, 150))
+                finished_button.drawBox()
+                finished_text.drawText()
                 for i in range(len(recipeScore)):
-                    scores_text[i] = classes.Text(615, 153, str(recipeScore[i]) + "%", white, 24)
+                    scores_text[i] = classes.Text(630, 153 + (80*i), str(recipeScore[i]) + "%", white, 24)
                     scores_text[i].drawText()
                 totalScore_text.changeText(str(score) + "%")
                 
