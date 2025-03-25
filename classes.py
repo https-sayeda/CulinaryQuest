@@ -1,6 +1,7 @@
 import globalvariables
 import pygame
 import os
+import database
 
 specialCharacters = "!£$%^&*()_+-={['#~.,<>/?|\¬`;:}]@"
 
@@ -185,3 +186,40 @@ class Input:
         return self.passValidated #returns it to create account loop
     
     def getInput(self): return self.input #getter method for inputs
+
+class linkedList:
+    def __init__(self): #the class for the linked list
+        self.data = 0 #will hold the data value of the node
+        self.next = None #holds the next node
+ 
+#sorts the linked list
+def sortList(head): 
+    current = head #sets the current value to the first item in the linked list
+ 
+    while current is not None: #while the list hasn't ended
+        index = current.next 
+        #pointer traverses the list from the current node by storing the value of the next node
+ 
+        while index is not None: #as long as the list hasn't ended
+            if current.data < index.data:
+                #if the current item is greater than the next item, swap them
+                temp = current.data
+                current.data = index.data
+                index.data = temp
+ 
+            index = index.next #stores the next value after the current index
+ 
+        current = current.next #stores the value after the current node
+ 
+def push(headPosition, newData): #adds the node to the beginning of the linked list
+    newNode = linkedList()
+    newNode.data = newData
+    newNode.next = headPosition
+    return newNode
+ 
+# This function prints contents of linked list starting from the given node
+def displayScore(node, pastAttempts):
+    while node is not None:
+        pastAttempts.append(node.data)
+        node = node.next
+    return pastAttempts

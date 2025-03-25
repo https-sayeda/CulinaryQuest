@@ -15,7 +15,6 @@ pygame.display.set_caption('Culinary Quest')
 #Commonly Used Variables
 bgPosition = (0,0)
 
-
 #COLOURS
 white = (255, 255, 255)
 black = pygame.Color(0, 0, 0)
@@ -255,6 +254,8 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recip
     current_level = str(database.getData_main(username, "current_level"))
     current_points = str(100-(database.getData_main(username, "current_points")))
 
+    prevScreen = "None"
+
     if theme_selected == "theme1":
         colours = [main_lightPurple1, main_lightPurple2, main_darkPurple1, main_darkPurple2, main_darkPurple3, main_brightPurple]
         mainBg_image = main1Bg_image
@@ -348,6 +349,7 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recip
                     shopLoop = True
                 settingsPressed = settings_button.checkPressed(pygame.mouse.get_pos())
                 if settingsPressed:
+                    prevScreen = "Main"
                     mainLoop = False
                     settingsLoop = True
                 burgerPressed = burger_button.checkPressed(pygame.mouse.get_pos())
@@ -635,7 +637,7 @@ def mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recip
 
         pygame.display.update()
 
-    return mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen
+    return mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen, prevScreen
 
 def shopScreen(mainLoop, shopLoop, username, theme_selected):
 
@@ -825,7 +827,7 @@ def shopScreen(mainLoop, shopLoop, username, theme_selected):
 
     return mainLoop, shopLoop, disc_selected, theme_selected
 
-def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_input, username, theme_selected):
+def settingsScreen(mainLoop, settingsLoop, minigameLoop, oldPassInput_input, newPassInput_input, username, theme_selected, prevScreen,  stack, visitedNodes, flag, score, value, burgerScore, cakeScore, sushiScore):
 
     volume_level = database.getData_main(username, "volume_level")
 
@@ -895,7 +897,10 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
                 backPressed = back_button.checkPressed(pygame.mouse.get_pos()) #checks if its been pressed
                 if backPressed:
                     settingsLoop = False
-                    mainLoop = True
+                    if prevScreen == "Main":
+                        mainLoop = True
+                    elif prevScreen == "Minigame":
+                        minigameLoop = True
                 savePressed = save_button.checkPressed(pygame.mouse.get_pos())
                 if savePressed: #if save button pressed
                     errorBg1_box.setUnactive() #sets to unactive so they don't remain displayed
@@ -1008,9 +1013,21 @@ def settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_inpu
             globalvariables.WIN.blit(scaled_checkmarkIcon, (670, 511)) #blit where us customary is
 
         pygame.display.update()
-    return mainLoop, settingsLoop
+    return mainLoop, settingsLoop, minigameLoop,  stack, visitedNodes, flag, score, value, burgerScore, cakeScore, sushiScore
     
 def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, theme_selected):
+
+    pastAttempts = database.getScore_main(username, recipeChosen)
+    scores = [0, 0, 0, 0, 0]
+
+    stack = deque([]) #creates a stack to traverse through the nodes within the tree
+    visitedNodes = [] #contains all the visited nodes
+    flag = True #indicates whether to traverse the tree
+    score = 0
+    value = ""
+    burgerScore = []
+    cakeScore = []
+    sushiScore = []
 
     measurementType = database.getData_main(username, "measurement_type")
 
@@ -1067,7 +1084,10 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
     exit_text = classes.Text(717, 86, "X", white, 30)
     recipePageR_text = classes.Text(695, 540, ">", white, 27)
     recipePageL_text = classes.Text(320, 540, "<", white, 27)
-    
+
+    for i in range(len(pastAttempts)):
+        scores[i] = (classes.Text(685, 252 + (40 * (i)), f"{i+1}.      " + str(pastAttempts[i]) + "%", white, 22))
+        
     #description text
     burgerDescription1_text = classes.Text(180, 467, "A burger consists of a ground meat patty enclosed in a bun. The", white, 22)
     burgerDescription2_text = classes.Text(180, 487, "patty can be made from beef, chicken, turkey, or even plant-based", white, 22)
@@ -1383,9 +1403,12 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
         descriptionLabel_box.drawBox()
         description_text.drawText()
         start_button.drawBox()
-        start_text.drawText()
         leaderboardBg_box.drawBox()
         descriptionBg_box.drawBox()
+        if recipeChosen == "burger" or recipeChosen == "cake" or recipeChosen == "sushi": 
+            #there is no table for the other recipes yet so it is only possible to display the scores for these recipes
+            for i in range(len(scores)):
+                scores[i].drawText()
 
         #displaying depending on the recipe that was chosen
         if recipeChosen == "burger":
@@ -1538,21 +1561,15 @@ def recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, the
                 naRecipe_text.drawText()
 
         pygame.display.update()
-    return mainLoop, recipeLoop, minigameLoop, recipeChosen, ingredients
+    return mainLoop, recipeLoop, minigameLoop, recipeChosen, ingredients, stack, visitedNodes, flag, score, value, burgerScore, cakeScore, sushiScore
 
-def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingredients):
+def minigameScreen(minigameLoop, recipeLoop, settingsLoop, recipeChosen, theme_selected, ingredients, username, stack, visitedNodes, flag, score, value, burgerScore, cakeScore, sushiScore):
 
     startingScreen = True #the starting screen will show all the steps, this will reappear every time the user finishes a minigame
     exitMessage = False #this will be set to true when the user presses the back button
-    stack = deque([]) #creates a stack to traverse through the nodes within the tree
-    visitedNodes = [] #contains all the visited nodes
-    flag = True #indicates whether to traverse the tree
-    score = 0
-    value = ""
     minigame = False
-    burgerScore = []
-    cakeScore = []
-    sushiScore = []
+    prevScreen = "None"
+    addScore = False
 
     if theme_selected == "theme1": #changes the colours of the boxes and buttons depending on the theme that has been chosen
             colours = [main_lightPurple1, main_lightPurple2, main_darkPurple1, main_darkPurple2, main_darkPurple3, main_brightPurple]
@@ -1565,6 +1582,7 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
     scaled_burger = pygame.transform.scale(burgerIcon_image, (250, 250))
     scaled_cake = pygame.transform.scale(cakeIcon_image, (170, 170))
     scaled_sushi = pygame.transform.scale(sushiIcon_image, (170, 170))
+    scaled_gameLogo = pygame.transform.scale(gameLogo_image, (75, 75))
 
     #text
     back_text = classes.Text(80, 55, "<--", white, 50)
@@ -1632,7 +1650,7 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
     exitMessage_box = classes.Box(260, 150, 200, 500, login_red1, False)
     totalScoreLabel_box = classes.Box(760, 150, 40, 200, colours[1], False)
     totalScore_box = classes.Box(760, 180, 40, 200, colours[1], False)
-
+    overhead_box = classes.Box(800, 0, 75, 300, colours[2], True)
 
     #buttons
     back_button = classes.Button(65, 50, 70, 100, colours[3], False)
@@ -1645,6 +1663,8 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
     exitNo_button = classes.Button(610, 290, 40, 100, white, False)
     finished_button = classes.Button(770, 500, 70, 100, colours[3], False)
 
+    #image buttons
+    settings_button = classes.ImageButton(930, 15, settingsIcon_image, 1)
 
     while minigameLoop:
 
@@ -1690,16 +1710,23 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
                     start5Active = start5_button.getActive()
                     if start5Pressed == True and start5Active == False:
                         minigame = True
+                    
+                    settingsPressed = settings_button.checkPressed(pygame.mouse.get_pos())
+                    if settingsPressed:
+                        prevScreen = "Minigame"
+                        minigameLoop = False
+                        settingsLoop = True
                 else:
                     finishedPressed = finished_button.checkPressed(pygame.mouse.get_pos())
                     if finishedPressed == True:
+                        database.updatePoints_main(username, score)
                         minigameLoop = False
                         recipeLoop = True
 
         #tree traversal
         if flag:
-            value, stack, visitedNodes = minigames.treeTraversal(recipeChosen, stack, visitedNodes)
-            flag = False
+            value, stack, visitedNodes = minigames.treeTraversal(recipeChosen, stack, visitedNodes) #traverses the tree to go to the next step
+            flag = False #sets to false so it doesn't keep traversing
 
         #displaying onto the screen
         globalvariables.WIN.blit(gameBg_image, bgPosition)
@@ -1711,6 +1738,9 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
             gameLabel1_box.drawBox()
             gameLabel2_box.drawBox()
             gameLabel3_box.drawBox()
+            overhead_box.drawBox()
+            settings_button.draw()
+            globalvariables.WIN.blit(scaled_gameLogo, (830, 5))
 
             if recipeChosen == "burger":
                 burgerLabel_text.drawText()
@@ -1743,6 +1773,8 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
                     locked5_text.drawText()
                 elif value == "Shaping":
                     start3_button.drawBox()
+                    completed1_text.drawText()
+                    completed2_text.drawText()
                     start_text.changePosition(615,313)
                     locked4_text.drawText()
                     locked5_text.drawText()
@@ -1857,9 +1889,12 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
                 finished_button.drawBox()
                 finished_text.drawText()
                 for i in range(len(recipeScore)):
-                    scores_text[i] = classes.Text(630, 153 + (80*i), str(recipeScore[i]) + "%", white, 24)
+                    scores_text[i] = classes.Text(630, 153 + (80*i), str(recipeScore[i]) + "%", white, 24) #displays the scores for each stage
                     scores_text[i].drawText()
-                totalScore_text.changeText(str(score) + "%")
+                totalScore_text.changeText(str(score) + "%") #displays total score
+                if addScore:
+                    addScore = database.addScore_main(username, score, recipeChosen)
+
             elif recipeChosen == "cake":
                 cakeLabel_text.drawText()
                 gameLabel4_box.drawBox()
@@ -1875,6 +1910,9 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
                     scores_text[i] = classes.Text(630, 153 + (80*i), str(recipeScore[i]) + "%", white, 24)
                     scores_text[i].drawText()
                 totalScore_text.changeText(str(score) + "%")
+                if addScore:
+                    addScore = database.addScore_main(username, score, recipeChosen)
+
             elif recipeChosen == "sushi":
                 sushiLabel_text.drawText()
                 gameLabel1_sushi_text.drawText()
@@ -1887,26 +1925,27 @@ def minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingre
                     scores_text[i] = classes.Text(630, 153 + (80*i), str(recipeScore[i]) + "%", white, 24)
                     scores_text[i].drawText()
                 totalScore_text.changeText(str(score) + "%")
-                
-                
+                if addScore:
+                    addScore = database.addScore_main(username, score, recipeChosen)  
 
         if minigame:
             if recipeChosen == "burger":
-                value, stack, visitedNodes, recipeScore, score, startingScreen = minigames.burgerGame(value, stack, visitedNodes, score, burgerScore, colours, ingredients, startingScreen)
+                value, stack, visitedNodes, recipeScore, score, startingScreen = minigames.burgerGame(value, stack, visitedNodes, score, burgerScore, colours, ingredients, startingScreen, theme_selected)
                 flag = True
                 minigame = False
             elif recipeChosen == "cake":
-                value, stack, visitedNodes, recipeScore, score, startingScreen = minigames.cakeGame(value, stack, visitedNodes, score,  cakeScore, colours, ingredients, startingScreen)
+                value, stack, visitedNodes, recipeScore, score, startingScreen = minigames.cakeGame(value, stack, visitedNodes, score,  cakeScore, colours, ingredients, startingScreen, theme_selected)
                 flag = True
                 minigame = False
             elif recipeChosen == "sushi":
-                value, stack, visitedNodes, recipeScore, score, startingScreen = minigames.sushiGame(value, stack, visitedNodes, score, sushiScore, colours, ingredients, startingScreen)
+                value, stack, visitedNodes, recipeScore, score, startingScreen = minigames.sushiGame(value, stack, visitedNodes, score, sushiScore, colours, ingredients, startingScreen, theme_selected)
                 flag = True
                 minigame = False
+            addScore = True
 
         pygame.display.update()
     
-    return minigameLoop, recipeLoop, recipeChosen
+    return minigameLoop, recipeLoop, settingsLoop, recipeChosen, prevScreen,  stack, visitedNodes, flag, score, value, burgerScore, cakeScore, sushiScore
         
 def playDisc(disc_selected):
     if disc_selected == "disc1":
@@ -1934,6 +1973,14 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop, mi
     oldPassInput_input = classes.Input(350, 250, 30, 280, black, 20, True)
     newPassInput_input = classes.Input(350, 310, 30, 280, black, 20, True)
 
+    stack = deque([]) #creates a stack to traverse through the nodes within the tree
+    visitedNodes = [] #contains all the visited nodes
+    flag = True #indicates whether to traverse the tree
+    score = 0
+    value = ""
+    burgerScore = []
+    cakeScore = []
+    sushiScore = []
 
     while run:
             
@@ -1951,20 +1998,20 @@ def main(loginLoop, createLoop, mainLoop, settingsLoop, shopLoop, recipeLoop, mi
             theme_selected = str(database.getData_main(username, "theme_selected"))
             volume_level = database.getData_main(username, "volume_level")
             pygame.mixer.music.set_volume((volume_level) / 100)
-            mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen = mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen, username, theme_selected) 
+            mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen, prevScreen = mainScreen(search_input, mainLoop, shopLoop, settingsLoop, recipeLoop, recipeChosen, username, theme_selected) 
         
         if shopLoop == True:
             mainLoop, shopLoop, disc_selected, theme_selected = shopScreen(mainLoop, shopLoop, username, theme_selected)
             playDisc(disc_selected)
 
         if settingsLoop == True:
-            mainLoop, settingsLoop = settingsScreen(mainLoop, settingsLoop, oldPassInput_input, newPassInput_input, username, theme_selected)
+            mainLoop, settingsLoop, minigameLoop,  stack, visitedNodes, flag, score, value, burgerScore, cakeScore, sushiScore = settingsScreen(mainLoop, settingsLoop, minigameLoop, oldPassInput_input, newPassInput_input, username, theme_selected, prevScreen,  stack, visitedNodes, flag, score, value, burgerScore, cakeScore, sushiScore)
 
         if recipeLoop == True:
-            mainLoop, recipeLoop, minigameLoop, recipeChosen, ingredients = recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, theme_selected)
+            mainLoop, recipeLoop, minigameLoop, recipeChosen, ingredients, stack, visitedNodes, flag, score, value, burgerScore, cakeScore, sushiScore = recipeScreen(mainLoop, recipeLoop, minigameLoop, recipeChosen, username, theme_selected)
 
         if minigameLoop == True:
-            minigameLoop, recipeLoop, recipeChosen = minigameScreen(minigameLoop, recipeLoop, recipeChosen, theme_selected, ingredients)
+            minigameLoop, recipeLoop, settingsLoop, recipeChosen, prevScreen, stack, visitedNodes, flag, score, value, burgerScore, cakeScore, sushiScore = minigameScreen(minigameLoop, recipeLoop, settingsLoop, recipeChosen, theme_selected, ingredients, username, stack, visitedNodes, flag, score, value, burgerScore, cakeScore, sushiScore)
 
 loginLoop = True
 createLoop = False
